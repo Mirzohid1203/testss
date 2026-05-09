@@ -11,6 +11,7 @@ interface AuthContextType {
     profile: UserProfile | null;
     loading: boolean;
     isAdmin: boolean;
+    isSuperAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
     profile: null,
     loading: true,
     isAdmin: false,
+    isSuperAdmin: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -51,10 +53,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return () => unsubscribe();
     }, []);
 
-    const isAdmin = profile?.role === 'admin' || user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+    const isSuperAdmin = user?.email === 'mirzohidmahmutaliyev@gmail.com' || profile?.role === 'superadmin';
+    const isAdmin = isSuperAdmin || profile?.role === 'admin' || user?.email === 'mmahmutaliyev411@gmail.com';
 
     return (
-        <AuthContext.Provider value={{ user, profile, loading, isAdmin }}>
+        <AuthContext.Provider value={{ user, profile, loading, isAdmin, isSuperAdmin }}>
             {children}
         </AuthContext.Provider>
     );

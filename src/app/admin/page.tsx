@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult, Subject } from "@/types";
 import StatsChart from "@/components/Charts";
 import { Users, FileQuestion, GraduationCap, TrendingUp, Loader2, Calendar } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
 
 export default function AdminOverview() {
     const [stats, setStats] = useState({
@@ -16,41 +16,71 @@ export default function AdminOverview() {
         avgScore: 0,
     });
     const [recentResults, setRecentResults] = useState<TestResult[]>([]);
+    const [chartData, setChartData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const [usersSnap, testsSnap, resultsSnap] = await Promise.all([
-                    getDocs(collection(db, "users")),
-                    getDocs(collection(db, "tests")),
-                    getDocs(collection(db, "results")),
-                ]);
+        // Real-time stats
+        const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
+            setStats(prev => ({ ...prev, totalUsers: snap.size }));
+        });
 
-                const results = resultsSnap.docs.map(d => d.data() as TestResult);
-                const totalScore = results.reduce((acc, r) => acc + (r.score / r.total), 0);
-                const avgScore = results.length > 0 ? Math.round((totalScore / results.length) * 100) : 0;
+        const unsubTests = onSnapshot(collection(db, "tests"), (snap) => {
+            setStats(prev => ({ ...prev, totalTests: snap.size }));
+        });
 
-                setStats({
-                    totalUsers: usersSnap.size,
-                    totalTests: testsSnap.size,
-                    totalResults: resultsSnap.size,
-                    avgScore,
-                });
+        const unsubResults = onSnapshot(collection(db, "results"), (snap) => {
+            const results = snap.docs.map(d => d.data() as TestResult);
+            const totalScore = results.reduce((acc, r) => acc + (r.score / r.total), 0);
+            const avgScore = results.length > 0 ? Math.round((totalScore / results.length) * 100) : 0;
 
-                // Fetch recent results
-                const q = query(collection(db, "results"), orderBy("createdAt", "desc"), limit(5));
-                const recentSnap = await getDocs(q);
-                setRecentResults(recentSnap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult)));
+            setStats(prev => ({
+                ...prev,
+                totalResults: snap.size,
+                avgScore
+            }));
 
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
+            // Calculate chart data (last 7 days)
+            const days = Array.from({ length: 7 }, (_, i) => {
+                const date = subDays(new Date(), 6 - i);
+                return {
+                    name: format(date, "EEE"),
+                    fullDate: startOfDay(date).getTime(),
+                    val: 0,
+                    count: 0
+                };
+            });
+
+            results.forEach(r => {
+                const resultDate = startOfDay(new Date(r.createdAt)).getTime();
+                const dayIndex = days.findIndex(d => d.fullDate === resultDate);
+                if (dayIndex !== -1) {
+                    days[dayIndex].val += (r.score / r.total) * 100;
+                    days[dayIndex].count++;
+                }
+            });
+
+            const finalChartData = days.map(d => ({
+                name: d.name,
+                val: d.count > 0 ? Math.round(d.val / d.count) : 0
+            }));
+
+            setChartData(finalChartData);
+            setLoading(false);
+        });
+
+        // Recent results query
+        const q = query(collection(db, "results"), orderBy("createdAt", "desc"), limit(5));
+        const unsubRecent = onSnapshot(q, (snap) => {
+            setRecentResults(snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult)));
+        });
+
+        return () => {
+            unsubUsers();
+            unsubTests();
+            unsubResults();
+            unsubRecent();
         };
-
-        fetchStats();
     }, []);
 
     const statCards = [
@@ -96,7 +126,7 @@ export default function AdminOverview() {
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                     <h2 className="mb-6 text-xl font-bold text-white">Recent Activities</h2>
                     <div className="space-y-4">
-                        {recentResults.map((res) => (
+                        {recentResults.length > 0 ? recentResults.map((res) => (
                             <div key={res.id} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 transition-colors hover:bg-gray-800/50">
                                 <div className="flex items-center gap-3">
                                     <div className={`h-2 w-2 rounded-full ${res.score / res.total >= 0.7 ? "bg-green-500" : "bg-red-500"}`} />
@@ -112,23 +142,17 @@ export default function AdminOverview() {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <p className="text-center py-8 text-gray-500">No recent activities</p>
+                        )}
                     </div>
                 </div>
 
-                {/* Mini Chart Mock */}
+                {/* Performance Chart */}
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
-                    <h2 className="mb-6 text-xl font-bold text-white">Performance Trend</h2>
+                    <h2 className="mb-6 text-xl font-bold text-white">Performance Trend (Avg %)</h2>
                     <StatsChart
-                        data={[
-                            { name: "Mon", val: 45 },
-                            { name: "Tue", val: 52 },
-                            { name: "Wed", val: 48 },
-                            { name: "Thu", val: 70 },
-                            { name: "Fri", val: 61 },
-                            { name: "Sat", val: 80 },
-                            { name: "Sun", val: 75 },
-                        ]}
+                        data={chartData}
                         type="line"
                         dataKey="val"
                         nameKey="name"

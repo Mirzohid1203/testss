@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -12,27 +12,28 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function Dashboard() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [ads, setAds] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const { t } = useLanguage();
 
     useEffect(() => {
-        const fetchSubjects = async () => {
-            try {
-                const q = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
-                const querySnapshot = await getDocs(q);
-                const subjectsData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Subject[];
-                setSubjects(subjectsData);
-            } catch (error) {
-                console.error("Error fetching subjects:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        // Subjects listener
+        const qSub = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
+        const unsubSub = onSnapshot(qSub, (snapshot) => {
+            setSubjects(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Subject[]);
+            setLoading(false);
+        });
 
-        fetchSubjects();
+        // Ads/Announcements listener
+        const qAds = query(collection(db, "ads"), orderBy("createdAt", "desc"));
+        const unsubAds = onSnapshot(qAds, (snapshot) => {
+            setAds(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        });
+
+        return () => {
+            unsubSub();
+            unsubAds();
+        };
     }, []);
 
     return (
@@ -43,6 +44,31 @@ export default function Dashboard() {
                     <h1 className="text-4xl font-bold text-white">{t.dashboard.title}</h1>
                     <p className="mt-2 text-gray-400">{t.dashboard.subtitle}</p>
                 </header>
+
+                {/* Announcements / Ads Display */}
+                {ads.length > 0 && (
+                    <div className="mb-12 space-y-4">
+                        {ads.map((ad) => (
+                            <motion.div
+                                key={ad.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="relative overflow-hidden rounded-2xl border border-blue-500/20 bg-blue-600/5 p-6 backdrop-blur-sm"
+                            >
+                                <div className="absolute right-0 top-0 h-full w-1 bg-blue-600" />
+                                <div className="flex items-start gap-4">
+                                    <div className="rounded-full bg-blue-600/20 p-2 text-blue-400">
+                                        <Info className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white">{ad.title}</h3>
+                                        <p className="text-gray-300">{ad.content}</p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
 
                 {loading ? (
                     <div className="flex h-64 items-center justify-center">

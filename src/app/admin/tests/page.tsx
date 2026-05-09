@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where, orderBy } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Question, Subject } from "@/types";
 import { Plus, Trash2, Edit3, Loader2, Filter, X, ChevronRight, CheckCircle2 } from "lucide-react";
@@ -23,43 +23,31 @@ export default function AdminTests() {
     const [btnLoading, setBtnLoading] = useState(false);
 
     useEffect(() => {
-        fetchSubjects();
+        const q = query(collection(db, "subjects"), orderBy("title"));
+        return onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Subject));
+            setSubjects(data);
+            if (data.length > 0 && !selectedSubjectId) {
+                setSelectedSubjectId(data[0].id);
+            }
+        });
     }, []);
 
     useEffect(() => {
-        if (subjects.length > 0) {
-            if (!selectedSubjectId) {
-                setSelectedSubjectId(subjects[0].id);
-            }
-            fetchQuestions(selectedSubjectId || subjects[0].id);
-        }
-    }, [subjects, selectedSubjectId]);
-
-    const fetchSubjects = async () => {
-        try {
-            const q = query(collection(db, "subjects"), orderBy("title"));
-            const snapshot = await getDocs(q);
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Subject));
-            setSubjects(data);
-        } catch (e: any) {
-            toast.error(e.message);
-        }
-    };
-
-    const fetchQuestions = async (subId: string) => {
-        if (!subId) return;
+        if (!selectedSubjectId) return;
         setLoading(true);
-        try {
-            const q = query(collection(db, "tests"), where("subjectId", "==", subId));
-            const snapshot = await getDocs(q);
+        const q = query(collection(db, "tests"), where("subjectId", "==", selectedSubjectId));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
             setQuestions(data);
-        } catch (e: any) {
-            toast.error(e.message);
-        } finally {
             setLoading(false);
-        }
-    };
+        }, (err) => {
+            toast.error(err.message);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [selectedSubjectId]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,7 +74,6 @@ export default function AdminTests() {
             }
             setIsModalOpen(false);
             resetForm();
-            fetchQuestions(selectedSubjectId);
         } catch (e: any) {
             toast.error(e.message);
         } finally {
@@ -99,7 +86,6 @@ export default function AdminTests() {
         try {
             await deleteDoc(doc(db, "tests", id as string));
             toast.success("Question deleted");
-            fetchQuestions(selectedSubjectId);
         } catch (e: any) {
             toast.error(e.message);
         }

@@ -17,8 +17,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Online Test Platform | Admin Panel",
-  description: "A production-ready online test platform with admin capabilities.",
+  title: "TestFlow | Professional Online Testing & Analytics",
+  description: "Advanced online testing platform with real-time analytics, secure test environment, and powerful admin management.",
 };
 
 export default function RootLayout({

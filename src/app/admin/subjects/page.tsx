@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
 import { Plus, Trash2, Edit3, Loader2, Search, X } from "lucide-react";
@@ -16,22 +16,18 @@ export default function AdminSubjects() {
     const [btnLoading, setBtnLoading] = useState(false);
 
     useEffect(() => {
-        fetchSubjects();
-    }, []);
-
-    const fetchSubjects = async () => {
-        setLoading(true);
-        try {
-            const q = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
-            const snapshot = await getDocs(q);
+        const q = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Subject));
             setSubjects(data);
-        } catch (e: any) {
-            toast.error(e.message);
-        } finally {
             setLoading(false);
-        }
-    };
+        }, (err) => {
+            toast.error(err.message);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,7 +47,6 @@ export default function AdminSubjects() {
             setIsModalOpen(false);
             setCurrentSubject({ title: "", description: "" });
             setIsEditing(false);
-            fetchSubjects();
         } catch (e: any) {
             toast.error(e.message);
         } finally {
@@ -64,7 +59,6 @@ export default function AdminSubjects() {
         try {
             await deleteDoc(doc(db, "subjects", id as string));
             toast.success("Subject deleted");
-            fetchSubjects();
         } catch (e: any) {
             toast.error(e.message);
         }
@@ -97,7 +91,8 @@ export default function AdminSubjects() {
             </div>
 
             <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden">
-                <table className="w-full text-left">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
                         <tr>
                             <th className="px-6 py-4">Title</th>
@@ -142,6 +137,7 @@ export default function AdminSubjects() {
                         )}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* Modal */}

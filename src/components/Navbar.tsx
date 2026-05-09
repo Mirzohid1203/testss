@@ -187,13 +187,46 @@ export default function Navbar() {
                                     {t.nav.dashboard}
                                 </Link>
                                 {isAdmin && (
-                                    <Link
-                                        href="/admin"
-                                        className="block rounded-lg px-3 py-3 text-base font-medium text-blue-400 hover:bg-gray-800"
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        {t.nav.admin}
-                                    </Link>
+                                    <div className="space-y-1">
+                                        <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                            Admin Panel
+                                        </div>
+                                        <Link
+                                            href="/admin"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-blue-400 hover:bg-gray-800 pl-6"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Overview
+                                        </Link>
+                                        <Link
+                                            href="/admin/subjects"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Subjects
+                                        </Link>
+                                        <Link
+                                            href="/admin/tests"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Tests
+                                        </Link>
+                                        <Link
+                                            href="/admin/users"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Users
+                                        </Link>
+                                        <Link
+                                            href="/admin/stats"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Statistics
+                                        </Link>
+                                    </div>
                                 )}
                                 <div className="border-t border-gray-800 mt-2 pt-2">
                                     <p className="px-3 py-2 text-sm text-gray-500 truncate">{user.email}</p>

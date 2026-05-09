@@ -25,8 +25,12 @@ export default function Register() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Determine role based on ENV
-            const role = email === process.env.NEXT_PUBLIC_ADMIN_EMAIL ? "admin" : "user";
+            // Default role is user. Only superadmin is assigned from ENV automatically.
+            // Admins are appointed by the superadmin.
+            let role = "user";
+            if (email === process.env.NEXT_PUBLIC_SUPERADMIN_EMAIL) {
+                role = "superadmin";
+            }
 
             // Save user profile to Firestore
             await setDoc(doc(db, "users", user.uid), {
