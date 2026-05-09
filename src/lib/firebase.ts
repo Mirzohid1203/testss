@@ -14,10 +14,31 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+let app;
+if (getApps().length > 0) {
+    app = getApp();
+} else {
+    // Initialize with config (fallback to empty string to prevent initializeApp crash)
+    app = initializeApp({
+        ...firebaseConfig,
+        apiKey: firebaseConfig.apiKey || "mock-key",
+    });
+}
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+let auth: any = {};
+let db: any = {};
+
+try {
+    // This will throw if apiKey is missing or invalid ("mock-key")
+    if (firebaseConfig.apiKey) {
+        auth = getAuth(app);
+        db = getFirestore(app);
+    }
+} catch (error) {
+    console.warn("Firebase initialization skipped (likely during SSR build).");
+}
+
+export { auth, db };
 
 // Analytics is only supported in the browser
 export const analytics = typeof window !== "undefined" ?
