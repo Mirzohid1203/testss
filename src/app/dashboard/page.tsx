@@ -35,12 +35,9 @@ export default function Dashboard() {
             <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
 
                 <header className="mb-12">
-                    <h1 className="text-4xl font-bold text-white">{t.dashboard.title}</h1>
-                    <p className="mt-2 text-gray-400">{t.dashboard.subtitle}</p>
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white font-outfit">{t.dashboard.title}</h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">{t.dashboard.subtitle}</p>
                 </header>
-
-                {/* Announcements Link (Optional - can be added if needed, but removing as per user request to have it in a separate section) */}
-
 
                 {loading ? (
                     <div className="flex h-64 items-center justify-center">
@@ -55,21 +52,21 @@ export default function Dashboard() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
                             >
-                                <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-6 transition-all hover:border-blue-500/50 hover:bg-gray-900/80 hover:shadow-2xl hover:shadow-blue-500/10">
+                                <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-sm transition-all hover:border-blue-500/50 hover:bg-white dark:hover:bg-gray-900/80 hover:shadow-xl dark:hover:shadow-blue-500/10">
                                     <div className="mb-4 flex items-center justify-between">
-                                        <div className="rounded-xl bg-blue-600/10 p-3 text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <div className="rounded-xl bg-blue-600/10 p-3 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                             <BookOpen className="h-6 w-6" />
                                         </div>
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-white group-hover:text-blue-400">
+                                    <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                         {subject.title}
                                     </h3>
-                                    <p className="mb-6 flex-grow text-sm text-gray-400 line-clamp-2">
+                                    <p className="mb-6 flex-grow text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                                         {subject.description}
                                     </p>
                                     <Link
                                         href={`/test/${subject.id}`}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-600 group-hover:border-transparent"
+                                        className="inline-flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white transition-all hover:bg-blue-600 hover:text-white"
                                     >
                                         {t.dashboard.startTest}
                                         <ArrowRight className="h-4 w-4" />
@@ -79,10 +76,10 @@ export default function Dashboard() {
                         ))}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-700 bg-gray-900/40 py-24 text-center">
-                        <BookOpen className="mb-4 h-12 w-12 text-gray-600" />
-                        <h3 className="text-xl font-medium text-gray-300">{t.dashboard.noSubjects}</h3>
-                        <p className="mt-2 text-gray-500">{t.dashboard.checkBack}</p>
+                    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900/40 py-24 text-center shadow-inner">
+                        <BookOpen className="mb-4 h-12 w-12 text-gray-400 dark:text-gray-600" />
+                        <h3 className="text-xl font-medium text-gray-900 dark:text-gray-300">{t.dashboard.noSubjects}</h3>
+                        <p className="mt-2 text-gray-600 dark:text-gray-500">{t.dashboard.checkBack}</p>
                     </div>
                 )}
             </main>

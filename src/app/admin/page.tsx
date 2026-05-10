@@ -107,20 +107,20 @@ export default function AdminOverview() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl font-bold text-white font-outfit">Dashboard Overview</h1>
-                <p className="text-gray-400">Real-time platform statistics and activity</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">Dashboard Overview</h1>
+                <p className="text-gray-500 dark:text-gray-400">Real-time platform statistics and activity</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {statCards.map((stat) => (
-                    <div key={stat.name} className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
+                    <div key={stat.name} className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm transition-all hover:shadow-xl">
                         <div className="flex items-center gap-4">
                             <div className={`rounded-xl ${stat.color} p-3 text-white`}>
                                 {stat.icon}
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-gray-500">{stat.name}</p>
-                                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.name}</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
                             </div>
                         </div>
                     </div>
@@ -129,16 +129,16 @@ export default function AdminOverview() {
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Recent Results */}
-                <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
-                    <h2 className="mb-6 text-xl font-bold text-white">Recent Activities</h2>
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
+                    <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Recent Activities</h2>
                     <div className="space-y-4">
                         {recentResults.length > 0 ? recentResults.map((res) => (
-                            <div key={res.id} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 transition-colors hover:bg-gray-800/50">
+                            <div key={res.id} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/30 p-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800/50">
                                 <div className="flex items-center gap-3">
                                     <div className={`h-2 w-2 rounded-full ${res.score / res.total >= 0.7 ? "bg-green-500" : "bg-red-500"}`} />
                                     <div>
-                                        <p className="text-sm font-semibold text-white">{res.subjectTitle}</p>
-                                        <p className="text-xs text-gray-500">Result: {res.score}/{res.total}</p>
+                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{res.subjectTitle}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Result: {res.score}/{res.total}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -155,8 +155,8 @@ export default function AdminOverview() {
                 </div>
 
                 {/* Performance Chart */}
-                <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
-                    <h2 className="mb-6 text-xl font-bold text-white">Performance Trend (Avg %)</h2>
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
+                    <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Performance Trend (Avg %)</h2>
                     <StatsChart
                         data={chartData}
                         type="line"

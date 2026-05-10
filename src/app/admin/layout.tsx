@@ -47,8 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         href={item.href}
                         onClick={() => setIsSidebarOpen(false)}
                         className={`group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all ${isActive
-                            ? "bg-blue-600/10 text-blue-400 border border-blue-500/20"
-                            : "text-gray-400 hover:bg-gray-800 hover:text-white border border-transparent"
+                            ? "bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                            : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white border border-transparent"
                             }`}
                     >
                         <span className="mr-3 transition-transform group-hover:scale-110">
@@ -64,26 +64,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <ProtectedRoute adminOnly>
-            <div className="flex min-h-screen w-full bg-gray-950">
+            <div className="flex min-h-screen w-full bg-white dark:bg-gray-950 transition-colors duration-300">
 
                 {/* Desktop Sidebar */}
-                <aside className="hidden w-64 flex-col border-r border-gray-800 bg-gray-900/50 md:flex h-screen sticky top-0">
+                <aside className="hidden w-64 flex-col border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 md:flex h-screen sticky top-0">
                     <SidebarContent />
                 </aside>
 
                 {/* Mobile Sidebar Overlay */}
                 {isSidebarOpen && (
                     <div
-                        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden"
+                        className="fixed inset-0 z-50 bg-black/40 dark:bg-black/60 backdrop-blur-sm md:hidden"
                         onClick={() => setIsSidebarOpen(false)}
                     />
                 )}
 
                 {/* Mobile Sidebar Drawer */}
-                <aside className={`fixed inset-y-0 left-0 z-[60] w-72 transform bg-gray-950 transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                    <div className="flex h-16 items-center justify-between border-b border-gray-800 px-6">
-                        <span className="text-xl font-bold text-white">{t.adminNav.menu}</span>
-                        <button onClick={() => setIsSidebarOpen(false)} className="rounded-lg p-2 text-gray-400 hover:bg-gray-800">
+                <aside className={`fixed inset-y-0 left-0 z-[60] w-72 transform bg-white dark:bg-gray-950 transition-transform duration-300 ease-in-out md:hidden border-r border-gray-200 dark:border-gray-800 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                    <div className="flex h-16 items-center justify-between border-b border-gray-200 dark:border-gray-800 px-6">
+                        <span className="text-xl font-bold text-gray-900 dark:text-white">{t.adminNav.menu}</span>
+                        <button onClick={() => setIsSidebarOpen(false)} className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                             <X className="h-6 w-6" />
                         </button>
                     </div>
@@ -94,7 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
                     {isSuperAdmin && (
                         <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2">
-                            <div className="mx-auto max-w-7xl flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-widest">
+                            <div className="mx-auto max-w-7xl flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest">
                                 <Crown className="h-3.5 w-3.5" />
                                 {t.adminNav.superAdminMode}
                             </div>
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
 
                 {/* Mobile Bottom Navigation (Admin Panel) */}
-                <nav className="fixed bottom-0 left-0 right-0 z-[100] flex items-center justify-around border-t border-gray-800 bg-gray-950/95 backdrop-blur-md px-2 py-3 md:hidden pb-safe">
+                <nav className="fixed bottom-0 left-0 right-0 z-[100] flex items-center justify-around border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md px-2 py-3 md:hidden pb-safe">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
@@ -114,7 +114,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 key={item.href}
                                 href={item.href}
                                 className={`flex flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all ${
-                                    isActive ? "text-blue-500" : "text-gray-400 hover:text-gray-200"
+                                    isActive ? "text-blue-600 dark:text-blue-500" : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-gray-200"
                                 }`}
                             >
                                 <span className={`${isActive ? "scale-110" : ""}`}>{item.icon}</span>
