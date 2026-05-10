@@ -33,7 +33,7 @@ export default function AdminStats() {
                         u.email !== "mirzohidmahmutaliyev@gmail.com"
                     );
 
-                const activeUserIds = new Set(activeUsers.map(u => u.id));
+                const activeUserIds = new Set(activeUsers.map(u => u.uid));
 
                 setResults(resultsSnap.docs
                     .map(d => ({ id: d.id, ...d.data() } as TestResult))
