@@ -280,17 +280,6 @@ export default function AdminUsers() {
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {isSuperAdmin && user.role !== "superadmin" ? (
-                                            <select
-                                                value={user.role}
-                                                onClick={(e) => e.stopPropagation()}
-                                                onChange={(e) => handleRoleChange(user.uid, e as any, e.target.value)}
-                                                className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-sm text-white outline-none focus:border-blue-500"
-                                            >
-                                                <option value="user">User</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
-                                        ) : (
                                             <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                                                 user.role === "superadmin" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
                                                 user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
@@ -299,7 +288,6 @@ export default function AdminUsers() {
                                                 {user.role === "admin" && <Shield className="h-3 w-3" />}
                                                 {user.role}
                                             </span>
-                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="font-semibold text-white">{user.testsTaken}</span>

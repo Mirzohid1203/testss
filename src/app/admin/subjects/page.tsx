@@ -4,16 +4,22 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
-import { Plus, Trash2, Edit3, Loader2, Search, X } from "lucide-react";
+import { Plus, Trash2, Edit3, Loader2, Search, X, ShieldCheck, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export default function AdminSubjects() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentSubject, setCurrentSubject] = useState<Partial<Subject>>({ title: "", description: "" });
+    const [currentSubject, setCurrentSubject] = useState<Partial<Subject>>({ 
+        title: "", 
+        description: "",
+        allowedGrades: [] 
+    });
     const [isEditing, setIsEditing] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+
+    const availableGrades = ["5", "6", "7", "8", "9", "10", "11"];
 
     useEffect(() => {
         const q = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
@@ -28,6 +34,15 @@ export default function AdminSubjects() {
 
         return () => unsubscribe();
     }, []);
+
+    const toggleGrade = (grade: string) => {
+        const current = currentSubject.allowedGrades || [];
+        if (current.includes(grade)) {
+            setCurrentSubject({ ...currentSubject, allowedGrades: current.filter(g => g !== grade) });
+        } else {
+            setCurrentSubject({ ...currentSubject, allowedGrades: [...current, grade] });
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,7 +60,7 @@ export default function AdminSubjects() {
                 toast.success("Subject added");
             }
             setIsModalOpen(false);
-            setCurrentSubject({ title: "", description: "" });
+            setCurrentSubject({ title: "", description: "", allowedGrades: [] });
             setIsEditing(false);
         } catch (e: any) {
             toast.error(e.message);
@@ -97,6 +112,7 @@ export default function AdminSubjects() {
                         <tr>
                             <th className="px-6 py-4">Title</th>
                             <th className="px-6 py-4">Description</th>
+                            <th className="px-6 py-4 text-center">Allowed Grades</th>
                             <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -112,6 +128,21 @@ export default function AdminSubjects() {
                                 <tr key={sub.id} className="hover:bg-gray-800/30 transition-colors">
                                     <td className="px-6 py-4 font-medium text-white">{sub.title}</td>
                                     <td className="px-6 py-4 text-sm text-gray-400 max-w-xs truncate">{sub.description}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-wrap gap-1 justify-center">
+                                            {sub.allowedGrades && sub.allowedGrades.length > 0 ? (
+                                                sub.allowedGrades.sort((a,b)=>parseInt(a)-parseInt(b)).map(g => (
+                                                    <span key={g} className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20">
+                                                        {g}-sinf
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-[10px] text-gray-600 flex items-center gap-1">
+                                                    <Lock className="h-3 w-3" /> Hech kimga
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
                                             <button
@@ -167,10 +198,34 @@ export default function AdminSubjects() {
                                 <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
                                 <textarea
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none"
-                                    rows={3}
+                                    rows={2}
                                     value={currentSubject.description}
                                     onChange={e => setCurrentSubject({ ...currentSubject, description: e.target.value })}
                                 />
+                            </div>
+
+                            <div>
+                                <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
+                                    <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                                    Ruxsat etilgan sinflar
+                                </label>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {availableGrades.map((grade) => (
+                                        <button
+                                            key={grade}
+                                            type="button"
+                                            onClick={() => toggleGrade(grade)}
+                                            className={`rounded-lg border py-2 text-xs font-bold transition-all ${
+                                                currentSubject.allowedGrades?.includes(grade)
+                                                    ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                                                    : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
+                                            }`}
+                                        >
+                                            {grade}-sinf
+                                        </button>
+                                    ))}
+                                </div>
+                                <p className="mt-2 text-[10px] text-gray-500 italic">* Agar hech qaysi sinf tanlanmasa, bu fan hech kimga ko'rinmaydi.</p>
                             </div>
                             <button
                                 type="submit"

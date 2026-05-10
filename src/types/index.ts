@@ -12,7 +12,8 @@ export interface UserProfile {
 export interface Subject {
   id: string;
   title: string;
-  description: string;
+  description?: string;
+  allowedGrades?: string[]; // Qaysi sinflar uchun ochiqligi (masalan: ["5", "9"])
   createdAt: number;
 }
 
