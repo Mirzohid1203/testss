@@ -295,7 +295,7 @@ export default function AdminUsers() {
                         >
                             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
                             
-                            <div className="flex items-center justify-between border-b border-gray-800 p-6">
+                            <div className="flex items-center justify-between border-b border-gray-800 p-6 relative z-10">
                                 <div className="flex items-center gap-4">
                                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-400">
                                         <BarChart3 className="h-6 w-6" />
@@ -306,14 +306,21 @@ export default function AdminUsers() {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => setSelectedUser(null)}
-                                    className="rounded-full bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedUser(null);
+                                    }}
+                                    className="rounded-full bg-gray-800 p-2.5 text-gray-400 hover:bg-gray-700 hover:text-white transition-all cursor-pointer relative z-50 active:scale-90"
+                                    aria-label="Yopish"
                                 >
                                     <X className="h-5 w-5" />
                                 </button>
                             </div>
 
-                            <div className="p-6">
+                            <div 
+                                className="p-6"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <div className="grid grid-cols-2 gap-4 mb-8">
                                     <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
                                         <p className="text-sm text-gray-500 font-medium">Total Tests</p>

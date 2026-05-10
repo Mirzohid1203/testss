@@ -13,7 +13,7 @@ import { toast } from "react-hot-toast";
 
 export default function TestPage() {
     const { subjectId } = useParams() as { subjectId: string };
-    const { user, isAdmin } = useAuth();
+    const { user, profile, isAdmin } = useAuth();
     const router = useRouter();
 
     const [subject, setSubject] = useState<Subject | null>(null);
@@ -33,8 +33,20 @@ export default function TestPage() {
                     setSubject({ id: subDoc.id, ...subDoc.data() } as Subject);
                 }
 
-                // Fetch Questions
-                const q = query(collection(db, "tests"), where("subjectId", "==", subjectId));
+                // Get student's grade level from their class name (e.g., "9-A" -> "9")
+                let studentGrade = "9"; // Default
+                if (profile?.className) {
+                    const match = profile.className.match(/\d+/);
+                    if (match) studentGrade = match[0];
+                }
+
+                // Fetch Questions for this subject AND this grade level
+                const q = query(
+                    collection(db, "tests"), 
+                    where("subjectId", "==", subjectId),
+                    where("gradeLevel", "==", studentGrade)
+                );
+                
                 const querySnapshot = await getDocs(q);
                 const questionsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
@@ -52,8 +64,8 @@ export default function TestPage() {
             }
         };
 
-        if (subjectId) fetchData();
-    }, [subjectId]);
+        if (subjectId && (user || isAdmin)) fetchData();
+    }, [subjectId, user, profile]);
 
     const handleSubmit = async () => {
         if (isFinished) return;

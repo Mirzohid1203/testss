@@ -5,7 +5,18 @@ import { collection, onSnapshot, query, orderBy, limit } from "firebase/firestor
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult, Subject } from "@/types";
 import StatsChart from "@/components/Charts";
-import { Users, FileQuestion, GraduationCap, TrendingUp, Loader2, Calendar } from "lucide-react";
+import { 
+    Users, 
+    BookOpen, 
+    TrendingUp, 
+    BarChart3, 
+    Clock, 
+    Award,
+    FileQuestion,
+    GraduationCap,
+    Loader2,
+    Calendar 
+} from "lucide-react";
 import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
 
 export default function AdminOverview() {
@@ -111,20 +122,40 @@ export default function AdminOverview() {
                 <p className="text-gray-500 dark:text-gray-400">Real-time platform statistics and activity</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {statCards.map((stat) => (
-                    <div key={stat.name} className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm transition-all hover:shadow-xl">
-                        <div className="flex items-center gap-4">
-                            <div className={`rounded-xl ${stat.color} p-3 text-white`}>
-                                {stat.icon}
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.name}</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-                            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                            <Users className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Total Users</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalUsers}</p>
                         </div>
                     </div>
-                ))}
+                </div>
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                            <BookOpen className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Subjects</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSubjects}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <TrendingUp className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Avg Score</p>
+                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.avgScore}%</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">

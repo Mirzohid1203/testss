@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Link from "next/link";
 import { BookOpen, ArrowRight, Loader2 } from "lucide-react";
@@ -11,24 +12,43 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Dashboard() {
+    const { profile, user } = useAuth();
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
     const { t } = useLanguage();
 
     useEffect(() => {
-        // Subjects listener
-        const qSub = query(collection(db, "subjects"), orderBy("createdAt", "desc"));
-        const unsubSub = onSnapshot(qSub, (snapshot) => {
-            setSubjects(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Subject[]);
-            setLoading(false);
-        });
+        if (!user || !profile) return;
 
+        // Get student's grade level
+        let studentGrade = "9";
+        if (profile?.className) {
+            const match = profile.className.match(/\d+/);
+            if (match) studentGrade = match[0];
+        }
 
-
-        return () => {
-            unsubSub();
+        // Fetch Subjects and Tests to filter
+        const fetchData = async () => {
+            try {
+                const subSnap = await getDocs(query(collection(db, "subjects"), orderBy("createdAt", "desc")));
+                const testSnap = await getDocs(query(collection(db, "tests"), where("gradeLevel", "==", studentGrade)));
+                
+                const allSubjects = subSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
+                const activeSubjectIds = new Set(testSnap.docs.map(d => d.data().subjectId));
+                
+                // Only show subjects that have questions for this student's grade
+                const filteredSubjects = allSubjects.filter(s => activeSubjectIds.has(s.id));
+                
+                setSubjects(filteredSubjects);
+            } catch (error) {
+                console.error("Error fetching dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
         };
-    }, []);
+
+        fetchData();
+    }, [user, profile]);
 
     return (
         <ProtectedRoute>

@@ -11,13 +11,15 @@ export default function AdminTests() {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
+    const [selectedGrade, setSelectedGrade] = useState<string>("9"); // Default to 9th grade
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentQuestion, setCurrentQuestion] = useState<Partial<Question>>({
         question: "",
         options: ["", "", "", ""],
         correctAnswer: 0,
-        subjectId: ""
+        subjectId: "",
+        gradeLevel: "9"
     });
     const [isEditing, setIsEditing] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
@@ -36,7 +38,12 @@ export default function AdminTests() {
     useEffect(() => {
         if (!selectedSubjectId) return;
         setLoading(true);
-        const q = query(collection(db, "tests"), where("subjectId", "==", selectedSubjectId));
+        // Filter by BOTH subject and grade level
+        const q = query(
+            collection(db, "tests"), 
+            where("subjectId", "==", selectedSubjectId),
+            where("gradeLevel", "==", selectedGrade)
+        );
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
             setQuestions(data);
@@ -47,7 +54,7 @@ export default function AdminTests() {
         });
 
         return () => unsubscribe();
-    }, [selectedSubjectId]);
+    }, [selectedSubjectId, selectedGrade]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,6 +67,7 @@ export default function AdminTests() {
         const dataToSave = {
             ...currentQuestion,
             subjectId: currentQuestion.subjectId || selectedSubjectId,
+            gradeLevel: currentQuestion.gradeLevel || selectedGrade,
             createdAt: Date.now()
         };
 
@@ -96,7 +104,8 @@ export default function AdminTests() {
             question: "",
             options: ["", "", "", ""],
             correctAnswer: 0,
-            subjectId: selectedSubjectId
+            subjectId: selectedSubjectId,
+            gradeLevel: selectedGrade
         });
         setIsEditing(false);
     };
@@ -120,25 +129,37 @@ export default function AdminTests() {
                     <h1 className="text-3xl font-bold text-white">Questions</h1>
                     <p className="text-gray-400">Manage test pool and answers</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <select
-                        className="rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:border-blue-500"
-                        value={selectedSubjectId}
-                        onChange={(e) => setSelectedSubjectId(e.target.value)}
-                    >
-                        {subjects.map(sub => (
-                            <option key={sub.id} value={sub.id}>{sub.title}</option>
-                        ))}
-                    </select>
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
+                        <select
+                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            value={selectedGrade}
+                            onChange={(e) => setSelectedGrade(e.target.value)}
+                        >
+                            {[5, 6, 7, 8, 9, 10, 11].map(g => (
+                                <option key={g} value={g.toString()}>{g}-sinf</option>
+                            ))}
+                        </select>
+                        <div className="h-4 w-px bg-gray-800" />
+                        <select
+                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            value={selectedSubjectId}
+                            onChange={(e) => setSelectedSubjectId(e.target.value)}
+                        >
+                            {subjects.map(sub => (
+                                <option key={sub.id} value={sub.id}>{sub.title}</option>
+                            ))}
+                        </select>
+                    </div>
                     <button
                         onClick={() => {
                             resetForm();
                             setIsModalOpen(true);
                         }}
-                        className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 whitespace-nowrap"
+                        className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 whitespace-nowrap shadow-lg shadow-blue-900/20 transition-all active:scale-95"
                     >
-                        <Plus className="h-5 w-5" />
-                        Add Question
+                        <Plus className="h-4 w-4" />
+                        Savol Qo'shish
                     </button>
                 </div>
             </div>
@@ -210,15 +231,29 @@ export default function AdminTests() {
                             </button>
                         </div>
                         <form onSubmit={handleSave} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
-                                <select
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white"
-                                    value={currentQuestion.subjectId || selectedSubjectId}
-                                    onChange={(e) => setCurrentQuestion({ ...currentQuestion, subjectId: e.target.value })}
-                                >
-                                    {subjects.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
-                                </select>
+                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                                    <select
+                                        className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                        value={currentQuestion.subjectId || selectedSubjectId}
+                                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, subjectId: e.target.value })}
+                                    >
+                                        {subjects.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">Target Grade</label>
+                                    <select
+                                        className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                        value={currentQuestion.gradeLevel || selectedGrade}
+                                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, gradeLevel: e.target.value })}
+                                    >
+                                        {[5, 6, 7, 8, 9, 10, 11].map(g => (
+                                            <option key={g} value={g.toString()}>{g}-sinf</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-2">Question Text</label>
