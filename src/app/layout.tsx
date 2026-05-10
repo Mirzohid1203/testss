@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import LayoutWrapper from "@/components/LayoutWrapper";
 
@@ -27,27 +28,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-gray-950 text-gray-50 flex min-h-screen flex-col`}
+        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex min-h-screen flex-col transition-colors duration-300`}
       >
-        <LanguageProvider>
-          <AuthProvider>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  background: '#1f2937',
-                  color: '#f9fafb',
-                  border: '1px solid #374151',
-                },
-              }}
-            />
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-          </AuthProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <Toaster
+                position="top-right"
+              />
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -37,19 +37,23 @@ export default function AdminUsers() {
                 // Listen to users
                 const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
                 const unsubscribe = onSnapshot(q, (snapshot) => {
-                    let usersData = snapshot.docs.map(doc => {
-                        const userData = doc.data() as UserProfile;
-                        const userResults = results.filter(r => r.userId === userData.uid);
-                        const testsTaken = userResults.length;
-                        const totalScore = userResults.reduce((acc, curr) => acc + (curr.score || 0), 0);
-                        
-                        return {
-                            ...userData,
-                            testsTaken,
-                            totalScore,
-                            results: userResults
-                        };
-                    });
+                    let usersData = snapshot.docs
+                        .map(doc => {
+                            const userData = doc.data() as UserProfile;
+                            const userResults = results.filter(r => r.userId === userData.uid);
+                            
+                            // STATS FILTER: Only show stats for regular users
+                            const isUser = userData.role === "user";
+                            const testsTaken = isUser ? userResults.length : 0;
+                            const totalScore = isUser ? userResults.reduce((acc, curr) => acc + (curr.score || 0), 0) : 0;
+                            
+                            return {
+                                ...userData,
+                                testsTaken,
+                                totalScore,
+                                results: userResults
+                            };
+                        }); // Removed the role filter to show everyone again
 
                     // Sort by testsTaken descending, then totalScore
                     usersData.sort((a, b) => {
@@ -92,10 +96,10 @@ export default function AdminUsers() {
     );
 
     const getUserSubjectStats = (user: UserWithStats) => {
-        const stats: Record<string, { title: string, count: number, avgScore: number }> = {};
+        const stats: Record<string, { subjectId: string, title: string, count: number, avgScore: number }> = {};
         user.results.forEach(r => {
             if (!stats[r.subjectId]) {
-                stats[r.subjectId] = { title: r.subjectTitle, count: 0, avgScore: 0 };
+                stats[r.subjectId] = { subjectId: r.subjectId, title: r.subjectTitle, count: 0, avgScore: 0 };
             }
             stats[r.subjectId].count++;
             stats[r.subjectId].avgScore += (r.score / r.total) * 100;
@@ -282,7 +286,7 @@ export default function AdminUsers() {
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {getUserSubjectStats(selectedUser).length > 0 ? (
                                         getUserSubjectStats(selectedUser).map((stat) => (
-                                            <div key={stat.title} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
+                                            <div key={stat.subjectId} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400">
                                                         <BookOpen className="h-5 w-5" />

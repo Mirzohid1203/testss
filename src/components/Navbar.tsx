@@ -7,8 +7,9 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe, Megaphone } from "lucide-react";
+import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe, Megaphone, Sun, Moon } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 import { Locale } from "@/locales/dictionary";
 
 const LANG_LABELS: Record<Locale, string> = {
@@ -26,6 +27,7 @@ const LANG_FULL: Record<Locale, string> = {
 export default function Navbar() {
     const { user, isAdmin } = useAuth();
     const { locale, setLocale, t } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLangOpen, setIsLangOpen] = useState(false);
@@ -46,7 +48,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/80 backdrop-blur-md">
+        <nav className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center">
@@ -54,7 +56,7 @@ export default function Navbar() {
                             <div className="rounded-lg bg-blue-600 p-1.5">
                                 <ShieldCheck className="h-6 w-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold tracking-tight text-white">3-IDUM TTM</span>
+                            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">3-IDUM TTM</span>
                         </Link>
                     </div>
 
@@ -64,14 +66,14 @@ export default function Navbar() {
                             <>
                                 <Link
                                     href="/dashboard"
-                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors hover:text-blue-600 dark:hover:text-white"
                                 >
                                     <LayoutDashboard className="h-4 w-4" />
                                     {t.nav.dashboard}
                                 </Link>
                                 <Link
                                     href="/dashboard/ads"
-                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors hover:text-blue-600 dark:hover:text-white"
                                 >
                                     <Megaphone className="h-4 w-4" />
                                     {t.nav.ads}
@@ -118,24 +120,33 @@ export default function Navbar() {
                             </div>
                         )}
 
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white transition-all"
+                            title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                        >
+                            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                        </button>
+
                         {/* Language Switcher */}
-                        <div className="relative border-l border-gray-800 pl-4">
+                        <div className="relative border-l border-gray-200 dark:border-gray-800 pl-4">
                             <button
                                 onClick={() => setIsLangOpen(!isLangOpen)}
-                                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white transition-colors"
                             >
                                 <Globe className="h-4 w-4" />
                                 {LANG_LABELS[locale]}
                             </button>
                             {isLangOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-36 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl overflow-hidden z-50">
+                                <div className="absolute right-0 top-full mt-2 w-36 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl overflow-hidden z-50">
                                     {(Object.keys(LANG_FULL) as Locale[]).map((l) => (
                                         <button
                                             key={l}
                                             onClick={() => handleLocale(l)}
-                                            className={`flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-gray-800 ${locale === l ? "text-blue-400 font-semibold" : "text-gray-300"}`}
+                                            className={`flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${locale === l ? "text-blue-600 font-semibold" : "text-gray-600 dark:text-gray-300"}`}
                                         >
-                                            <span className="text-xs font-mono bg-gray-800 px-1.5 py-0.5 rounded">{LANG_LABELS[l]}</span>
+                                            <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-gray-600 dark:text-gray-400">{LANG_LABELS[l]}</span>
                                             {LANG_FULL[l]}
                                         </button>
                                     ))}
@@ -182,32 +193,32 @@ export default function Navbar() {
 
             {/* Mobile menu */}
             {isMenuOpen && (
-                <div className="border-t border-gray-800 bg-gray-950 md:hidden">
+                <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 md:hidden shadow-xl">
                     <div className="space-y-1 px-4 pb-3 pt-2">
                         {user ? (
                             <>
                                 <Link
                                     href="/dashboard"
-                                    className="block rounded-lg px-3 py-3 text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white"
+                                    className="block rounded-lg px-3 py-3 text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     {t.nav.dashboard}
                                 </Link>
                                 <Link
                                     href="/dashboard/ads"
-                                    className="block rounded-lg px-3 py-3 text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white"
+                                    className="block rounded-lg px-3 py-3 text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     {t.nav.ads}
                                 </Link>
                                 {isAdmin && (
                                     <div className="space-y-1">
-                                        <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                        <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                                             Admin Panel
                                         </div>
                                         <Link
                                             href="/admin"
-                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-blue-400 hover:bg-gray-800 pl-6"
+                                            className="block rounded-lg px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Overview

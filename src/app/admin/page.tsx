@@ -22,7 +22,8 @@ export default function AdminOverview() {
     useEffect(() => {
         // Real-time stats
         const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
-            setStats(prev => ({ ...prev, totalUsers: snap.size }));
+            const onlyUsers = snap.docs.filter(d => (d.data() as UserProfile).role === "user");
+            setStats(prev => ({ ...prev, totalUsers: onlyUsers.length }));
         });
 
         const unsubTests = onSnapshot(collection(db, "tests"), (snap) => {
@@ -32,7 +33,8 @@ export default function AdminOverview() {
         const unsubResults = onSnapshot(collection(db, "results"), (snap) => {
             const results = snap.docs
                 .map(d => d.data() as TestResult)
-                .filter(r => !r.isAdminResult);
+                .filter(r => !r.isAdminResult && r.total > 0); // Safety check for total > 0
+            
             const totalScore = results.reduce((acc, r) => acc + (r.score / r.total), 0);
             const avgScore = results.length > 0 ? Math.round((totalScore / results.length) * 100) : 0;
 

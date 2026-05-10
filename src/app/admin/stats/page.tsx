@@ -22,7 +22,7 @@ export default function AdminStats() {
 
                 setResults(resultsSnap.docs
                     .map(d => d.data() as TestResult)
-                    .filter(r => !r.isAdminResult)
+                    .filter(r => !r.isAdminResult && r.total > 0)
                 );
                 setSubjects(subjectsSnap.docs.map(d => ({ id: d.id, ...d.data() } as any) as Subject));
             } catch (error) {
