@@ -11,11 +11,9 @@ const firebaseConfig = {
     messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-// Initialize Firebase
-const missingKeys = Object.entries(firebaseConfig)
-    .filter(([key, value]) => !value && key !== 'measurementId') // measurementId is optional
-    .map(([key]) => `NEXT_PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, letter => `_${letter}`).toUpperCase().replace('__', '_')}`);
+};
 
+// Initialize Firebase
 // Special check for mapping the exact env var names used
 const actualMissingKeys: string[] = [];
 if (!firebaseConfig.apiKey) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_API_KEY");
