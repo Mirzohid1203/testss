@@ -20,6 +20,7 @@ export interface Question {
   question: string;
   options: string[];
   correctAnswer: number; // Index of the correct option
+  gradeLevel?: string;
   createdAt: number;
 }
 
