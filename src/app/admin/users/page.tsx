@@ -172,6 +172,7 @@ export default function AdminUsers() {
                         <tr>
                             <th className="px-6 py-4">Rank</th>
                             <th className="px-6 py-4">User</th>
+                            <th className="px-6 py-4">Sinf</th>
                             <th className="px-6 py-4">Role</th>
                             <th className="px-6 py-4">Tests Taken</th>
                             <th className="px-6 py-4">Total Score</th>
@@ -208,6 +209,11 @@ export default function AdminUsers() {
                                                 <p className="text-xs text-gray-500 truncate max-w-[150px]">{user.uid}</p>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-300">
+                                            {user.className || "N/A"}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         {isSuperAdmin && user.role !== "superadmin" ? (
@@ -263,7 +269,7 @@ export default function AdminUsers() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={6} className="py-12 text-center text-gray-500">No users found</td>
+                                <td colSpan={7} className="py-12 text-center text-gray-500">No users found</td>
                             </tr>
                         )}
                     </tbody>
@@ -296,7 +302,7 @@ export default function AdminUsers() {
                                     </div>
                                     <div>
                                         <h2 className="text-xl font-bold text-white">User Statistics</h2>
-                                        <p className="text-sm text-gray-400">{selectedUser.email}</p>
+                                        <p className="text-sm text-gray-400">{selectedUser.email} • {selectedUser.className || "No Class"}</p>
                                     </div>
                                 </div>
                                 <button

@@ -1,21 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection, query, orderBy } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { Loader2, Mail, Lock, UserPlus } from "lucide-react";
+import { Loader2, Mail, Lock, UserPlus, Users } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [classes, setClasses] = useState<{ id: string, name: string }[]>([]);
+    const [selectedClass, setSelectedClass] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { t } = useLanguage();
+
+    useEffect(() => {
+        const fetchClasses = async () => {
+            const q = query(collection(db, "classes"), orderBy("name", "asc"));
+            const snap = await getDocs(q);
+            setClasses(snap.docs.map(d => ({ id: d.id, name: d.data().name })));
+        };
+        fetchClasses();
+    }, []);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,6 +48,8 @@ export default function Register() {
                 uid: user.uid,
                 email: user.email,
                 role: role,
+                classId: selectedClass,
+                className: classes.find(c => c.id === selectedClass)?.name || "",
                 createdAt: Date.now(),
             });
 
@@ -79,6 +92,21 @@ export default function Register() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                        </div>
+
+                        <div className="relative">
+                            <Users className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                            <select
+                                required
+                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm appearance-none"
+                                value={selectedClass}
+                                onChange={(e) => setSelectedClass(e.target.value)}
+                            >
+                                <option value="" disabled>Sinfingizni tanlang</option>
+                                {classes.map((cls) => (
+                                    <option key={cls.id} value={cls.id}>{cls.name}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
