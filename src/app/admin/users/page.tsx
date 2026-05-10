@@ -162,9 +162,9 @@ export default function AdminUsers() {
                                 </td>
                             </tr>
                         ) : filteredUsers.length > 0 ? (
-                            filteredUsers.map((user) => (
+                            filteredUsers.map((user, idx) => (
                                 <tr 
-                                    key={user.uid} 
+                                    key={user.uid || `user-${idx}`} 
                                     onClick={() => setSelectedUser(user)}
                                     className="hover:bg-gray-800/60 transition-all cursor-pointer group"
                                 >
@@ -285,8 +285,8 @@ export default function AdminUsers() {
                                 
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {getUserSubjectStats(selectedUser).length > 0 ? (
-                                        getUserSubjectStats(selectedUser).map((stat) => (
-                                            <div key={stat.subjectId} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
+                                        getUserSubjectStats(selectedUser).map((stat, idx) => (
+                                            <div key={stat.subjectId || `stat-${idx}`} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400">
                                                         <BookOpen className="h-5 w-5" />

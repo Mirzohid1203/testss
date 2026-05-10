@@ -7,9 +7,8 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe, Megaphone, Sun, Moon } from "lucide-react";
+import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe, Megaphone } from "lucide-react";
 import { useState } from "react";
-import { useTheme } from "@/context/ThemeContext";
 import { Locale } from "@/locales/dictionary";
 
 const LANG_LABELS: Record<Locale, string> = {
@@ -27,7 +26,6 @@ const LANG_FULL: Record<Locale, string> = {
 export default function Navbar() {
     const { user, isAdmin } = useAuth();
     const { locale, setLocale, t } = useLanguage();
-    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLangOpen, setIsLangOpen] = useState(false);
@@ -120,33 +118,24 @@ export default function Navbar() {
                             </div>
                         )}
 
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={toggleTheme}
-                            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white transition-all"
-                            title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                        >
-                            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-                        </button>
-
                         {/* Language Switcher */}
-                        <div className="relative border-l border-gray-200 dark:border-gray-800 pl-4">
+                        <div className="relative border-l border-gray-800 pl-4">
                             <button
                                 onClick={() => setIsLangOpen(!isLangOpen)}
-                                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-white transition-colors"
+                                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
                             >
                                 <Globe className="h-4 w-4" />
                                 {LANG_LABELS[locale]}
                             </button>
                             {isLangOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-36 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl overflow-hidden z-50">
+                                <div className="absolute right-0 top-full mt-2 w-36 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl overflow-hidden z-50">
                                     {(Object.keys(LANG_FULL) as Locale[]).map((l) => (
                                         <button
                                             key={l}
                                             onClick={() => handleLocale(l)}
-                                            className={`flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 ${locale === l ? "text-blue-600 font-semibold" : "text-gray-600 dark:text-gray-300"}`}
+                                            className={`flex w-full items-center gap-2 px-4 py-3 text-sm transition-colors hover:bg-gray-800 ${locale === l ? "text-blue-400 font-semibold" : "text-gray-300"}`}
                                         >
-                                            <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-gray-600 dark:text-gray-400">{LANG_LABELS[l]}</span>
+                                            <span className="text-xs font-mono bg-gray-800 px-1.5 py-0.5 rounded">{LANG_LABELS[l]}</span>
                                             {LANG_FULL[l]}
                                         </button>
                                     ))}
