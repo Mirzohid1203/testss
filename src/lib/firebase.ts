@@ -14,29 +14,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app;
-if (getApps().length > 0) {
-    app = getApp();
-} else {
-    // Initialize with config (fallback to empty string to prevent initializeApp crash)
-    app = initializeApp({
-        ...firebaseConfig,
-        apiKey: firebaseConfig.apiKey || "mock-key",
-    });
-}
+const app = getApps().length > 0 ? getApp() : initializeApp({
+    apiKey: firebaseConfig.apiKey || "mock-api-key",
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId || "tests-a9543", // Fallback to prevent crash
+    storageBucket: firebaseConfig.storageBucket,
+    messagingSenderId: firebaseConfig.messagingSenderId,
+    appId: firebaseConfig.appId,
+    measurementId: firebaseConfig.measurementId,
+});
 
-let auth: any = {};
-let db: any = {};
-
-try {
-    // This will throw if apiKey is missing or invalid ("mock-key")
-    if (firebaseConfig.apiKey) {
-        auth = getAuth(app);
-        db = getFirestore(app);
-    }
-} catch (error) {
-    console.warn("Firebase initialization skipped (likely during SSR build).");
-}
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 export { auth, db };
 
