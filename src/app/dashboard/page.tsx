@@ -36,8 +36,13 @@ export default function Dashboard() {
                 const allSubjects = subSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
                 const activeSubjectIds = new Set(testSnap.docs.map(d => d.data().subjectId));
                 
-                // Only show subjects that have questions for this student's grade
-                const filteredSubjects = allSubjects.filter(s => activeSubjectIds.has(s.id));
+                // 2-bosqichli filtr:
+                // 1. Shu fan bo'yicha o'quvchining sinfiga tegishli testlar bormi?
+                // 2. Admin ushbu fanni o'quvchining sinfi uchun ochib qo'yganmi (allowedGrades)?
+                const filteredSubjects = allSubjects.filter(s => 
+                    activeSubjectIds.has(s.id) && 
+                    s.allowedGrades?.includes(studentGrade)
+                );
                 
                 setSubjects(filteredSubjects);
             } catch (error) {

@@ -25,20 +25,22 @@ export default function AdminStats() {
                     getDocs(collection(db, "classes"))
                 ]);
 
-                setResults(resultsSnap.docs
-                    .map(d => ({ id: d.id, ...d.data() } as TestResult))
-                    .filter(r => !r.isAdminResult && r.total > 0)
-                );
-                setSubjects(subjectsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject)));
-                // Filter out Admin, Super Admin and specific Super Admin email
-                setUsers(usersSnap.docs
-                    .map(d => d.data() as UserProfile)
+                const activeUsers = usersSnap.docs
+                    .map(d => ({ id: d.id, ...d.data() } as UserProfile))
                     .filter(u => 
                         u.role !== "admin" && 
                         u.role !== "superadmin" && 
                         u.email !== "mirzohidmahmutaliyev@gmail.com"
-                    )
+                    );
+
+                const activeUserIds = new Set(activeUsers.map(u => u.id));
+
+                setResults(resultsSnap.docs
+                    .map(d => ({ id: d.id, ...d.data() } as TestResult))
+                    .filter(r => !r.isAdminResult && r.total > 0 && activeUserIds.has(r.userId))
                 );
+                setSubjects(subjectsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject)));
+                setUsers(activeUsers);
                 setClasses(classesSnap.docs.map(d => ({ id: d.id, name: d.data().name })));
             } catch (error) {
                 console.error(error);
@@ -79,10 +81,10 @@ export default function AdminStats() {
 
         return {
             name: sub.title,
-            attempts: subResults.length,
-            avgScore
+            urinishlar: subResults.length,
+            ortachaBall: avgScore
         };
-    }).sort((a, b) => b.attempts - a.attempts);
+    }).sort((a, b) => b.urinishlar - a.urinishlar);
 
     if (loading) {
         return (
@@ -207,13 +209,13 @@ export default function AdminStats() {
                 {/* Most Popular Subjects */}
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">Popularity by Attempts</h2>
+                        <h2 className="text-xl font-bold text-white">Fanlar Ommabopligi</h2>
                         <TrendingUp className="text-blue-500" />
                     </div>
                     <StatsChart
                         data={statsBySubject.slice(0, 7)}
                         type="bar"
-                        dataKey="attempts"
+                        dataKey="urinishlar"
                         nameKey="name"
                         color="#2563eb"
                     />
@@ -222,13 +224,13 @@ export default function AdminStats() {
                 {/* Average Scores by Subject */}
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">Avg. Score (%) by Subject</h2>
+                        <h2 className="text-xl font-bold text-white">O'rtacha Ball (%)</h2>
                         <Award className="text-yellow-500" />
                     </div>
                     <StatsChart
                         data={statsBySubject.slice(0, 7)}
                         type="bar"
-                        dataKey="avgScore"
+                        dataKey="ortachaBall"
                         nameKey="name"
                         color="#10b981"
                     />
@@ -243,32 +245,32 @@ export default function AdminStats() {
                 <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
                         <tr>
-                            <th className="px-6 py-4">Subject</th>
-                            <th className="px-6 py-4">Total Attempts</th>
-                            <th className="px-6 py-4">Average Score</th>
-                            <th className="px-6 py-4">Difficulty</th>
+                            <th className="px-6 py-4">Fan nomi</th>
+                            <th className="px-6 py-4">Jami urinishlar</th>
+                            <th className="px-6 py-4">O'rtacha natija</th>
+                            <th className="px-6 py-4">Qiyinlik darajasi</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
                         {statsBySubject.map((s) => (
                             <tr key={s.name} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4 font-medium text-white">{s.name}</td>
-                                <td className="px-6 py-4 text-gray-400">{s.attempts}</td>
+                                <td className="px-6 py-4 text-gray-400">{s.urinishlar}</td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
                                         <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-700">
                                             <div
-                                                className={`h-full ${s.avgScore >= 70 ? "bg-green-500" : s.avgScore >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
-                                                style={{ width: `${s.avgScore}%` }}
+                                                className={`h-full ${s.ortachaBall >= 70 ? "bg-green-500" : s.ortachaBall >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
+                                                style={{ width: `${s.ortachaBall}%` }}
                                             />
                                         </div>
-                                        <span className="text-sm font-semibold text-white">{s.avgScore}%</span>
+                                        <span className="text-sm font-semibold text-white">{s.ortachaBall}%</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className={`rounded-lg px-2 py-1 text-[10px] font-bold uppercase ${s.avgScore < 50 ? "bg-red-500/10 text-red-400" : s.avgScore < 75 ? "bg-yellow-500/10 text-yellow-400" : "bg-green-500/10 text-green-400"
+                                    <span className={`rounded-lg px-2 py-1 text-[10px] font-bold uppercase ${s.ortachaBall < 50 ? "bg-red-500/10 text-red-400" : s.ortachaBall < 75 ? "bg-yellow-500/10 text-yellow-400" : "bg-green-500/10 text-green-400"
                                         }`}>
-                                        {s.avgScore < 50 ? "Hard" : s.avgScore < 75 ? "Medium" : "Easy"}
+                                        {s.ortachaBall < 50 ? "Qiyin" : s.ortachaBall < 75 ? "O'rtacha" : "Oson"}
                                     </span>
                                 </td>
                             </tr>

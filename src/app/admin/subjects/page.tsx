@@ -80,7 +80,10 @@ export default function AdminSubjects() {
     };
 
     const openEdit = (sub: Subject) => {
-        setCurrentSubject(sub);
+        setCurrentSubject({
+            ...sub,
+            allowedGrades: sub.allowedGrades || []
+        });
         setIsEditing(true);
         setIsModalOpen(true);
     };
