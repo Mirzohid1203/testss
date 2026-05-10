@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, orderBy, limit, updateDoc, doc } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, limit, updateDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult, Subject } from "@/types";
 import Link from "next/link";
@@ -55,10 +55,27 @@ export default function AdminOverview() {
             setStats(prev => ({ ...prev, totalSubjects: snap.size }));
         });
 
-        const unsubResults = onSnapshot(collection(db, "results"), (snap) => {
-            const results = snap.docs
-                .map(d => d.data() as TestResult)
-                .filter(r => !r.isAdminResult && r.total > 0); // Safety check for total > 0
+        const unsubResults = onSnapshot(collection(db, "results"), async (snap) => {
+            const resultsRaw = snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult));
+            
+            // Get current active users to filter results
+            const usersSnap = await getDocs(collection(db, "users"));
+            const activeUserIds = new Set(usersSnap.docs.map(d => d.id));
+
+            // Clean up orphaned results (results without existing users)
+            const orphanedResults = resultsRaw.filter(r => !activeUserIds.has(r.userId) && !r.isAdminResult);
+            if (orphanedResults.length > 0) {
+                console.log(`Cleaning up ${orphanedResults.length} orphaned results...`);
+                orphanedResults.forEach(async (r) => {
+                    try { await deleteDoc(doc(db, "results", r.id)); } catch(e) {}
+                });
+            }
+
+            const results = resultsRaw.filter(r => 
+                !r.isAdminResult && 
+                r.total > 0 && 
+                activeUserIds.has(r.userId)
+            );
             
             const totalScore = results.reduce((acc, r) => acc + (r.score / r.total), 0);
             const avgScore = results.length > 0 ? Math.round((totalScore / results.length) * 100) : 0;
@@ -100,9 +117,14 @@ export default function AdminOverview() {
 
         // Recent results query
         const qRecent = query(collection(db, "results"), orderBy("createdAt", "desc"));
-        const unsubRecent = onSnapshot(qRecent, (snap) => {
-            const allResults = snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult));
-            const filteredResults = allResults.filter(r => !r.isAdminResult).slice(0, 5);
+        const unsubRecent = onSnapshot(qRecent, async (snap) => {
+            const resultsRaw = snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult));
+            const usersSnap = await getDocs(collection(db, "users"));
+            const activeUserIds = new Set(usersSnap.docs.map(d => d.id));
+
+            const filteredResults = resultsRaw
+                .filter(r => !r.isAdminResult && activeUserIds.has(r.userId))
+                .slice(0, 5);
             setRecentResults(filteredResults);
         });
 
