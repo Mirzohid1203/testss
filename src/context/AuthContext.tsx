@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db, isConfigValid } from '@/lib/firebase';
+import { auth, db, isConfigValid, actualMissingKeys } from '@/lib/firebase';
 import { UserProfile } from '@/types';
 
 interface AuthContextType {
@@ -62,18 +62,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-8 max-w-md">
                     <h1 className="text-2xl font-bold text-red-500 mb-4">Configuration Missing</h1>
                     <p className="text-gray-400 mb-6">
-                        Firebase configuration is missing. Please add the required environment variables to your Vercel project.
+                        The following environment variables are missing in Vercel:
                     </p>
-                    <div className="text-left bg-black/50 p-4 rounded-lg font-mono text-xs text-gray-500 mb-6">
-                        NEXT_PUBLIC_FIREBASE_API_KEY<br/>
-                        NEXT_PUBLIC_FIREBASE_PROJECT_ID<br/>
-                        ... (and others)
+                    <div className="text-left bg-black/50 p-4 rounded-lg font-mono text-xs text-red-500 mb-6 space-y-1">
+                        {actualMissingKeys.map(key => (
+                            <div key={key}>• {key}</div>
+                        ))}
+                        {!process.env.NEXT_PUBLIC_SUPERADMIN_EMAIL && <div>• NEXT_PUBLIC_SUPERADMIN_EMAIL</div>}
                     </div>
+                    <p className="text-xs text-gray-500 mb-6 italic">
+                        After adding them, don't forget to <b>Redeploy</b> the project.
+                    </p>
                     <button 
                         onClick={() => window.location.reload()}
                         className="w-full rounded-xl bg-red-600 py-3 font-bold text-white transition-all hover:bg-red-700"
                     >
-                        Check Again
+                        Refresh Page
                     </button>
                 </div>
             </div>

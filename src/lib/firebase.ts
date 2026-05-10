@@ -11,10 +11,21 @@ const firebaseConfig = {
     messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-};
-
 // Initialize Firebase
-const isConfigValid = !!firebaseConfig.apiKey && !!firebaseConfig.projectId;
+const missingKeys = Object.entries(firebaseConfig)
+    .filter(([key, value]) => !value && key !== 'measurementId') // measurementId is optional
+    .map(([key]) => `NEXT_PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, letter => `_${letter}`).toUpperCase().replace('__', '_')}`);
+
+// Special check for mapping the exact env var names used
+const actualMissingKeys: string[] = [];
+if (!firebaseConfig.apiKey) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_API_KEY");
+if (!firebaseConfig.authDomain) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN");
+if (!firebaseConfig.projectId) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_PROJECT_ID");
+if (!firebaseConfig.storageBucket) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET");
+if (!firebaseConfig.messagingSenderId) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID");
+if (!firebaseConfig.appId) actualMissingKeys.push("NEXT_PUBLIC_FIREBASE_APP_ID");
+
+const isConfigValid = actualMissingKeys.length === 0;
 
 const app = getApps().length > 0 ? getApp() : initializeApp({
     apiKey: firebaseConfig.apiKey || "mock-api-key",
@@ -30,7 +41,7 @@ const app = getApps().length > 0 ? getApp() : initializeApp({
 const auth = isConfigValid ? getAuth(app) : { currentUser: null } as any;
 const db = isConfigValid ? getFirestore(app) : {} as any;
 
-export { auth, db, isConfigValid };
+export { auth, db, isConfigValid, actualMissingKeys };
 
 // Analytics is only supported in the browser
 export const analytics = typeof window !== "undefined" ?
