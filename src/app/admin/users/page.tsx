@@ -94,12 +94,21 @@ export default function AdminUsers() {
         e.stopPropagation();
         if (!isSuperAdmin) return;
         
-        const confirmed = window.confirm(`Are you sure you want to delete user ${email}? This action cannot be undone.`);
+        const confirmed = window.confirm(`Are you sure you want to delete user ${email} and ALL their test results? This action cannot be undone.`);
         if (!confirmed) return;
 
         try {
+            // 1. Delete all results for this user
+            const resultsSnap = await getDocs(query(collection(db, "results")));
+            const userResults = resultsSnap.docs.filter(d => d.data().userId === uid);
+            
+            const deletePromises = userResults.map(resDoc => deleteDoc(doc(db, "results", resDoc.id)));
+            await Promise.all(deletePromises);
+
+            // 2. Delete user profile
             await deleteDoc(doc(db, "users", uid));
-            toast.success("User deleted successfully from database");
+            
+            toast.success("User and all results deleted successfully");
         } catch (error: any) {
             toast.error(error.message);
         }
