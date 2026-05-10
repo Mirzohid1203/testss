@@ -7,7 +7,7 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { Loader2, Mail, Lock, UserPlus, Users } from "lucide-react";
+import { Loader2, Mail, Lock, UserPlus, Users, Shield } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Register() {
@@ -15,6 +15,7 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [classes, setClasses] = useState<{ id: string, name: string }[]>([]);
     const [selectedClass, setSelectedClass] = useState("");
+    const [isAdminRequest, setIsAdminRequest] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { t } = useLanguage();
@@ -48,8 +49,9 @@ export default function Register() {
                 uid: user.uid,
                 email: user.email,
                 role: role,
-                classId: selectedClass,
-                className: classes.find(c => c.id === selectedClass)?.name || "",
+                status: isAdminRequest ? "pending_admin" : "active",
+                classId: isAdminRequest ? "" : selectedClass,
+                className: isAdminRequest ? "" : (classes.find(c => c.id === selectedClass)?.name || ""),
                 createdAt: Date.now(),
             });
 
@@ -94,19 +96,41 @@ export default function Register() {
                             />
                         </div>
 
-                        <div className="relative">
-                            <Users className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                            <select
-                                required
-                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm appearance-none"
-                                value={selectedClass}
-                                onChange={(e) => setSelectedClass(e.target.value)}
-                            >
-                                <option value="" disabled>Sinfingizni tanlang</option>
-                                {classes.map((cls) => (
-                                    <option key={cls.id} value={cls.id}>{cls.name}</option>
-                                ))}
-                            </select>
+                        {!isAdminRequest && (
+                            <div className="relative">
+                                <Users className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                                <select
+                                    required={!isAdminRequest}
+                                    className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm appearance-none"
+                                    value={selectedClass}
+                                    onChange={(e) => setSelectedClass(e.target.value)}
+                                >
+                                    <option value="" disabled>Sinfingizni tanlang</option>
+                                    {classes.map((cls) => (
+                                        <option key={cls.id} value={cls.id}>{cls.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        <div 
+                            className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
+                                isAdminRequest ? "bg-blue-600/10 border-blue-500/50" : "bg-gray-800/30 border-gray-700"
+                            }`}
+                            onClick={() => setIsAdminRequest(!isAdminRequest)}
+                        >
+                            <div className={`p-2 rounded-lg ${isAdminRequest ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400"}`}>
+                                <Shield className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-sm font-bold text-white">Admin sifatida qo'shilish</p>
+                                <p className="text-xs text-gray-500">Super Admin tasdiqlashi kerak</p>
+                            </div>
+                            <div className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
+                                isAdminRequest ? "bg-blue-600 border-blue-600" : "border-gray-600"
+                            }`}>
+                                {isAdminRequest && <div className="h-2.5 w-2.5 rounded-sm bg-white" />}
+                            </div>
                         </div>
                     </div>
 

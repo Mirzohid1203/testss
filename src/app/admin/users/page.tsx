@@ -19,6 +19,7 @@ interface UserWithStats extends UserProfile {
 
 export default function AdminUsers() {
     const [users, setUsers] = useState<UserWithStats[]>([]);
+    const [classes, setClasses] = useState<{id: string, name: string}[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedUser, setSelectedUser] = useState<UserWithStats | null>(null);
@@ -33,6 +34,10 @@ export default function AdminUsers() {
                 const results = resultsSnap.docs
                     .map(doc => ({ id: doc.id, ...doc.data() } as TestResult))
                     .filter(r => !r.isAdminResult);
+
+                // Fetch classes
+                const classesSnap = await getDocs(collection(db, "classes"));
+                setClasses(classesSnap.docs.map(d => ({ id: d.id, name: d.data().name })));
 
                 // Listen to users
                 const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
@@ -86,29 +91,50 @@ export default function AdminUsers() {
         const currentUser = users.find(u => u.uid === uid);
         if (!currentUser) return;
 
+        // Agar rol o'zgarmagan bo'lsa, hech narsa qilma
+        if (currentUser.role === newRole) return;
+
         try {
             const updateData: any = { role: newRole };
             
-            // User -> Admin: Save current class to backup and clear active class
-            if (newRole === "admin") {
-                updateData.prevClassId = currentUser.classId || "";
-                updateData.prevClassName = currentUser.className || "";
+            // 1. User -> Admin o'tayotgan bo'lsa: Hozirgi sinfini "Zahira"ga olamiz
+            if (newRole === "admin" && currentUser.role === "user") {
+                // Faqat sinfi bor bo'lsagina zahira olamiz
+                if (currentUser.classId) {
+                    updateData.prevClassId = currentUser.classId;
+                    updateData.prevClassName = currentUser.className;
+                }
                 updateData.classId = "";
                 updateData.className = "";
             } 
-            // Admin -> User: Restore class from backup if it exists
-            else if (newRole === "user") {
+            
+            // 2. Admin -> User qaytayotgan bo'lsa: Zahiradan sinfni tiklaymiz
+            else if (newRole === "user" && currentUser.role === "admin") {
                 if (currentUser.prevClassId) {
                     updateData.classId = currentUser.prevClassId;
                     updateData.className = currentUser.prevClassName;
-                    // Optional: clear backup after restoration
+                    // Tiklangandan so'ng zahirani tozalash (ixtiyoriy)
                     updateData.prevClassId = "";
                     updateData.prevClassName = "";
                 }
             }
 
             await updateDoc(doc(db, "users", uid), updateData);
-            toast.success("Rol va sinf ma'lumotlari yangilandi");
+            toast.success("Foydalanuvchi roli va sinf ma'lumotlari yangilandi");
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
+    const handleClassChange = async (uid: string, e: React.ChangeEvent<HTMLSelectElement>) => {
+        e.stopPropagation();
+        if (!isSuperAdmin) return;
+        const classId = e.target.value;
+        const className = e.target.options[e.target.selectedIndex].text;
+
+        try {
+            await updateDoc(doc(db, "users", uid), { classId, className });
+            toast.success("Sinf muvaffaqiyatli biriktirildi");
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -235,13 +261,23 @@ export default function AdminUsers() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${
-                                            (user.role === "admin" || user.role === "superadmin") 
-                                            ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" 
-                                            : "bg-gray-800 text-gray-300"
-                                        }`}>
-                                            {(user.role === "admin" || user.role === "superadmin") ? "Nazoratchi" : (user.className || "N/A")}
-                                        </span>
+                                        {(user.role === "admin" || user.role === "superadmin") ? (
+                                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-400 border border-purple-500/20">
+                                                Nazoratchi
+                                            </span>
+                                        ) : (
+                                            <select
+                                                value={user.classId || ""}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) => handleClassChange(user.uid, e)}
+                                                className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-white outline-none focus:border-blue-500"
+                                            >
+                                                <option value="">Sinfni tanlang</option>
+                                                {classes.map(c => (
+                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                ))}
+                                            </select>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         {isSuperAdmin && user.role !== "superadmin" ? (
