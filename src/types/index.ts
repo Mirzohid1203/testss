@@ -4,8 +4,11 @@ export interface UserProfile {
   uid: string;
   email: string;
   role: UserRole;
+  classId?: string;
+  className?: string;
   prevClassId?: string;
   prevClassName?: string;
+  status?: 'active' | 'pending_admin';
   createdAt: number;
 }
 
