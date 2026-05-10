@@ -82,17 +82,33 @@ export default function AdminUsers() {
     const handleRoleChange = async (uid: string, e: React.MouseEvent, newRole: string) => {
         e.stopPropagation();
         if (!isSuperAdmin) return;
+        
+        const currentUser = users.find(u => u.uid === uid);
+        if (!currentUser) return;
+
         try {
             const updateData: any = { role: newRole };
             
-            // If promoted to admin, remove from class
+            // User -> Admin: Save current class to backup and clear active class
             if (newRole === "admin") {
+                updateData.prevClassId = currentUser.classId || "";
+                updateData.prevClassName = currentUser.className || "";
                 updateData.classId = "";
                 updateData.className = "";
+            } 
+            // Admin -> User: Restore class from backup if it exists
+            else if (newRole === "user") {
+                if (currentUser.prevClassId) {
+                    updateData.classId = currentUser.prevClassId;
+                    updateData.className = currentUser.prevClassName;
+                    // Optional: clear backup after restoration
+                    updateData.prevClassId = "";
+                    updateData.prevClassName = "";
+                }
             }
 
             await updateDoc(doc(db, "users", uid), updateData);
-            toast.success(newRole === "admin" ? "Admin tayinlandi va sinfdan olindi" : "Rol yangilandi");
+            toast.success("Rol va sinf ma'lumotlari yangilandi");
         } catch (error: any) {
             toast.error(error.message);
         }

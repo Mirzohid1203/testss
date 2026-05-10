@@ -60,7 +60,9 @@ export default function Footer() {
                     </p>
                     <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 md:mt-0">
                         <Mail className="h-4 w-4" />
-                        <span>support@testflow.com</span>
+                        <a href="mailto:mmhamutaliyev411@gmail.com" className="hover:text-blue-400 transition-colors">
+                            mmahmutaliyev411@gmail.com
+                        </a>
                     </div>
                 </div>
             </div>

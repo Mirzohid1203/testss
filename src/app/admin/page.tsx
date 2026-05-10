@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult, Subject } from "@/types";
+import Link from "next/link";
 import StatsChart from "@/components/Charts";
 import { 
     Users, 
@@ -15,7 +16,8 @@ import {
     FileQuestion,
     GraduationCap,
     Loader2,
-    Calendar 
+    Calendar,
+    Crown
 } from "lucide-react";
 import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
 
@@ -23,6 +25,7 @@ export default function AdminOverview() {
     const [stats, setStats] = useState({
         totalUsers: 0,
         totalTests: 0,
+        totalSubjects: 0,
         totalResults: 0,
         avgScore: 0,
     });
@@ -39,6 +42,10 @@ export default function AdminOverview() {
 
         const unsubTests = onSnapshot(collection(db, "tests"), (snap) => {
             setStats(prev => ({ ...prev, totalTests: snap.size }));
+        });
+
+        const unsubSubjects = onSnapshot(collection(db, "subjects"), (snap) => {
+            setStats(prev => ({ ...prev, totalSubjects: snap.size }));
         });
 
         const unsubResults = onSnapshot(collection(db, "results"), (snap) => {
@@ -95,6 +102,7 @@ export default function AdminOverview() {
         return () => {
             unsubUsers();
             unsubTests();
+            unsubSubjects();
             unsubResults();
             unsubRecent();
         };
@@ -185,15 +193,43 @@ export default function AdminOverview() {
                     </div>
                 </div>
 
-                {/* Performance Chart */}
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
-                    <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Performance Trend (Avg %)</h2>
-                    <StatsChart
-                        data={chartData}
-                        type="line"
-                        dataKey="val"
-                        nameKey="name"
-                    />
+                {/* Quick Actions & Status */}
+                <div className="space-y-6">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
+                        <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <BarChart3 className="h-5 w-5 text-blue-500" />
+                            Tezkor Amallar
+                        </h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Link href="/admin/tests" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-blue-500 hover:shadow-lg">
+                                <FileQuestion className="h-6 w-6 text-blue-500 group-hover:scale-110 transition-transform" />
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Savol Qo'shish</span>
+                            </Link>
+                            <Link href="/admin/classes" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-emerald-500 hover:shadow-lg">
+                                <Users className="h-6 w-6 text-emerald-500 group-hover:scale-110 transition-transform" />
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Sinflar</span>
+                            </Link>
+                            <Link href="/admin/subjects" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-amber-500 hover:shadow-lg">
+                                <BookOpen className="h-6 w-6 text-amber-500 group-hover:scale-110 transition-transform" />
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Fanlar</span>
+                            </Link>
+                            <Link href="/admin/stats" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-purple-500 hover:shadow-lg">
+                                <TrendingUp className="h-6 w-6 text-purple-500 group-hover:scale-110 transition-transform" />
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Analitika</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white shadow-xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-bold text-lg">Maktab Holati</h3>
+                            <Crown className="h-5 w-5 text-amber-300" />
+                        </div>
+                        <p className="text-sm text-blue-100 mb-6">Barcha tizimlar normal holatda ishlamoqda. Yangi testlar va o'quvchilar qo'shishga tayyor.</p>
+                        <Link href="/admin/ads" className="inline-block w-full text-center rounded-lg bg-white/20 py-2 text-sm font-bold backdrop-blur-sm hover:bg-white/30 transition-all">
+                            E'lon qo'shish
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
