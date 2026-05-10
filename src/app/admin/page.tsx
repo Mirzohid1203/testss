@@ -67,7 +67,7 @@ export default function AdminOverview() {
             if (orphanedResults.length > 0) {
                 console.log(`Cleaning up ${orphanedResults.length} orphaned results...`);
                 orphanedResults.forEach(async (r) => {
-                    try { await deleteDoc(doc(db, "results", r.id)); } catch(e) {}
+                    try { await deleteDoc(doc(db, "results", r.id!)); } catch(e) {}
                 });
             }
 
