@@ -5,6 +5,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db, isConfigValid, actualMissingKeys } from '@/lib/firebase';
 import { UserProfile } from '@/types';
+import { toast } from 'react-hot-toast';
 
 interface AuthContextType {
     user: User | null;
@@ -45,7 +46,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (docSnap.exists()) {
                     setProfile(docSnap.data() as UserProfile);
                 } else {
+                    // Profile missing means admin deleted the user from database
+                    await auth.signOut();
+                    setUser(null);
                     setProfile(null);
+                    toast.error("Account removed by administrator. Please register again.");
                 }
             } else {
                 setProfile(null);
