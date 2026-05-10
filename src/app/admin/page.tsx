@@ -30,13 +30,15 @@ export default function AdminOverview() {
         });
 
         const unsubResults = onSnapshot(collection(db, "results"), (snap) => {
-            const results = snap.docs.map(d => d.data() as TestResult);
+            const results = snap.docs
+                .map(d => d.data() as TestResult)
+                .filter(r => !r.isAdminResult);
             const totalScore = results.reduce((acc, r) => acc + (r.score / r.total), 0);
             const avgScore = results.length > 0 ? Math.round((totalScore / results.length) * 100) : 0;
 
             setStats(prev => ({
                 ...prev,
-                totalResults: snap.size,
+                totalResults: results.length,
                 avgScore
             }));
 
@@ -70,9 +72,11 @@ export default function AdminOverview() {
         });
 
         // Recent results query
-        const q = query(collection(db, "results"), orderBy("createdAt", "desc"), limit(5));
-        const unsubRecent = onSnapshot(q, (snap) => {
-            setRecentResults(snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult)));
+        const qRecent = query(collection(db, "results"), orderBy("createdAt", "desc"));
+        const unsubRecent = onSnapshot(qRecent, (snap) => {
+            const allResults = snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult));
+            const filteredResults = allResults.filter(r => !r.isAdminResult).slice(0, 5);
+            setRecentResults(filteredResults);
         });
 
         return () => {
