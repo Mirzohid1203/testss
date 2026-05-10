@@ -314,7 +314,9 @@ export default function AdminUsers() {
                                     </div>
                                     <div>
                                         <h2 className="text-xl font-bold text-white">User Statistics</h2>
-                                        <p className="text-sm text-gray-400">{selectedUser.email} • {selectedUser.className || "No Class"}</p>
+                                        <p className="text-sm text-gray-400">
+                                            {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? "Nazoratchi" : (selectedUser.className || "No Class")}
+                                        </p>
                                     </div>
                                 </div>
                                 <button
