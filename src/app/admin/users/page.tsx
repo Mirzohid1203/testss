@@ -80,11 +80,19 @@ export default function AdminUsers() {
     }, []);
 
     const handleRoleChange = async (uid: string, e: React.MouseEvent, newRole: string) => {
-        e.stopPropagation(); // Don't open modal when changing role
+        e.stopPropagation();
         if (!isSuperAdmin) return;
         try {
-            await updateDoc(doc(db, "users", uid), { role: newRole });
-            toast.success("Role updated successfully");
+            const updateData: any = { role: newRole };
+            
+            // If promoted to admin, remove from class
+            if (newRole === "admin") {
+                updateData.classId = "";
+                updateData.className = "";
+            }
+
+            await updateDoc(doc(db, "users", uid), updateData);
+            toast.success(newRole === "admin" ? "Admin tayinlandi va sinfdan olindi" : "Rol yangilandi");
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -211,8 +219,12 @@ export default function AdminUsers() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-300">
-                                            {user.className || "N/A"}
+                                        <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${
+                                            (user.role === "admin" || user.role === "superadmin") 
+                                            ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" 
+                                            : "bg-gray-800 text-gray-300"
+                                        }`}>
+                                            {(user.role === "admin" || user.role === "superadmin") ? "Nazoratchi" : (user.className || "N/A")}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">

@@ -30,10 +30,14 @@ export default function AdminStats() {
                     .filter(r => !r.isAdminResult && r.total > 0)
                 );
                 setSubjects(subjectsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject)));
-                // Filter out Admin and Super Admin from rankings
+                // Filter out Admin, Super Admin and specific Super Admin email
                 setUsers(usersSnap.docs
                     .map(d => d.data() as UserProfile)
-                    .filter(u => u.role !== "admin" && u.role !== "superadmin")
+                    .filter(u => 
+                        u.role !== "admin" && 
+                        u.role !== "superadmin" && 
+                        u.email !== "mirzohidmahmutaliyev@gmail.com"
+                    )
                 );
                 setClasses(classesSnap.docs.map(d => ({ id: d.id, name: d.data().name })));
             } catch (error) {
