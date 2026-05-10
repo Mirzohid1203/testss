@@ -40,8 +40,8 @@ export default function AdminOverview() {
         // Real-time stats
         const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
             const allUsers = snap.docs.map(d => d.data() as UserProfile);
-            const onlyUsers = allUsers.filter(u => u.role === "user" && u.status !== "pending_admin");
-            const pending = allUsers.filter(u => u.status === "pending_admin");
+            const onlyUsers = allUsers.filter(u => u.role === "user" && (u as any).status !== "pending_admin");
+            const pending = allUsers.filter(u => (u as any).status === "pending_admin");
             
             setStats(prev => ({ ...prev, totalUsers: onlyUsers.length }));
             setPendingRequests(pending);
