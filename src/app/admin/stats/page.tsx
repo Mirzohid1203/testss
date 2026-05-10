@@ -26,7 +26,7 @@ export default function AdminStats() {
                 ]);
 
                 const activeUsers = usersSnap.docs
-                    .map(d => ({ id: d.id, ...d.data() } as UserProfile))
+                    .map(d => ({ uid: d.id, ...d.data() } as UserProfile))
                     .filter(u => 
                         u.role !== "admin" && 
                         u.role !== "superadmin" && 
