@@ -6,13 +6,12 @@ import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Link from "next/link";
-import { BookOpen, ArrowRight, Loader2, Info } from "lucide-react";
+import { BookOpen, ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Dashboard() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [ads, setAds] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const { t } = useLanguage();
 
@@ -24,15 +23,10 @@ export default function Dashboard() {
             setLoading(false);
         });
 
-        // Ads/Announcements listener
-        const qAds = query(collection(db, "ads"), orderBy("createdAt", "desc"));
-        const unsubAds = onSnapshot(qAds, (snapshot) => {
-            setAds(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-        });
+
 
         return () => {
             unsubSub();
-            unsubAds();
         };
     }, []);
 
@@ -45,30 +39,8 @@ export default function Dashboard() {
                     <p className="mt-2 text-gray-400">{t.dashboard.subtitle}</p>
                 </header>
 
-                {/* Announcements / Ads Display */}
-                {ads.length > 0 && (
-                    <div className="mb-12 space-y-4">
-                        {ads.map((ad) => (
-                            <motion.div
-                                key={ad.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="relative overflow-hidden rounded-2xl border border-blue-500/20 bg-blue-600/5 p-6 backdrop-blur-sm"
-                            >
-                                <div className="absolute right-0 top-0 h-full w-1 bg-blue-600" />
-                                <div className="flex items-start gap-4">
-                                    <div className="rounded-full bg-blue-600/20 p-2 text-blue-400">
-                                        <Info className="h-5 w-5" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-white">{ad.title}</h3>
-                                        <p className="text-gray-300">{ad.content}</p>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
+                {/* Announcements Link (Optional - can be added if needed, but removing as per user request to have it in a separate section) */}
+
 
                 {loading ? (
                     <div className="flex h-64 items-center justify-center">
@@ -108,7 +80,7 @@ export default function Dashboard() {
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-700 bg-gray-900/40 py-24 text-center">
-                        <Info className="mb-4 h-12 w-12 text-gray-600" />
+                        <BookOpen className="mb-4 h-12 w-12 text-gray-600" />
                         <h3 className="text-xl font-medium text-gray-300">{t.dashboard.noSubjects}</h3>
                         <p className="mt-2 text-gray-500">{t.dashboard.checkBack}</p>
                     </div>

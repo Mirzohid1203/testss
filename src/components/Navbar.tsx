@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe } from "lucide-react";
+import { LogOut, LayoutDashboard, User, ShieldCheck, Menu, X, Globe, Megaphone } from "lucide-react";
 import { useState } from "react";
 import { Locale } from "@/locales/dictionary";
 
@@ -54,7 +54,7 @@ export default function Navbar() {
                             <div className="rounded-lg bg-blue-600 p-1.5">
                                 <ShieldCheck className="h-6 w-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold tracking-tight text-white">TestFlow</span>
+                            <span className="text-xl font-bold tracking-tight text-white">3-IDUM TTM</span>
                         </Link>
                     </div>
 
@@ -68,6 +68,13 @@ export default function Navbar() {
                                 >
                                     <LayoutDashboard className="h-4 w-4" />
                                     {t.nav.dashboard}
+                                </Link>
+                                <Link
+                                    href="/dashboard/ads"
+                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+                                >
+                                    <Megaphone className="h-4 w-4" />
+                                    {t.nav.ads}
                                 </Link>
                                 {isAdmin && (
                                     <Link
@@ -185,6 +192,13 @@ export default function Navbar() {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     {t.nav.dashboard}
+                                </Link>
+                                <Link
+                                    href="/dashboard/ads"
+                                    className="block rounded-lg px-3 py-3 text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-white"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    {t.nav.ads}
                                 </Link>
                                 {isAdmin && (
                                     <div className="space-y-1">

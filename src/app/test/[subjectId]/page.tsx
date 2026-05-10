@@ -13,7 +13,7 @@ import { toast } from "react-hot-toast";
 
 export default function TestPage() {
     const { subjectId } = useParams() as { subjectId: string };
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
     const router = useRouter();
 
     const [subject, setSubject] = useState<Subject | null>(null);
@@ -77,6 +77,7 @@ export default function TestPage() {
             total: questions.length,
             timeSpent,
             createdAt: Date.now(),
+            isAdminResult: isAdmin,
         };
 
         try {

@@ -4,6 +4,7 @@ export const translations = {
     en: {
         nav: {
             dashboard: "Dashboard",
+            ads: "Announcements",
             admin: "Admin Panel",
             logout: "Logout",
             login: "Login",
@@ -44,11 +45,51 @@ export const translations = {
             register: "Register",
             haveAccount: "Already have an account?",
             noAccount: "Don't have an account?"
+        },
+        adsPage: {
+            subtitle: "Stay updated with the latest news and announcements from 3-IDUM TTM.",
+            readMore: "Read more",
+            noAds: "No announcements found",
+            noAdsDesc: "We'll post important updates and news here. Check back soon!",
+            close: "Close"
+        },
+        common: {
+            welcomeBack: "Welcome back!",
+            accountCreated: "Account created successfully!",
+            error: "An error occurred",
+            loading: "Loading...",
+            success: "Success"
+        },
+        adminAds: {
+            title: "Announcements",
+            subtitle: "Manage site-wide advertisements and announcements (Superadmin only)",
+            newAd: "New Announcement",
+            adTitle: "Title",
+            adContent: "Content",
+            placeholderTitle: "e.g., Important Update",
+            placeholderContent: "Announcement details...",
+            publish: "Publish",
+            noAds: "No announcements yet",
+            confirmDelete: "Are you sure you want to delete this announcement?",
+            deleted: "Announcement deleted",
+            added: "Announcement added successfully",
+            fillFields: "Please fill all fields"
+        },
+        adminNav: {
+            overview: "Overview",
+            subjects: "Subjects",
+            tests: "Tests",
+            users: "Users",
+            statistics: "Statistics",
+            announcements: "Announcements",
+            menu: "Admin Menu",
+            superAdminMode: "Super Admin Mode"
         }
     },
     uz: {
         nav: {
             dashboard: "Boshqaruv paneli",
+            ads: "E'lonlar",
             admin: "Admin paneli",
             logout: "Chiqish",
             login: "Kirish",
@@ -89,11 +130,51 @@ export const translations = {
             register: "Ro'yxatdan o'tish",
             haveAccount: "Hisobingiz bormi?",
             noAccount: "Hisobingiz yo'qmi?"
+        },
+        adsPage: {
+            subtitle: "3-IDUM TTM bilan bog'liq so'nggi yangiliklar va e'lonlardan xabardor bo'ling.",
+            readMore: "Batafsil ma'lumot",
+            noAds: "E'lonlar topilmadi",
+            noAdsDesc: "Hozircha hech qanday e'lon mavjud emas. Yangiliklarni kutib qoling!",
+            close: "Yopish"
+        },
+        common: {
+            welcomeBack: "Xush kelibsiz!",
+            accountCreated: "Hisob muvaffaqiyatli yaratildi!",
+            error: "Xatolik yuz berdi",
+            loading: "Yuklanmoqda...",
+            success: "Muvaffaqiyatli"
+        },
+        adminAds: {
+            title: "E'lonlar",
+            subtitle: "Sayt bo'ylab e'lonlarni boshqarish (Faqat Superadmin)",
+            newAd: "Yangi e'lon",
+            adTitle: "Sarlavha",
+            adContent: "Mazmuni",
+            placeholderTitle: "Masalan: Muhim yangilanish",
+            placeholderContent: "E'lon tafsilotlari...",
+            publish: "Chop etish",
+            noAds: "Hozircha e'lonlar yo'q",
+            confirmDelete: "Ushbu e'lonni o'chirib tashlamoqchimisiz?",
+            deleted: "E'lon o'chirildi",
+            added: "E'lon muvaffaqiyatli qo'shildi",
+            fillFields: "Iltimos, barcha maydonlarni to'ldiring"
+        },
+        adminNav: {
+            overview: "Umumiy ko'rinish",
+            subjects: "Fanlar",
+            tests: "Testlar",
+            users: "Foydalanuvchilar",
+            statistics: "Statistika",
+            announcements: "E'lonlar",
+            menu: "Admin menyusi",
+            superAdminMode: "Super Admin rejimi"
         }
     },
     ru: {
         nav: {
             dashboard: "Панель",
+            ads: "Объявления",
             admin: "Админ-панель",
             logout: "Выйти",
             login: "Войти",
@@ -134,6 +215,45 @@ export const translations = {
             register: "Регистрация",
             haveAccount: "Уже есть аккаунт?",
             noAccount: "Нет аккаунта?"
+        },
+        adsPage: {
+            subtitle: "Будьте в курсе последних новостей и объявлений от 3-IDUM TTM.",
+            readMore: "Подробнее",
+            noAds: "Объявлений не найдено",
+            noAdsDesc: "Мы будем публиковать важные обновления и новости здесь. Заходите позже!",
+            close: "Закрыть"
+        },
+        common: {
+            welcomeBack: "С возвращением!",
+            accountCreated: "Аккаунт успешно создан!",
+            error: "Произошла ошибка",
+            loading: "Загрузка...",
+            success: "Успешно"
+        },
+        adminAds: {
+            title: "Объявления",
+            subtitle: "Управление объявлениями на всем сайте (Только для суперадмина)",
+            newAd: "Новое объявление",
+            adTitle: "Заголовок",
+            adContent: "Содержание",
+            placeholderTitle: "Например: Важное обновление",
+            placeholderContent: "Детали объявления...",
+            publish: "Опубликовать",
+            noAds: "Объявлений пока нет",
+            confirmDelete: "Вы уверены, что хотите удалить это объявление?",
+            deleted: "Объявление удалено",
+            added: "Объявление успешно добавлено",
+            fillFields: "Пожалуйста, заполните все поля"
+        },
+        adminNav: {
+            overview: "Обзор",
+            subjects: "Предметы",
+            tests: "Тесты",
+            users: "Пользователи",
+            statistics: "Статистика",
+            announcements: "Объявления",
+            menu: "Меню админа",
+            superAdminMode: "Режим Суперадмина"
         }
     }
 };

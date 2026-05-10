@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import {
     LayoutDashboard,
     BookOpen,
@@ -21,17 +22,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { isSuperAdmin } = useAuth();
+    const { t } = useLanguage();
 
     const menuItems = [
-        { name: "Overview", icon: <LayoutDashboard className="h-5 w-5" />, href: "/admin" },
-        { name: "Subjects", icon: <BookOpen className="h-5 w-5" />, href: "/admin/subjects" },
-        { name: "Tests", icon: <FileQuestion className="h-5 w-5" />, href: "/admin/tests" },
-        { name: "Users", icon: <Users className="h-5 w-5" />, href: "/admin/users" },
-        { name: "Statistics", icon: <BarChart className="h-5 w-5" />, href: "/admin/stats" },
+        { name: t.adminNav.overview, icon: <LayoutDashboard className="h-5 w-5" />, href: "/admin" },
+        { name: t.adminNav.subjects, icon: <BookOpen className="h-5 w-5" />, href: "/admin/subjects" },
+        { name: t.adminNav.tests, icon: <FileQuestion className="h-5 w-5" />, href: "/admin/tests" },
+        { name: t.adminNav.users, icon: <Users className="h-5 w-5" />, href: "/admin/users" },
+        { name: t.adminNav.statistics, icon: <BarChart className="h-5 w-5" />, href: "/admin/stats" },
     ];
 
     if (isSuperAdmin) {
-        menuItems.push({ name: "Announcements", icon: <Megaphone className="h-5 w-5" />, href: "/admin/ads" });
+        menuItems.push({ name: t.adminNav.announcements, icon: <Megaphone className="h-5 w-5" />, href: "/admin/ads" });
     }
 
 
@@ -41,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 const isActive = pathname === item.href;
                 return (
                     <Link
-                        key={item.name}
+                        key={item.href}
                         href={item.href}
                         onClick={() => setIsSidebarOpen(false)}
                         className={`group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all ${isActive
@@ -80,7 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Mobile Sidebar Drawer */}
                 <aside className={`fixed inset-y-0 left-0 z-[60] w-72 transform bg-gray-950 transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
                     <div className="flex h-16 items-center justify-between border-b border-gray-800 px-6">
-                        <span className="text-xl font-bold text-white">Admin Menu</span>
+                        <span className="text-xl font-bold text-white">{t.adminNav.menu}</span>
                         <button onClick={() => setIsSidebarOpen(false)} className="rounded-lg p-2 text-gray-400 hover:bg-gray-800">
                             <X className="h-6 w-6" />
                         </button>
@@ -94,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2">
                             <div className="mx-auto max-w-7xl flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-widest">
                                 <Crown className="h-3.5 w-3.5" />
-                                Super Admin Mode
+                                {t.adminNav.superAdminMode}
                             </div>
                         </div>
                     )}
@@ -109,7 +111,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         const isActive = pathname === item.href;
                         return (
                             <Link
-                                key={item.name}
+                                key={item.href}
                                 href={item.href}
                                 className={`flex flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all ${
                                     isActive ? "text-blue-500" : "text-gray-400 hover:text-gray-200"

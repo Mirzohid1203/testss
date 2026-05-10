@@ -4,20 +4,24 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult } from "@/types";
-import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3 } from "lucide-react";
+import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UserWithStats extends UserProfile {
     testsTaken: number;
     totalScore: number;
     rank?: number;
+    results: TestResult[];
 }
 
 export default function AdminUsers() {
     const [users, setUsers] = useState<UserWithStats[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedUser, setSelectedUser] = useState<UserWithStats | null>(null);
     const { isSuperAdmin } = useAuth();
 
     useEffect(() => {
@@ -25,7 +29,10 @@ export default function AdminUsers() {
             try {
                 // Fetch all results first for stats
                 const resultsSnap = await getDocs(collection(db, "results"));
-                const results = resultsSnap.docs.map(doc => doc.data() as TestResult);
+                // FILTER: Exclude admin results from general stats
+                const results = resultsSnap.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() } as TestResult))
+                    .filter(r => !r.isAdminResult);
 
                 // Listen to users
                 const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
@@ -39,7 +46,8 @@ export default function AdminUsers() {
                         return {
                             ...userData,
                             testsTaken,
-                            totalScore
+                            totalScore,
+                            results: userResults
                         };
                     });
 
@@ -67,7 +75,8 @@ export default function AdminUsers() {
         return () => { if (unsub) unsub(); };
     }, []);
 
-    const handleRoleChange = async (uid: string, newRole: string) => {
+    const handleRoleChange = async (uid: string, e: React.MouseEvent, newRole: string) => {
+        e.stopPropagation(); // Don't open modal when changing role
         if (!isSuperAdmin) return;
         try {
             await updateDoc(doc(db, "users", uid), { role: newRole });
@@ -75,6 +84,27 @@ export default function AdminUsers() {
         } catch (error: any) {
             toast.error(error.message);
         }
+    };
+
+    const filteredUsers = users.filter(u => 
+        u.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        u.uid.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const getUserSubjectStats = (user: UserWithStats) => {
+        const stats: Record<string, { title: string, count: number, avgScore: number }> = {};
+        user.results.forEach(r => {
+            if (!stats[r.subjectId]) {
+                stats[r.subjectId] = { title: r.subjectTitle, count: 0, avgScore: 0 };
+            }
+            stats[r.subjectId].count++;
+            stats[r.subjectId].avgScore += (r.score / r.total) * 100;
+        });
+
+        return Object.values(stats).map(s => ({
+            ...s,
+            avgScore: Math.round(s.avgScore / s.count)
+        }));
     };
 
     const safeFormatDate = (dateVal: any) => {
@@ -90,9 +120,22 @@ export default function AdminUsers() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold text-white">Users & Leaderboard</h1>
-                <p className="text-gray-400">View and manage platform members</p>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Users & Leaderboard</h1>
+                    <p className="text-gray-400">View and manage platform members</p>
+                </div>
+                
+                <div className="relative w-full max-w-md">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                    <input
+                        type="text"
+                        placeholder="Search users by email or ID..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
+                    />
+                </div>
             </div>
 
             <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-x-auto shadow-xl">
@@ -114,11 +157,15 @@ export default function AdminUsers() {
                                     <Loader2 className="mx-auto h-10 w-10 animate-spin text-blue-500" />
                                 </td>
                             </tr>
-                        ) : users.length > 0 ? (
-                            users.map((user) => (
-                                <tr key={user.uid} className="hover:bg-gray-800/40 transition-all">
+                        ) : filteredUsers.length > 0 ? (
+                            filteredUsers.map((user) => (
+                                <tr 
+                                    key={user.uid} 
+                                    onClick={() => setSelectedUser(user)}
+                                    className="hover:bg-gray-800/60 transition-all cursor-pointer group"
+                                >
                                     <td className="px-6 py-4">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 font-bold text-gray-300">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 font-bold text-gray-300 group-hover:bg-blue-600/20 group-hover:text-blue-400 transition-colors">
                                             #{user.rank}
                                         </div>
                                     </td>
@@ -128,7 +175,7 @@ export default function AdminUsers() {
                                                 <User className="h-5 w-5" />
                                             </div>
                                             <div>
-                                                <p className="font-medium text-white">{user.email}</p>
+                                                <p className="font-medium text-white group-hover:text-blue-400 transition-colors">{user.email}</p>
                                                 <p className="text-xs text-gray-500 truncate max-w-[150px]">{user.uid}</p>
                                             </div>
                                         </div>
@@ -137,7 +184,8 @@ export default function AdminUsers() {
                                         {isSuperAdmin && user.role !== "superadmin" ? (
                                             <select
                                                 value={user.role}
-                                                onChange={(e) => handleRoleChange(user.uid, e.target.value)}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={(e) => handleRoleChange(user.uid, e as any, e.target.value)}
                                                 className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-sm text-white outline-none focus:border-blue-500"
                                             >
                                                 <option value="user">User</option>
@@ -161,9 +209,12 @@ export default function AdminUsers() {
                                         <span className="font-semibold text-white">{user.totalScore}</span>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="h-4 w-4" />
-                                            {safeFormatDate(user.createdAt)}
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-4 w-4" />
+                                                {safeFormatDate(user.createdAt)}
+                                            </div>
+                                            <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                     </td>
                                 </tr>
@@ -176,7 +227,100 @@ export default function AdminUsers() {
                     </tbody>
                 </table>
             </div>
+
+            {/* User Statistics Modal */}
+            <AnimatePresence>
+                {selectedUser && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setSelectedUser(null)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-gray-800 bg-gray-900 shadow-2xl"
+                        >
+                            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
+                            
+                            <div className="flex items-center justify-between border-b border-gray-800 p-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-400">
+                                        <BarChart3 className="h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-white">User Statistics</h2>
+                                        <p className="text-sm text-gray-400">{selectedUser.email}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setSelectedUser(null)}
+                                    className="rounded-full bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                <div className="grid grid-cols-2 gap-4 mb-8">
+                                    <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
+                                        <p className="text-sm text-gray-500 font-medium">Total Tests</p>
+                                        <p className="text-2xl font-bold text-white">{selectedUser.testsTaken}</p>
+                                    </div>
+                                    <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
+                                        <p className="text-sm text-gray-500 font-medium">Total Score</p>
+                                        <p className="text-2xl font-bold text-blue-400">{selectedUser.totalScore}</p>
+                                    </div>
+                                </div>
+
+                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Performance by Subject</h3>
+                                
+                                <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                                    {getUserSubjectStats(selectedUser).length > 0 ? (
+                                        getUserSubjectStats(selectedUser).map((stat) => (
+                                            <div key={stat.title} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400">
+                                                        <BookOpen className="h-5 w-5" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-white">{stat.title}</p>
+                                                        <p className="text-xs text-gray-500">{stat.count} test(s) completed</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
+                                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Avg. Accuracy</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="py-12 text-center text-gray-500">
+                                            <p>No test data available for this user.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-800/50 p-6 flex justify-end">
+                                <button
+                                    onClick={() => setSelectedUser(null)}
+                                    className="rounded-xl bg-blue-600 px-8 py-2.5 font-bold text-white transition-all hover:bg-blue-700"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
+
+import { BookOpen } from "lucide-react";
 

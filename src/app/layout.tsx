@@ -17,7 +17,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "TestFlow | Professional Online Testing & Analytics",
+  title: "3-IDUM TTM | Professional Online Testing & Analytics",
   description: "Advanced online testing platform with real-time analytics, secure test environment, and powerful admin management.",
 };
 
@@ -52,6 +52,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-
-

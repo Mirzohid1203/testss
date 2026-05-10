@@ -32,4 +32,5 @@ export interface TestResult {
   total: number;
   timeSpent: number; // in seconds
   createdAt: number;
+  isAdminResult?: boolean;
 }

@@ -16,7 +16,7 @@ export default function Footer() {
                             <div className="rounded-lg bg-blue-600 p-1.5">
                                 <ShieldCheck className="h-6 w-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold tracking-tight text-white">TestFlow</span>
+                            <span className="text-xl font-bold tracking-tight text-white">3-IDUM TTM</span>
                         </Link>
                         <p className="mt-4 max-w-xs text-sm text-gray-400">
                             {t.footer.desc}
@@ -56,7 +56,7 @@ export default function Footer() {
 
                 <div className="mt-12 border-t border-gray-800 pt-8 text-center md:flex md:items-center md:justify-between">
                     <p className="text-sm text-gray-500">
-                        &copy; {new Date().getFullYear()} TestFlow Inc. {t.footer.rights}
+                        &copy; {new Date().getFullYear()} 3-IDUM TTM. {t.footer.rights}
                     </p>
                     <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 md:mt-0">
                         <Mail className="h-4 w-4" />

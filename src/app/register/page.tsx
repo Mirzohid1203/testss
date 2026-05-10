@@ -40,7 +40,7 @@ export default function Register() {
                 createdAt: Date.now(),
             });
 
-            toast.success("Account created successfully!");
+            toast.success(t.common.accountCreated);
             router.push("/dashboard");
         } catch (error: any) {
             toast.error(error.message);
@@ -54,7 +54,7 @@ export default function Register() {
             <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-800 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-xl">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold tracking-tight text-white">{t.auth.createAccount}</h2>
-                    <p className="mt-2 text-sm text-gray-400">TestFlow</p>
+                    <p className="mt-2 text-sm text-gray-400">3-IDUM TTM</p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleRegister}>
                     <div className="space-y-4 rounded-md shadow-sm">
