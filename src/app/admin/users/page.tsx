@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult } from "@/types";
-import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight } from "lucide-react";
+import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-hot-toast";
@@ -90,6 +90,21 @@ export default function AdminUsers() {
         }
     };
 
+    const handleDeleteUser = async (uid: string, email: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!isSuperAdmin) return;
+        
+        const confirmed = window.confirm(`Are you sure you want to delete user ${email}? This action cannot be undone.`);
+        if (!confirmed) return;
+
+        try {
+            await deleteDoc(doc(db, "users", uid));
+            toast.success("User deleted successfully from database");
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
     const filteredUsers = users.filter(u => 
         u.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
         u.uid.toLowerCase().includes(searchQuery.toLowerCase())
@@ -152,6 +167,7 @@ export default function AdminUsers() {
                             <th className="px-6 py-4">Tests Taken</th>
                             <th className="px-6 py-4">Total Score</th>
                             <th className="px-6 py-4">Joined At</th>
+                            {isSuperAdmin && <th className="px-6 py-4">Actions</th>}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
@@ -221,6 +237,19 @@ export default function AdminUsers() {
                                             <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                     </td>
+                                    {isSuperAdmin && (
+                                        <td className="px-6 py-4">
+                                            {user.role !== "superadmin" && (
+                                                <button
+                                                    onClick={(e) => handleDeleteUser(user.uid, user.email, e)}
+                                                    className="rounded-lg p-2 text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                                                    title="Delete User"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            )}
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         ) : (
