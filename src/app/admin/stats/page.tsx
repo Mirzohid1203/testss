@@ -30,7 +30,11 @@ export default function AdminStats() {
                     .filter(r => !r.isAdminResult && r.total > 0)
                 );
                 setSubjects(subjectsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject)));
-                setUsers(usersSnap.docs.map(d => d.data() as UserProfile));
+                // Filter out Admin and Super Admin from rankings
+                setUsers(usersSnap.docs
+                    .map(d => d.data() as UserProfile)
+                    .filter(u => u.role !== "admin" && u.role !== "superadmin")
+                );
                 setClasses(classesSnap.docs.map(d => ({ id: d.id, name: d.data().name })));
             } catch (error) {
                 console.error(error);
