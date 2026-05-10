@@ -14,20 +14,23 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+const isConfigValid = !!firebaseConfig.apiKey && !!firebaseConfig.projectId;
+
 const app = getApps().length > 0 ? getApp() : initializeApp({
     apiKey: firebaseConfig.apiKey || "mock-api-key",
     authDomain: firebaseConfig.authDomain,
-    projectId: firebaseConfig.projectId || "tests-a9543", // Fallback to prevent crash
+    projectId: firebaseConfig.projectId || "tests-a9543", 
     storageBucket: firebaseConfig.storageBucket,
     messagingSenderId: firebaseConfig.messagingSenderId,
     appId: firebaseConfig.appId,
     measurementId: firebaseConfig.measurementId,
 });
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Helper to prevent crashes if auth/db are accessed before proper initialization
+const auth = isConfigValid ? getAuth(app) : { currentUser: null } as any;
+const db = isConfigValid ? getFirestore(app) : {} as any;
 
-export { auth, db };
+export { auth, db, isConfigValid };
 
 // Analytics is only supported in the browser
 export const analytics = typeof window !== "undefined" ?
