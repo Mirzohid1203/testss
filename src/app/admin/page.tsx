@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, limit, updateDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult, Subject } from "@/types";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 import StatsChart from "@/components/Charts";
 import { 
     Users, 
@@ -17,7 +18,8 @@ import {
     GraduationCap,
     Loader2,
     Calendar,
-    Crown
+    Crown,
+    Shield
 } from "lucide-react";
 import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
 
@@ -29,6 +31,7 @@ export default function AdminOverview() {
         totalResults: 0,
         avgScore: 0,
     });
+    const [pendingRequests, setPendingRequests] = useState<UserProfile[]>([]);
     const [recentResults, setRecentResults] = useState<TestResult[]>([]);
     const [chartData, setChartData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -36,8 +39,12 @@ export default function AdminOverview() {
     useEffect(() => {
         // Real-time stats
         const unsubUsers = onSnapshot(collection(db, "users"), (snap) => {
-            const onlyUsers = snap.docs.filter(d => (d.data() as UserProfile).role === "user");
+            const allUsers = snap.docs.map(d => d.data() as UserProfile);
+            const onlyUsers = allUsers.filter(u => u.role === "user" && u.status !== "pending_admin");
+            const pending = allUsers.filter(u => u.status === "pending_admin");
+            
             setStats(prev => ({ ...prev, totalUsers: onlyUsers.length }));
+            setPendingRequests(pending);
         });
 
         const unsubTests = onSnapshot(collection(db, "tests"), (snap) => {
@@ -108,6 +115,29 @@ export default function AdminOverview() {
         };
     }, []);
 
+    const handleApproveAdmin = async (uid: string) => {
+        try {
+            await updateDoc(doc(db, "users", uid), {
+                role: "admin",
+                status: "active"
+            });
+            toast.success("Admin so'rovi tasdiqlandi!");
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
+    const handleRejectAdmin = async (uid: string) => {
+        try {
+            await updateDoc(doc(db, "users", uid), {
+                status: "active" // Keeps as regular user
+            });
+            toast.success("So'rov rad etildi (O'quvchi bo'lib qoldi)");
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+
     const statCards = [
         { name: "Total Users", value: stats.totalUsers, icon: <Users className="h-6 w-6" />, color: "bg-blue-500" },
         { name: "Tests Created", value: stats.totalTests, icon: <FileQuestion className="h-6 w-6" />, color: "bg-purple-500" },
@@ -125,10 +155,61 @@ export default function AdminOverview() {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">Dashboard Overview</h1>
-                <p className="text-gray-500 dark:text-gray-400">Real-time platform statistics and activity</p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div>
+                    <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">
+                        Dashboard <span className="text-blue-500">Overview</span>
+                    </h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">Platformaning real vaqt rejimida statistikasi va faoliyati</p>
+                </div>
             </div>
+
+            {/* Pending Admin Requests Section */}
+            {pendingRequests.length > 0 && (
+                <div className="mb-10 animate-pulse">
+                    <div className="rounded-3xl border border-blue-500/30 bg-blue-600/5 p-6 backdrop-blur-md shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)]">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                                <Shield className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Admin So'rovlari</h2>
+                                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{pendingRequests.length} ta yangi so'rov kutilmoqda</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {pendingRequests.map((req) => (
+                                <div key={req.uid} className="flex flex-col gap-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-5 transition-all hover:bg-gray-50 dark:hover:bg-white/10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-bold border border-gray-300 dark:border-white/5">
+                                            {req.email ? req.email[0].toUpperCase() : 'U'}
+                                        </div>
+                                        <div className="overflow-hidden">
+                                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{req.email}</p>
+                                            <p className="text-[10px] text-gray-500">Kutilmoqda...</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleApproveAdmin(req.uid)}
+                                            className="flex-1 rounded-xl bg-blue-600 py-2 text-xs font-bold text-white transition-all hover:bg-blue-700 active:scale-95"
+                                        >
+                                            Tasdiqlash
+                                        </button>
+                                        <button
+                                            onClick={() => handleRejectAdmin(req.uid)}
+                                            className="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 transition-all hover:bg-red-500/20 hover:text-red-600 hover:border-red-500/30 active:scale-95"
+                                        >
+                                            Rad etish
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
