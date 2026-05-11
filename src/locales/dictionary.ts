@@ -214,6 +214,7 @@ export const translations = {
                 timesTaken: "times taken",
                 grantRetake: "Grant retake permission",
                 retakeGranted: "Retake permission granted!",
+                deleted: "User deleted successfully",
                 alreadyGranted: "Permission already granted for this subject",
                 deleteConfirm: "Are you sure you want to delete user and ALL their test results?"
             },
@@ -464,6 +465,7 @@ export const translations = {
                 timesTaken: "marta topshirilgan",
                 grantRetake: "Qayta topshirishga ruxsat",
                 retakeGranted: "Qayta topshirishga ruxsat berildi!",
+                deleted: "Foydalanuvchi muvaffaqiyatli o'chirildi",
                 alreadyGranted: "Bu fan uchun allaqachon ruxsat berilgan",
                 deleteConfirm: "Foydalanuvchini va uning BARCHA natijalarini o'chirishga ishonchingiz komilmi?"
             },
@@ -714,6 +716,7 @@ export const translations = {
                 timesTaken: "раз сдано",
                 grantRetake: "Разрешить пересдачу",
                 retakeGranted: "Разрешение на пересдачу дано!",
+                deleted: "Пользователь удален",
                 alreadyGranted: "Для этого предмета разрешение уже дано",
                 deleteConfirm: "Вы уверены, что хотите удалить пользователя и ВСЕ его результаты?"
             },

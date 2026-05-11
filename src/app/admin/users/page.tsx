@@ -363,7 +363,7 @@ export default function AdminUsers() {
                                                 onChange={(e) => handleClassChange(user.uid, e)}
                                                 className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-white outline-none focus:border-blue-500"
                                             >
-                                                <option value="">{t.admin.users.selectClass}</option>
+                                                <option value="">{t.auth.selectClass}</option>
                                                 {classes.map(c => (
                                                     <option key={c.id} value={c.id}>{c.name}</option>
                                                 ))}
