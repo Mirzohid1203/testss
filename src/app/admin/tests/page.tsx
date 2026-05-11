@@ -109,46 +109,64 @@ export default function AdminTests() {
                 const ws = wb.Sheets[wsname];
                 const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-                // Skip header row (index 0)
-                const questionsToImport = data.slice(1).filter(row => row[1] && row[6]).map(row => {
-                    const question = row[1]?.toString() || "";
-                    const options = [
-                        row[2]?.toString() || "",
-                        row[3]?.toString() || "",
-                        row[4]?.toString() || "",
-                        row[5]?.toString() || ""
-                    ];
-                    
-                    const correctChar = row[6]?.toString().trim().toUpperCase();
-                    const correctAnswer = correctChar === "A" ? 0 : 
-                                        correctChar === "B" ? 1 : 
-                                        correctChar === "C" ? 2 : 
-                                        correctChar === "D" ? 3 : 0;
-
-                    return {
-                        question,
-                        options,
-                        correctAnswer,
-                        subjectId: selectedSubjectId,
-                        gradeLevel: selectedGrade,
-                        createdAt: Date.now()
-                    };
-                });
-
-                if (questionsToImport.length === 0) {
-                    toast.error("Excel faylda ma'lumot topilmadi yoki format noto'g'ri.");
+                if (!data || data.length < 2) {
+                    toast.error("Faylda ma'lumot yetarli emas (kamida 2 qator bo'lishi kerak).");
                     setImportLoading(false);
                     return;
                 }
 
-                // Batch add
+                // Ustunlarni aniqlash (Aqlli qidiruv)
+                // Agar 1-ustun (0) raqam bo'lsa va 2-ustun (1) matn bo'lsa, demak B ustun - Savol
+                // Agar 1-ustun (0) matn bo'lsa, demak A ustun - Savol
+                const firstRow = data[1]; // Sarlavhadan keyingi birinchi ma'lumot qatori
+                let startIndex = 0;
+                
+                if (typeof firstRow[0] === 'number' && firstRow[1]) {
+                    startIndex = 1; // Savol B ustunda
+                } else if (typeof firstRow[0] === 'string') {
+                    startIndex = 0; // Savol A ustunda
+                }
+
+                const questionsToImport = data.slice(1)
+                    .filter(row => row[startIndex] && row[startIndex + 5]) // Savol va Javob borligini tekshirish
+                    .map(row => {
+                        const question = row[startIndex]?.toString() || "";
+                        const options = [
+                            row[startIndex + 1]?.toString() || "",
+                            row[startIndex + 2]?.toString() || "",
+                            row[startIndex + 3]?.toString() || "",
+                            row[startIndex + 4]?.toString() || ""
+                        ];
+                        
+                        const correctChar = row[startIndex + 5]?.toString().trim().toUpperCase();
+                        const correctAnswer = correctChar === "A" ? 0 : 
+                                            correctChar === "B" ? 1 : 
+                                            correctChar === "C" ? 2 : 
+                                            correctChar === "D" ? 3 : 0;
+
+                        return {
+                            question,
+                            options,
+                            correctAnswer,
+                            subjectId: selectedSubjectId,
+                            gradeLevel: selectedGrade,
+                            createdAt: Date.now()
+                        };
+                    });
+
+                if (questionsToImport.length === 0) {
+                    toast.error("Format mos kelmadi. Ustunlar tartibini tekshiring (Savol, A, B, C, D, Javobi).");
+                    setImportLoading(false);
+                    return;
+                }
+
                 const promises = questionsToImport.map(q => addDoc(collection(db, "tests"), q));
                 await Promise.all(promises);
 
                 toast.success(`${questionsToImport.length} ta savol muvaffaqiyatli yuklandi!`);
-                e.target.value = ""; // Reset input
+                e.target.value = ""; 
             } catch (err: any) {
-                toast.error("Xatolik: " + err.message);
+                toast.error("Xatolik yuz berdi: " + err.message);
             } finally {
                 setImportLoading(false);
             }
