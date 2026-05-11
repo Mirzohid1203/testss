@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult } from "@/types";
-import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2 } from "lucide-react";
+import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2, Download } from "lucide-react";
+import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-hot-toast";
@@ -196,6 +197,25 @@ export default function AdminUsers() {
         }
     };
 
+    const handleExportUserStats = (user: UserWithStats) => {
+        try {
+            const subjectStats = getUserSubjectStats(user);
+            const data = subjectStats.map(s => ({
+                "Fan nomi": s.title,
+                "Testlar soni": s.count,
+                "O'rtacha natija (%)": s.avgScore + "%"
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Natijalar");
+            
+            XLSX.writeFile(wb, `${user.email}_statistikasi.xlsx`);
+        } catch (error) {
+            console.error("Export error:", error);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -359,6 +379,13 @@ export default function AdminUsers() {
                                         </p>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => handleExportUserStats(selectedUser)}
+                                    className="mr-2 rounded-full bg-emerald-600/20 p-2.5 text-emerald-400 hover:bg-emerald-600/30 transition-all cursor-pointer relative z-50 active:scale-90"
+                                    title="Excelga yuklash"
+                                >
+                                    <Download className="h-5 w-5" />
+                                </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();

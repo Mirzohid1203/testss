@@ -5,7 +5,8 @@ import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { TestResult, Subject, UserProfile } from "@/types";
 import StatsChart from "@/components/Charts";
-import { Loader2, TrendingUp, Award, Clock, Target, Users, School, Medal, Search } from "lucide-react";
+import { Loader2, TrendingUp, Award, Clock, Target, Users, School, Medal, Search, Download } from "lucide-react";
+import * as XLSX from "xlsx";
 
 export default function AdminStats() {
     const [results, setResults] = useState<TestResult[]>([]);
@@ -86,6 +87,44 @@ export default function AdminStats() {
         };
     }).sort((a, b) => b.urinishlar - a.urinishlar);
 
+    const handleExportExcel = () => {
+        try {
+            // Prepare Leaderboard Data
+            const leaderboardData = filteredRankings.map((u, idx) => ({
+                "O'rin": idx + 1,
+                "Email": u.email,
+                "Sinf": u.className || "N/A",
+                "Testlar soni": u.testsTaken,
+                "Umumiy Ball": u.totalScore,
+                "Aniqiq (%)": u.avgAccuracy + "%"
+            }));
+
+            // Prepare Subject Stats Data
+            const subjectData = statsBySubject.map(s => ({
+                "Fan nomi": s.name,
+                "Jami urinishlar": s.urinishlar,
+                "O'rtacha natija (%)": s.ortachaBall + "%"
+            }));
+
+            // Create Workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Add Leaderboard Sheet
+            const wsLeaderboard = XLSX.utils.json_to_sheet(leaderboardData);
+            XLSX.utils.book_append_sheet(wb, wsLeaderboard, "Leaderboard");
+
+            // Add Subject Stats Sheet
+            const wsSubjects = XLSX.utils.json_to_sheet(subjectData);
+            XLSX.utils.book_append_sheet(wb, wsSubjects, "Fanlar Statistikasi");
+
+            // Save File
+            const fileName = selectedClassId === "all" ? "Umumiy_Statistika.xlsx" : `${classes.find(c => c.id === selectedClassId)?.name}_Statistikasi.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        } catch (error) {
+            console.error("Excel export error:", error);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex h-96 items-center justify-center">
@@ -101,18 +140,15 @@ export default function AdminStats() {
                     <h1 className="text-3xl font-bold text-white font-outfit">Maktab Analitikasi</h1>
                     <p className="text-gray-400">O'quvchilar natijalari va sinflar reytingi</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
-                        <School className="ml-2 h-4 w-4 text-gray-500" />
-                        <select
-                            className="bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
-                            value={selectedClassId}
-                            onChange={(e) => setSelectedClassId(e.target.value)}
-                        >
-                            <option value="all">Barcha Sinflar</option>
-                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
+                    <button
+                        onClick={handleExportExcel}
+                        className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95"
+                    >
+                        <Download className="h-4 w-4" />
+                        Excelga yuklash
+                    </button>
                 </div>
             </div>
 

@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, where, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Question, Subject } from "@/types";
-import { Plus, Trash2, Edit3, Loader2, Filter, X, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, Edit3, Loader2, Filter, X, ChevronRight, CheckCircle2, FileUp } from "lucide-react";
 import { toast } from "react-hot-toast";
+import * as XLSX from "xlsx";
 
 export default function AdminTests() {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -23,6 +24,7 @@ export default function AdminTests() {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+    const [importLoading, setImportLoading] = useState(false);
 
     useEffect(() => {
         const q = query(collection(db, "subjects"), orderBy("title"));
@@ -89,6 +91,72 @@ export default function AdminTests() {
         }
     };
 
+    const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !selectedSubjectId) {
+            toast.error("Iltimos, avval fanni tanlang!");
+            return;
+        }
+
+        setImportLoading(true);
+        const reader = new FileReader();
+
+        reader.onload = async (evt) => {
+            try {
+                const bstr = evt.target?.result;
+                const wb = XLSX.read(bstr, { type: "binary" });
+                const wsname = wb.SheetNames[0];
+                const ws = wb.Sheets[wsname];
+                const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
+
+                // Skip header row (index 0)
+                const questionsToImport = data.slice(1).filter(row => row[1] && row[6]).map(row => {
+                    const question = row[1]?.toString() || "";
+                    const options = [
+                        row[2]?.toString() || "",
+                        row[3]?.toString() || "",
+                        row[4]?.toString() || "",
+                        row[5]?.toString() || ""
+                    ];
+                    
+                    const correctChar = row[6]?.toString().trim().toUpperCase();
+                    const correctAnswer = correctChar === "A" ? 0 : 
+                                        correctChar === "B" ? 1 : 
+                                        correctChar === "C" ? 2 : 
+                                        correctChar === "D" ? 3 : 0;
+
+                    return {
+                        question,
+                        options,
+                        correctAnswer,
+                        subjectId: selectedSubjectId,
+                        gradeLevel: selectedGrade,
+                        createdAt: Date.now()
+                    };
+                });
+
+                if (questionsToImport.length === 0) {
+                    toast.error("Excel faylda ma'lumot topilmadi yoki format noto'g'ri.");
+                    setImportLoading(false);
+                    return;
+                }
+
+                // Batch add
+                const promises = questionsToImport.map(q => addDoc(collection(db, "tests"), q));
+                await Promise.all(promises);
+
+                toast.success(`${questionsToImport.length} ta savol muvaffaqiyatli yuklandi!`);
+                e.target.value = ""; // Reset input
+            } catch (err: any) {
+                toast.error("Xatolik: " + err.message);
+            } finally {
+                setImportLoading(false);
+            }
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm("Delete this question?")) return;
         try {
@@ -149,8 +217,22 @@ export default function AdminTests() {
                             {subjects.map(sub => (
                                 <option key={sub.id} value={sub.id}>{sub.title}</option>
                             ))}
-                        </select>
                     </div>
+                    <label className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer">
+                        {importLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <FileUp className="h-4 w-4" />
+                        )}
+                        Exceldan yuklash
+                        <input
+                            type="file"
+                            accept=".xlsx, .xls"
+                            className="hidden"
+                            onChange={handleExcelUpload}
+                            disabled={importLoading}
+                        />
+                    </label>
                     <button
                         onClick={() => {
                             resetForm();
