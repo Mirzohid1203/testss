@@ -4,13 +4,13 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { collection, getDocs, query, where, addDoc, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Question, Subject, TestResult } from "@/types";
+import { Question, Subject, TestResult, UserProfile } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Timer from "@/components/Timer";
 import { toast } from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, Loader2, AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function TestPage() {
     const { subjectId } = useParams() as { subjectId: string };
@@ -89,11 +89,11 @@ export default function TestPage() {
                     const newCorrectAnswer = shuffledOptions.indexOf(correctAnswerText);
 
                     return {
-                        id: doc.id,
                         ...data,
+                        id: doc.id,
                         options: shuffledOptions,
                         correctAnswer: newCorrectAnswer
-                    };
+                    } as Question;
                 }) as Question[];
 
                 // Savollarni o'zini ham shuffle qilish

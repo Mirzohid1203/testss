@@ -55,7 +55,7 @@ export default function Register() {
                 createdAt: Date.now(),
             });
 
-            toast.success(t.common.accountCreated);
+            toast.success(t.auth.success);
             router.push("/dashboard");
         } catch (error: any) {
             toast.error(error.message);

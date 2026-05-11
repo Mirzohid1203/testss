@@ -57,7 +57,7 @@ export default function ResultPage() {
     if (!result) {
         return (
             <div className="flex h-screen flex-col items-center justify-center bg-gray-950 px-4 text-center">
-                <h2 className="text-2xl font-bold text-white">{t.test.noResults}</h2>
+                <h2 className="text-2xl font-bold text-white">{t.result.not_found}</h2>
                 <Link href="/dashboard" className="mt-4 text-blue-500 underline">{t.test.backDashboard}</Link>
             </div>
         );
@@ -86,27 +86,27 @@ export default function ResultPage() {
                         </div>
 
                         <h1 className="text-4xl font-black text-white tracking-tight font-outfit uppercase">
-                            {isPassed ? t.test.congrats : t.test.tryAgain}
+                            {isPassed ? t.result.congrats : t.result.tryAgain}
                         </h1>
                         <p className="mt-2 text-lg text-gray-400">
-                            {t.test.completed.replace("{subject}", result.subjectTitle)}
+                            {t.result.completed.replace("{subject}", result.subjectTitle)}
                         </p>
 
                         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
                             <div className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm">
-                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.test.score}</div>
+                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.result.score}</div>
                                 <div className="mt-1 text-3xl font-black text-white">
                                     {result.score} <span className="text-xl font-normal text-gray-600">/ {result.total}</span>
                                 </div>
                             </div>
                             <div className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm">
-                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.test.percentage}</div>
+                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.result.percentage}</div>
                                 <div className={`mt-1 text-3xl font-black ${isPassed ? "text-emerald-500" : "text-red-500"}`}>
                                     {percentage}%
                                 </div>
                             </div>
                             <div className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm">
-                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.test.timeSpent}</div>
+                                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.result.timeSpent}</div>
                                 <div className="flex items-center justify-center mt-1 text-3xl font-black text-white">
                                     <Clock className="mr-2 h-6 w-6 text-blue-500" />
                                     {Math.floor(result.timeSpent / 60)}m {result.timeSpent % 60}s
@@ -120,21 +120,21 @@ export default function ResultPage() {
                                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-700 bg-gray-800/50 px-6 py-4 font-bold text-white transition-all hover:bg-gray-800 sm:w-auto active:scale-95"
                             >
                                 <Home className="h-5 w-5" />
-                                {t.common.home}
+                                {t.result.home}
                             </Link>
                             <button
                                 onClick={() => setShowReview(!showReview)}
                                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 border border-white/10 px-6 py-4 font-bold text-white transition-all hover:bg-white/20 sm:w-auto active:scale-95"
                             >
                                 <RefreshCw className={`h-5 w-5 transition-transform ${showReview ? "rotate-180" : ""}`} />
-                                {showReview ? t.test.closeReview : t.test.showReview}
+                                {showReview ? t.result.closeReview : t.result.review}
                             </button>
                             <Link
                                 href={`/test/${result.subjectId}`}
                                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-4 font-bold text-white transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 sm:w-auto active:scale-95"
                             >
                                 <ChevronRight className="h-5 w-5" />
-                                {t.test.retake}
+                                {t.result.retake}
                             </Link>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ export default function ResultPage() {
                         className="mt-12 space-y-6"
                     >
                         <h2 className="text-2xl font-black text-white tracking-tight font-outfit uppercase text-center mb-8">
-                            {t.test.reviewTitle.split(' ')[0]} <span className="text-blue-500">{t.test.reviewTitle.split(' ').slice(1).join(' ')}</span>
+                            {t.result.errorWork.split(' ')[0]} <span className="text-blue-500">{t.result.errorWork.split(' ').slice(1).join(' ')}</span>
                         </h2>
                         
                         {questions.map((q, idx) => {
@@ -205,13 +205,13 @@ export default function ResultPage() {
 
                                                 <div className="mt-4 flex flex-wrap gap-3 rounded-2xl bg-red-500/10 border border-red-500/20 p-4">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{t.test.yourAnswer}:</span>
+                                                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{t.result.wrong}</span>
                                                         <span className="rounded-lg bg-red-500 px-3 py-1 text-xs font-black text-white shadow-lg shadow-red-500/20">
-                                                            {userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : t.test.noAnswer}
+                                                            {userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : t.result.notSelected}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{t.test.correctAnswer}:</span>
+                                                        <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{t.result.correctAnswer}</span>
                                                         <span className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-black text-white shadow-lg shadow-emerald-500/20">
                                                             {String.fromCharCode(65 + q.correctAnswer)}
                                                         </span>
@@ -221,7 +221,7 @@ export default function ResultPage() {
                                             {isCorrect && (
                                                 <div className="mt-4 flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4">
                                                     <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{t.test.correctFeedback}</span>
+                                                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">{t.result.wellDone}</span>
                                                 </div>
                                             )}
                                         </div>
