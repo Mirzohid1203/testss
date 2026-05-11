@@ -181,7 +181,9 @@ export const translations = {
                 deleted: "Question deleted",
                 importSuccess: "Questions imported successfully",
                 importError: "Error importing Excel",
-                noTests: "No questions found for the selected filters."
+                noTests: "No questions found for the selected filters.",
+                option: "Option",
+                questionPlaceholder: "e.g., What is the capital of Uzbekistan?"
             },
             users: {
                 title: "Users & Rankings",
@@ -403,7 +405,9 @@ export const translations = {
                 deleted: "Savol o'chirildi",
                 importSuccess: "Savollar muvaffaqiyatli yuklandi",
                 importError: "Excel yuklashda xatolik",
-                noTests: "Tanlangan filtrlar bo'yicha savollar topilmadi."
+                noTests: "Tanlangan filtrlar bo'yicha savollar topilmadi.",
+                option: "Variant",
+                questionPlaceholder: "Masalan: O'zbekistonning poytaxti qaysi shahar?"
             },
             users: {
                 title: "Foydalanuvchilar va Reyting",
@@ -625,7 +629,9 @@ export const translations = {
                 deleted: "Вопрос удален",
                 importSuccess: "Вопросы успешно импортированы",
                 importError: "Ошибка при импорте Excel",
-                noTests: "Вопросы по выбранным фильтрам не найдены."
+                noTests: "Вопросы по выбранным фильтрам не найдены.",
+                option: "Вариант",
+                questionPlaceholder: "Например: Какая столица Узбекистана?"
             },
             users: {
                 title: "Пользователи и Рейтинг",

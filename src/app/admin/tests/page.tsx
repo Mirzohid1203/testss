@@ -63,7 +63,7 @@ export default function AdminTests() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentQuestion.subjectId && !selectedSubjectId) {
-            toast.error("Please select a subject");
+            toast.error(t.admin.subjects.add);
             return;
         }
 
@@ -96,7 +96,7 @@ export default function AdminTests() {
     const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !selectedSubjectId) {
-            toast.error("Iltimos, avval fanni tanlang!");
+            toast.error(t.admin.tests.importError);
             return;
         }
 
@@ -112,7 +112,7 @@ export default function AdminTests() {
                 const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
                 if (!data || data.length < 1) {
-                    toast.error("Fayl bo'sh.");
+                    toast.error(t.admin.tests.noTests);
                     setImportLoading(false);
                     return;
                 }
@@ -144,7 +144,7 @@ export default function AdminTests() {
 
                 if (headerRowIndex === -1) {
                     const firstRows = data.slice(0, 3).map(r => r.join(", ")).join(" | ");
-                    toast.error("Sarlavhalar topilmadi. Ustunlarda 'Savol' va 'Javobi' so'zlari borligini tekshiring.");
+                    toast.error(t.admin.tests.importError);
                     console.log("Fayl sarlavhalari:", data[0]); // Debug uchun konsolga chiqarish
                     setImportLoading(false);
                     return;
@@ -184,7 +184,7 @@ export default function AdminTests() {
                     });
 
                 if (questionsToImport.length === 0) {
-                    toast.error("Savollar topilmadi. Qatorlar to'liq to'ldirilganiga ishonch hosil qiling.");
+                    toast.error(t.admin.tests.noTests);
                     setImportLoading(false);
                     return;
                 }
@@ -192,7 +192,7 @@ export default function AdminTests() {
                 const promises = questionsToImport.map(q => addDoc(collection(db, "tests"), q));
                 await Promise.all(promises);
 
-                toast.success(`${questionsToImport.length} ta savol yuklandi!`);
+                toast.success(t.admin.tests.importSuccess);
                 e.target.value = ""; 
             } catch (err: any) {
                 toast.error("Xatolik: " + err.message);
@@ -393,14 +393,14 @@ export default function AdminTests() {
                                     rows={2}
                                     value={currentQuestion.question}
                                     onChange={e => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
-                                    placeholder="Masalan: O'zbekistonning poytaxti qaysi shahar?"
+                                    placeholder={t.admin.tests.questionPlaceholder}
                                 />
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 {currentQuestion.options?.map((opt, idx) => (
                                     <div key={idx}>
                                         <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
-                                            Variant {String.fromCharCode(65 + idx)}
+                                            {t.admin.tests.option} {String.fromCharCode(65 + idx)}
                                         </label>
                                         <div className="flex items-center gap-2">
                                             <input
@@ -416,7 +416,7 @@ export default function AdminTests() {
                                                 className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                                                 value={opt}
                                                 onChange={e => updateOption(idx, e.target.value)}
-                                                placeholder={`Variant ${String.fromCharCode(65 + idx)}`}
+                                                placeholder={`${t.admin.tests.option} ${String.fromCharCode(65 + idx)}`}
                                             />
                                         </div>
                                     </div>
