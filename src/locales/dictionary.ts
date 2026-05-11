@@ -143,7 +143,12 @@ export const translations = {
                 addQuestion: "Add Question",
                 classes: "Classes",
                 allSubjects: "All Subjects",
-                total: "Total"
+                total: "Total",
+                approved: "Admin request approved!",
+                rejected: "Request rejected (remained as student)",
+                noData: "No data available at the moment",
+                schoolStatus: "School Status",
+                schoolStatusDesc: "All systems are operating normally. Ready for new tests and students."
             },
             subjects: {
                 title: "Subjects",
@@ -360,7 +365,12 @@ export const translations = {
                 addQuestion: "Savol Qo'shish",
                 classes: "Sinflar",
                 allSubjects: "Barcha Fanlar",
-                total: "Jami"
+                total: "Jami",
+                approved: "Admin so'rovi tasdiqlandi!",
+                rejected: "So'rov rad etildi (O'quvchi bo'lib qoldi)",
+                noData: "Hozircha ma'lumotlar mavjud emas",
+                schoolStatus: "Maktab Holati",
+                schoolStatusDesc: "Barcha tizimlar normal holatda ishlamoqda. Yangi testlar va o'quvchilar qo'shishga tayyor."
             },
             subjects: {
                 title: "Fanlar",
@@ -577,7 +587,12 @@ export const translations = {
                 addQuestion: "Добавить вопрос",
                 classes: "Классы",
                 allSubjects: "Все предметы",
-                total: "Всего"
+                total: "Всего",
+                approved: "Запрос админа подтвержден!",
+                rejected: "Запрос отклонен (остался учеником)",
+                noData: "Данные в данный момент отсутствуют",
+                schoolStatus: "Статус школы",
+                schoolStatusDesc: "Все системы работают нормально. Готово к новым тестам и ученикам."
             },
             subjects: {
                 title: "Предметы",
