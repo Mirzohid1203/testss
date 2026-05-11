@@ -33,7 +33,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            toast.success("Logged out successfully");
+            toast.success("Tizimdan muvaffaqiyatli chiqildi");
             router.push("/");
         } catch (error: any) {
             toast.error(error.message);
@@ -203,42 +203,42 @@ export default function Navbar() {
                                 {isAdmin && (
                                     <div className="space-y-1">
                                         <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                                            Admin Panel
+                                            Admin Paneli
                                         </div>
                                         <Link
                                             href="/admin"
                                             className="block rounded-lg px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Overview
+                                            {t.adminNav.overview}
                                         </Link>
                                         <Link
                                             href="/admin/subjects"
                                             className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Subjects
+                                            {t.adminNav.subjects}
                                         </Link>
                                         <Link
                                             href="/admin/tests"
                                             className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Tests
+                                            {t.adminNav.tests}
                                         </Link>
                                         <Link
                                             href="/admin/users"
                                             className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Users
+                                            {t.adminNav.users}
                                         </Link>
                                         <Link
                                             href="/admin/stats"
                                             className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 pl-6"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Statistics
+                                            {t.adminNav.statistics}
                                         </Link>
                                     </div>
                                 )}

@@ -46,10 +46,10 @@ export default function Footer() {
                     <div>
                         <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300">{t.footer.support}</h3>
                         <ul className="mt-4 space-y-2">
-                            <li><Link href="/docs" className="text-sm text-gray-400 hover:text-white transition-colors">Documentation</Link></li>
-                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Help Center</Link></li>
-                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Contact Us</Link></li>
-                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/docs" className="text-sm text-gray-400 hover:text-white transition-colors">Yo'riqnoma</Link></li>
+                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Yordam markazi</Link></li>
+                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Bog'lanish</Link></li>
+                            <li><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Maxfiylik siyosati</Link></li>
                         </ul>
                     </div>
                 </div>

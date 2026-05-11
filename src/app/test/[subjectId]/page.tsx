@@ -98,7 +98,7 @@ export default function TestPage() {
                 const shuffledQuestions = questionsData.sort(() => Math.random() - 0.5);
                 setQuestions(shuffledQuestions);
             } catch (error) {
-                toast.error("Error loading test");
+                toast.error("Testni yuklashda xatolik");
                 console.error(error);
             } finally {
                 setLoading(false);
@@ -219,7 +219,7 @@ export default function TestPage() {
                     <div className="mx-auto flex max-w-4xl items-center justify-between">
                         <div>
                             <h1 className="text-xl font-bold text-white">{subject?.title}</h1>
-                            <p className="text-xs text-gray-400">Question {currentIdx + 1} of {questions.length}</p>
+                            <p className="text-xs text-gray-400">{currentIdx + 1}-savol, jami {questions.length}</p>
                         </div>
                         <Timer
                             initialTime={questions.length * 60}
@@ -266,7 +266,7 @@ export default function TestPage() {
                                 className="flex items-center gap-2 rounded-xl border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-gray-800 disabled:opacity-30"
                             >
                                 <ChevronLeft className="h-5 w-5" />
-                                Previous
+                                Oldingi
                             </button>
 
                             {currentIdx === questions.length - 1 ? (
@@ -274,14 +274,14 @@ export default function TestPage() {
                                     onClick={handleSubmit}
                                     className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-700 transition-transform active:scale-95"
                                 >
-                                    Finish Test
+                                    Testni yakunlash
                                 </button>
                             ) : (
                                 <button
                                     onClick={() => setCurrentIdx(prev => prev + 1)}
                                     className="flex items-center gap-2 rounded-xl bg-white/5 border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-white/10"
                                 >
-                                    Next
+                                    Keyingi
                                     <ChevronRight className="h-5 w-5" />
                                 </button>
                             )}

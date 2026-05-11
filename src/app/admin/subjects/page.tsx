@@ -51,13 +51,13 @@ export default function AdminSubjects() {
             if (isEditing && currentSubject.id) {
                 const { id, ...data } = currentSubject;
                 await updateDoc(doc(db, "subjects", id as string), data);
-                toast.success("Subject updated");
+                toast.success("Fan yangilandi");
             } else {
                 await addDoc(collection(db, "subjects"), {
                     ...currentSubject,
                     createdAt: Date.now()
                 });
-                toast.success("Subject added");
+                toast.success("Fan qo'shildi");
             }
             setIsModalOpen(false);
             setCurrentSubject({ title: "", description: "", allowedGrades: [] });
@@ -70,10 +70,10 @@ export default function AdminSubjects() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure? This will delete all tests for this subject too (hypothetically, you should handle that).")) return;
+        if (!confirm("Ishonchingiz komilmi? Bu fanning barcha testlarini ham o'chirib yuboradi.")) return;
         try {
             await deleteDoc(doc(db, "subjects", id as string));
-            toast.success("Subject deleted");
+            toast.success("Fan o'chirildi");
         } catch (e: any) {
             toast.error(e.message);
         }
@@ -92,8 +92,8 @@ export default function AdminSubjects() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Subjects</h1>
-                    <p className="text-gray-400">Manage test categories and subjects</p>
+                    <h1 className="text-3xl font-bold text-white">Fanlar</h1>
+                    <p className="text-gray-400">Test kategoriyalari va fanlarni boshqarish</p>
                 </div>
                 <button
                     onClick={() => {
@@ -104,7 +104,7 @@ export default function AdminSubjects() {
                     className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                     <Plus className="h-5 w-5" />
-                    Add Subject
+                    Fan qo'shish
                 </button>
             </div>
 
@@ -113,10 +113,10 @@ export default function AdminSubjects() {
                     <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
                         <tr>
-                            <th className="px-6 py-4">Title</th>
-                            <th className="px-6 py-4">Description</th>
-                            <th className="px-6 py-4 text-center">Allowed Grades</th>
-                            <th className="px-6 py-4 text-right">Actions</th>
+                            <th className="px-6 py-4">Nomi</th>
+                            <th className="px-6 py-4">Tavsif</th>
+                            <th className="px-6 py-4 text-center">Ruxsat etilgan sinflar</th>
+                            <th className="px-6 py-4 text-right">Amallar</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
@@ -166,7 +166,7 @@ export default function AdminSubjects() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={3} className="py-12 text-center text-gray-500">No subjects found</td>
+                                <td colSpan={4} className="py-12 text-center text-gray-500">Fanlar topilmadi</td>
                             </tr>
                         )}
                     </tbody>
@@ -180,7 +180,7 @@ export default function AdminSubjects() {
                     <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-2xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-xl font-bold text-white">
-                                {isEditing ? "Edit Subject" : "New Subject"}
+                                {isEditing ? "Fanni tahrirlash" : "Yangi fan"}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
                                 <X className="h-6 w-6" />
@@ -188,7 +188,7 @@ export default function AdminSubjects() {
                         </div>
                         <form onSubmit={handleSave} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Title</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Nomi</label>
                                 <input
                                     type="text"
                                     required
@@ -198,7 +198,7 @@ export default function AdminSubjects() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Tavsif</label>
                                 <textarea
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none"
                                     rows={2}
@@ -235,7 +235,7 @@ export default function AdminSubjects() {
                                 disabled={btnLoading}
                                 className="w-full rounded-lg bg-blue-600 py-3 font-bold text-white hover:bg-blue-700 disabled:opacity-50"
                             >
-                                {btnLoading ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : "Save Subject"}
+                                {btnLoading ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : "Saqlash"}
                             </button>
                         </form>
                     </div>
