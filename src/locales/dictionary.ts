@@ -8,7 +8,8 @@ export const translations = {
             admin: "Admin Panel",
             logout: "Logout",
             login: "Login",
-            register: "Register"
+            register: "Register",
+            logoutSuccess: "Successfully logged out"
         },
         hero: {
             badge: "The Ultimate Testing Platform",
@@ -85,7 +86,10 @@ export const translations = {
             register: "Register",
             haveAccount: "Already have an account?",
             noAccount: "Don't have an account?",
-            success: "Account created successfully!"
+            success: "Account created successfully!",
+            selectClass: "Select your class",
+            joinAdmin: "Join as Admin",
+            adminDesc: "Super Admin must approve"
         },
         adsPage: {
             subtitle: "Stay updated with the latest news and announcements from 3-IDUM TTM.",
@@ -210,7 +214,8 @@ export const translations = {
             admin: "Admin paneli",
             logout: "Chiqish",
             login: "Kirish",
-            register: "Ro'yxatdan o'tish"
+            register: "Ro'yxatdan o'tish",
+            logoutSuccess: "Tizimdan muvaffaqiyatli chiqildi"
         },
         hero: {
             badge: "Eng yaxshi test platformasi",
@@ -287,7 +292,10 @@ export const translations = {
             register: "Ro'yxatdan o'tish",
             haveAccount: "Hisobingiz bormi?",
             noAccount: "Hisobingiz yo'qmi?",
-            success: "Hisob muvaffaqiyatli yaratildi!"
+            success: "Hisob muvaffaqiyatli yaratildi!",
+            selectClass: "Sinfingizni tanlang",
+            joinAdmin: "Admin sifatida qo'shilish",
+            adminDesc: "Super Admin tasdiqlashi kerak"
         },
         adsPage: {
             subtitle: "3-IDUM TTM bilan bog'liq so'nggi yangiliklar va e'lonlardan xabardor bo'ling.",
@@ -412,7 +420,8 @@ export const translations = {
             admin: "Админ-панель",
             logout: "Выйти",
             login: "Войти",
-            register: "Регистрация"
+            register: "Регистрация",
+            logoutSuccess: "Вы успешно вышли из системы"
         },
         hero: {
             badge: "Лучшая платформа для тестирования",
@@ -489,7 +498,10 @@ export const translations = {
             register: "Регистрация",
             haveAccount: "Уже есть аккаунт?",
             noAccount: "Нет аккаунта?",
-            success: "Аккаунт успешно создан!"
+            success: "Аккаунт успешно создан!",
+            selectClass: "Выберите ваш класс",
+            joinAdmin: "Зарегистрироваться как админ",
+            adminDesc: "Суперадмин должен подтвердить"
         },
         adsPage: {
             subtitle: "Будьте в курсе последних новостей и объявлений от 3-IDUM TTM.",

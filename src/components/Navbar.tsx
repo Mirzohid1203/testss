@@ -33,7 +33,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            toast.success("Tizimdan muvaffaqiyatli chiqildi");
+            toast.success(t.nav.logoutSuccess);
             router.push("/");
         } catch (error: any) {
             toast.error(error.message);
@@ -203,7 +203,7 @@ export default function Navbar() {
                                 {isAdmin && (
                                     <div className="space-y-1">
                                         <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                                            Admin Paneli
+                                            {t.nav.admin}
                                         </div>
                                         <Link
                                             href="/admin"

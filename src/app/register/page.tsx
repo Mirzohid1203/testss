@@ -105,7 +105,7 @@ export default function Register() {
                                     value={selectedClass}
                                     onChange={(e) => setSelectedClass(e.target.value)}
                                 >
-                                    <option value="" disabled>Sinfingizni tanlang</option>
+                                    <option value="" disabled>{t.auth.selectClass}</option>
                                     {classes.map((cls) => (
                                         <option key={cls.id} value={cls.id}>{cls.name}</option>
                                     ))}
@@ -123,8 +123,8 @@ export default function Register() {
                                 <Shield className="h-5 w-5" />
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-bold text-white">Admin sifatida qo'shilish</p>
-                                <p className="text-xs text-gray-500">Super Admin tasdiqlashi kerak</p>
+                                <p className="text-sm font-bold text-white">{t.auth.joinAdmin}</p>
+                                <p className="text-xs text-gray-500">{t.auth.adminDesc}</p>
                             </div>
                             <div className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
                                 isAdminRequest ? "bg-blue-600 border-blue-600" : "border-gray-600"

@@ -8,13 +8,15 @@ import { Question, Subject, TestResult } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Timer from "@/components/Timer";
-import { Loader2, ChevronRight, ChevronLeft, CheckCircle2, AlertTriangle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
+import { FileQuestion } from "lucide-react";
 
 export default function TestPage() {
     const { subjectId } = useParams() as { subjectId: string };
     const { user, profile, isAdmin } = useAuth();
     const router = useRouter();
+    const { t } = useLanguage();
 
     const [subject, setSubject] = useState<Subject | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -98,7 +100,7 @@ export default function TestPage() {
                 const shuffledQuestions = questionsData.sort(() => Math.random() - 0.5);
                 setQuestions(shuffledQuestions);
             } catch (error) {
-                toast.error("Testni yuklashda xatolik");
+                toast.error(t.test.loading);
                 console.error(error);
             } finally {
                 setLoading(false);
@@ -156,10 +158,10 @@ export default function TestPage() {
                 await updateDoc(userRef, { retakeAllowed: newRetakeAllowed });
             }
 
-            toast.success("Test muvaffaqiyatli topshirildi!");
+            toast.success(t.test.success);
             router.push(`/result/${docRef.id}`);
         } catch (error) {
-            toast.error("Natijani saqlashda xatolik yuz berdi");
+            toast.error(t.test.error);
             setIsFinished(false);
             setLoading(false);
         }
@@ -168,7 +170,10 @@ export default function TestPage() {
     if (loading && !isFinished) {
         return (
             <div className="flex h-screen w-full items-center justify-center bg-gray-950">
-                <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+                <div className="text-center">
+                    <Loader2 className="mx-auto h-10 w-10 animate-spin text-blue-500 mb-4" />
+                    <p className="text-gray-400 font-medium">{t.test.loading}</p>
+                </div>
             </div>
         );
     }
@@ -182,15 +187,15 @@ export default function TestPage() {
                         <AlertTriangle className="h-12 w-12" />
                     </div>
                 </div>
-                <h2 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">Kirish Taqiqlangan</h2>
+                <h2 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">{t.test.forbidden}</h2>
                 <p className="mt-4 max-w-md text-gray-400 leading-relaxed text-lg">
-                    Siz ushbu fandan testni topshirib bo'lgansiz. Qayta topshirish uchun <span className="text-blue-500 font-bold">Super Admin</span> ruxsati kerak.
+                    {t.test.attempted}
                 </p>
                 <button 
                     onClick={() => router.push('/dashboard')} 
                     className="mt-8 rounded-2xl bg-white/5 border border-white/10 px-10 py-4 font-bold text-white transition-all hover:bg-white/10 active:scale-95 shadow-xl"
                 >
-                    Dashboardga qaytish
+                    {t.test.backDashboard}
                 </button>
             </div>
         );
@@ -202,9 +207,9 @@ export default function TestPage() {
                 <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-500/10 text-amber-500 mb-6 border border-amber-500/20">
                     <FileQuestion className="h-10 w-10" />
                 </div>
-                <h2 className="text-2xl font-black text-white tracking-tight font-outfit uppercase">Savollar topilmadi</h2>
-                <p className="mt-2 text-gray-400">Bu fan va sizning sinfingiz uchun hali testlar qo'shilmagan.</p>
-                <button onClick={() => router.back()} className="mt-8 rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all active:scale-95">Orqaga qaytish</button>
+                <h2 className="text-2xl font-black text-white tracking-tight font-outfit uppercase">{t.test.noQuestions}</h2>
+                <p className="mt-2 text-gray-400">{t.test.noQuestionsDesc}</p>
+                <button onClick={() => router.back()} className="mt-8 rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all active:scale-95">{t.test.back}</button>
             </div>
         );
     }
@@ -219,7 +224,7 @@ export default function TestPage() {
                     <div className="mx-auto flex max-w-4xl items-center justify-between">
                         <div>
                             <h1 className="text-xl font-bold text-white">{subject?.title}</h1>
-                            <p className="text-xs text-gray-400">{currentIdx + 1}-savol, jami {questions.length}</p>
+                            <p className="text-xs text-gray-400">{currentIdx + 1}-{t.test.question}, {t.test.of} {questions.length}</p>
                         </div>
                         <Timer
                             initialTime={questions.length * 60}
@@ -266,7 +271,7 @@ export default function TestPage() {
                                 className="flex items-center gap-2 rounded-xl border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-gray-800 disabled:opacity-30"
                             >
                                 <ChevronLeft className="h-5 w-5" />
-                                Oldingi
+                                {t.test.previous}
                             </button>
 
                             {currentIdx === questions.length - 1 ? (
@@ -274,14 +279,14 @@ export default function TestPage() {
                                     onClick={handleSubmit}
                                     className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-700 transition-transform active:scale-95"
                                 >
-                                    Testni yakunlash
+                                    {t.test.finish}
                                 </button>
                             ) : (
                                 <button
                                     onClick={() => setCurrentIdx(prev => prev + 1)}
                                     className="flex items-center gap-2 rounded-xl bg-white/5 border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-white/10"
                                 >
-                                    Keyingi
+                                    {t.test.next}
                                     <ChevronRight className="h-5 w-5" />
                                 </button>
                             )}

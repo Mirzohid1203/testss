@@ -7,6 +7,7 @@ import { TestResult, Subject, UserProfile } from "@/types";
 import StatsChart from "@/components/Charts";
 import { Loader2, TrendingUp, Award, Clock, Target, Users, School, Medal, Search, Download } from "lucide-react";
 import * as XLSX from "xlsx";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AdminStats() {
     const [results, setResults] = useState<TestResult[]>([]);
@@ -15,6 +16,7 @@ export default function AdminStats() {
     const [classes, setClasses] = useState<{id: string, name: string}[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<string>("all");
     const [loading, setLoading] = useState(true);
+    const { t } = useLanguage();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -91,19 +93,19 @@ export default function AdminStats() {
         try {
             // Prepare Leaderboard Data
             const leaderboardData = filteredRankings.map((u, idx) => ({
-                "O'rin": idx + 1,
+                [t.admin.users.rank]: idx + 1,
                 "Email": u.email,
-                "Sinf": u.className || "N/A",
-                "Testlar soni": u.testsTaken,
-                "Umumiy Ball": u.totalScore,
-                "Aniqiq (%)": u.avgAccuracy + "%"
+                [t.admin.users.class]: u.className || "N/A",
+                [t.admin.users.testsCount]: u.testsTaken,
+                [t.admin.users.totalScore]: u.totalScore,
+                [t.test.percentage]: u.avgAccuracy + "%"
             }));
 
             // Prepare Subject Stats Data
             const subjectData = statsBySubject.map(s => ({
-                "Fan nomi": s.name,
-                "Jami urinishlar": s.urinishlar,
-                "O'rtacha natija (%)": s.ortachaBall + "%"
+                [t.admin.subjects.name]: s.name,
+                [t.test.score]: s.urinishlar,
+                [t.admin.overview.stats.avgScore]: s.ortachaBall + "%"
             }));
 
             // Create Workbook
@@ -111,11 +113,11 @@ export default function AdminStats() {
             
             // Add Leaderboard Sheet
             const wsLeaderboard = XLSX.utils.json_to_sheet(leaderboardData);
-            XLSX.utils.book_append_sheet(wb, wsLeaderboard, "Leaderboard");
+            XLSX.utils.book_append_sheet(wb, wsLeaderboard, t.admin.overview.leaderboard);
 
             // Add Subject Stats Sheet
             const wsSubjects = XLSX.utils.json_to_sheet(subjectData);
-            XLSX.utils.book_append_sheet(wb, wsSubjects, "Fanlar Statistikasi");
+            XLSX.utils.book_append_sheet(wb, wsSubjects, t.admin.subjects.title);
 
             // Save File
             const fileName = selectedClassId === "all" ? "Umumiy_Statistika.xlsx" : `${classes.find(c => c.id === selectedClassId)?.name}_Statistikasi.xlsx`;
@@ -137,8 +139,8 @@ export default function AdminStats() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-outfit">Maktab Analitikasi</h1>
-                    <p className="text-gray-400">O'quvchilar natijalari va sinflar reytingi</p>
+                    <h1 className="text-3xl font-bold text-white font-outfit">{t.adminNav.statistics}</h1>
+                    <p className="text-gray-400">{t.admin.overview.subtitle}</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
@@ -148,7 +150,7 @@ export default function AdminStats() {
                             value={selectedClassId}
                             onChange={(e) => setSelectedClassId(e.target.value)}
                         >
-                            <option value="all">Barcha Sinflar</option>
+                            <option value="all">{t.admin.users.allClasses}</option>
                             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
@@ -157,7 +159,7 @@ export default function AdminStats() {
                         className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95"
                     >
                         <Download className="h-4 w-4" />
-                        Excelga yuklash
+                        {t.admin.tests.import.replace('yuklash', 'saqlash')}
                     </button>
                 </div>
             </div>
@@ -169,19 +171,19 @@ export default function AdminStats() {
                         <div className="flex items-center justify-between border-b border-gray-800 p-6">
                             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                                 <Medal className="text-yellow-500" />
-                                {selectedClassId === "all" ? "Maktab Leaderboardi" : "Sinf Leaderboardi"}
+                                {selectedClassId === "all" ? t.admin.overview.leaderboard : t.admin.users.class + " Leaderboard"}
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead className="bg-gray-800/30 text-xs font-semibold uppercase text-gray-500">
                                     <tr>
-                                        <th className="px-6 py-4">O'rin</th>
-                                        <th className="px-6 py-4">O'quvchi</th>
-                                        <th className="px-6 py-4">Sinf</th>
-                                        <th className="px-6 py-4">Testlar</th>
-                                        <th className="px-6 py-4">Umumiy Ball</th>
-                                        <th className="px-6 py-4">Aniqlik</th>
+                                        <th className="px-6 py-4">{t.admin.users.rank}</th>
+                                        <th className="px-6 py-4">{t.admin.users.user}</th>
+                                        <th className="px-6 py-4">{t.admin.users.class}</th>
+                                        <th className="px-6 py-4">{t.admin.users.testsCount}</th>
+                                        <th className="px-6 py-4">{t.admin.users.totalScore}</th>
+                                        <th className="px-6 py-4">{t.test.percentage}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
@@ -201,7 +203,7 @@ export default function AdminStats() {
                                                 <p className="font-medium text-white">{u.email}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-sm text-gray-400">{u.className || "Mavjud emas"}</span>
+                                                <span className="text-sm text-gray-400">{u.className || "---"}</span>
                                             </td>
                                             <td className="px-6 py-4 text-gray-400">{u.testsTaken}</td>
                                             <td className="px-6 py-4 font-bold text-blue-400">{u.totalScore}</td>
@@ -212,7 +214,7 @@ export default function AdminStats() {
                                     ))}
                                     {filteredRankings.length === 0 && (
                                         <tr>
-                                            <td colSpan={6} className="py-20 text-center text-gray-500">Ma'lumot topilmadi</td>
+                                            <td colSpan={6} className="py-20 text-center text-gray-500">{t.admin.users.noUsers}</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -234,8 +236,8 @@ export default function AdminStats() {
                                 return (
                                     <div key={c.id} className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-400">{c.name} sinfi</span>
-                                            <span className="text-white font-bold">{totalClassScore} ball</span>
+                                            <span className="text-gray-400">{c.name}</span>
+                                            <span className="text-white font-bold">{totalClassScore}</span>
                                         </div>
                                         <div className="h-2 w-full rounded-full bg-gray-800 overflow-hidden">
                                             <div 
@@ -255,7 +257,7 @@ export default function AdminStats() {
                 {/* Most Popular Subjects */}
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">Fanlar Ommabopligi</h2>
+                        <h2 className="text-xl font-bold text-white">{t.admin.subjects.title}</h2>
                         <TrendingUp className="text-blue-500" />
                     </div>
                     <StatsChart
@@ -270,7 +272,7 @@ export default function AdminStats() {
                 {/* Average Scores by Subject */}
                 <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">O'rtacha Ball (%)</h2>
+                        <h2 className="text-xl font-bold text-white">{t.admin.overview.stats.avgScore}</h2>
                         <Award className="text-yellow-500" />
                     </div>
                     <StatsChart
@@ -286,15 +288,15 @@ export default function AdminStats() {
             {/* Summary Table */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden shadow-xl">
                 <div className="border-b border-gray-800 p-6">
-                    <h2 className="text-xl font-bold text-white">Fanlar bo'yicha batafsil statistika</h2>
+                    <h2 className="text-xl font-bold text-white">{t.admin.subjects.title}</h2>
                 </div>
                 <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
                         <tr>
-                            <th className="px-6 py-4">Fan nomi</th>
-                            <th className="px-6 py-4">Jami urinishlar</th>
-                            <th className="px-6 py-4">O'rtacha natija</th>
-                            <th className="px-6 py-4">Qiyinlik darajasi</th>
+                            <th className="px-6 py-4">{t.admin.subjects.name}</th>
+                            <th className="px-6 py-4">{t.admin.users.testsCount}</th>
+                            <th className="px-6 py-4">{t.admin.overview.stats.avgScore}</th>
+                            <th className="px-6 py-4">---</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
