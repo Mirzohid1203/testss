@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult } from "@/types";
-import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2, Download } from "lucide-react";
+import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2, Download, RefreshCw, CheckCircle2 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
@@ -165,6 +165,26 @@ export default function AdminUsers() {
         }
     };
 
+    const handleClearAllResults = async () => {
+        if (!isSuperAdmin) return;
+        const confirmed = window.confirm("DIQQAT! Barcha o'quvchilarning hamma natijalarini o'chirib tashlamoqchimisiz? Bu amalni qaytarib bo'lmaydi!");
+        if (!confirmed) return;
+
+        setLoading(true);
+        try {
+            const resultsSnap = await getDocs(collection(db, "results"));
+            const deletePromises = resultsSnap.docs.map(resDoc => deleteDoc(doc(db, "results", resDoc.id)));
+            await Promise.all(deletePromises);
+            toast.success("Barcha natijalar muvaffaqiyatli o'chirildi!");
+            // Refresh will happen automatically due to onSnapshot if any results are being watched
+            window.location.reload(); // Hard refresh to clear everything
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const filteredUsers = users.filter(u => 
         u.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
         u.uid.toLowerCase().includes(searchQuery.toLowerCase())
@@ -184,6 +204,40 @@ export default function AdminUsers() {
             ...s,
             avgScore: Math.round(s.avgScore / s.count)
         }));
+    };
+
+    const handleGrantRetake = async (userId: string, subjectId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDocs(query(collection(db, "users")));
+            const userData = userSnap.docs.find(d => d.id === userId)?.data() as UserProfile;
+            const retakeAllowed = userData.retakeAllowed || [];
+            
+            if (!retakeAllowed.includes(subjectId)) {
+                await updateDoc(userRef, {
+                    retakeAllowed: [...retakeAllowed, subjectId]
+                });
+                toast.success("Qayta topshirishga ruxsat berildi!");
+                
+                // Update local state to reflect change immediately
+                setUsers(prev => prev.map(u => {
+                    if (u.uid === userId) {
+                        return { ...u, retakeAllowed: [...retakeAllowed, subjectId] };
+                    }
+                    return u;
+                }));
+
+                // Also update selectedUser if open
+                if (selectedUser && selectedUser.uid === userId) {
+                    setSelectedUser({ ...selectedUser, retakeAllowed: [...retakeAllowed, subjectId] });
+                }
+            } else {
+                toast.error("Bu fan uchun allaqachon ruxsat berilgan");
+            }
+        } catch (error: any) {
+            toast.error(error.message);
+        }
     };
 
     const safeFormatDate = (dateVal: any) => {
@@ -224,15 +278,26 @@ export default function AdminUsers() {
                     <p className="text-gray-400">View and manage platform members</p>
                 </div>
                 
-                <div className="relative w-full max-w-md">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                    <input
-                        type="text"
-                        placeholder="Search users by email or ID..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
-                    />
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                    {isSuperAdmin && (
+                        <button
+                            onClick={handleClearAllResults}
+                            className="flex items-center gap-2 rounded-xl bg-red-600/10 border border-red-500/20 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-600 hover:text-white transition-all active:scale-95 whitespace-nowrap"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                            Natijalarni tozalash
+                        </button>
+                    )}
+                    <div className="relative w-full max-w-md">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                        <input
+                            type="text"
+                            placeholder="Search users by email or ID..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -428,9 +493,24 @@ export default function AdminUsers() {
                                                         <p className="text-xs text-gray-500">{stat.count} test(s) completed</p>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
-                                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Avg. Accuracy</p>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="text-right mr-3">
+                                                        <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
+                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Avg. Accuracy</p>
+                                                    </div>
+                                                    {isSuperAdmin && (
+                                                        <button
+                                                            onClick={(e) => handleGrantRetake(selectedUser.uid, stat.subjectId, e)}
+                                                            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all active:scale-90 ${
+                                                                selectedUser.retakeAllowed?.includes(stat.subjectId)
+                                                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 cursor-default"
+                                                                : "bg-blue-600/10 border-blue-600/30 text-blue-400 hover:bg-blue-600 hover:text-white"
+                                                            }`}
+                                                            title={selectedUser.retakeAllowed?.includes(stat.subjectId) ? "Ruxsat berilgan" : "Qayta topshirishga ruxsat berish"}
+                                                        >
+                                                            {selectedUser.retakeAllowed?.includes(stat.subjectId) ? <CheckCircle2 className="h-5 w-5" /> : <RefreshCw className="h-5 w-5" />}
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { collection, getDocs, query, where, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc, doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Question, Subject, TestResult } from "@/types";
 import { useAuth } from "@/context/AuthContext";
@@ -24,23 +24,48 @@ export default function TestPage() {
     const [isFinished, setIsFinished] = useState(false);
     const [startTime] = useState(Date.now());
 
+    const [hasAttempted, setHasAttempted] = useState(false);
+    const [canRetake, setCanRetake] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (!user) return;
+
+                // Check if user already has a result for THIS subject
+                const resultsQuery = query(
+                    collection(db, "results"),
+                    where("userId", "==", user.uid),
+                    where("subjectId", "==", subjectId)
+                );
+                const resultsSnap = await getDocs(resultsQuery);
+                const attempted = !resultsSnap.empty;
+                setHasAttempted(attempted);
+
+                // Check if admin allowed a retake
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userData = userDoc.data() as UserProfile;
+                const retakeAllowed = userData.retakeAllowed?.includes(subjectId);
+                setCanRetake(!!retakeAllowed);
+
+                if (attempted && !retakeAllowed && !isAdmin) {
+                    setLoading(false);
+                    return;
+                }
+
                 // Fetch Subject
                 const subDoc = await getDoc(doc(db, "subjects", subjectId));
                 if (subDoc.exists()) {
                     setSubject({ id: subDoc.id, ...subDoc.data() } as Subject);
                 }
 
-                // Get student's grade level from their class name (e.g., "9-A" -> "9")
-                let studentGrade = "9"; // Default
+                // Get student's grade level
+                let studentGrade = "9";
                 if (profile?.className) {
                     const match = profile.className.match(/\d+/);
                     if (match) studentGrade = match[0];
                 }
 
-                // Fetch Questions for this subject AND this grade level
                 const q = query(
                     collection(db, "tests"), 
                     where("subjectId", "==", subjectId),
@@ -48,14 +73,30 @@ export default function TestPage() {
                 );
                 
                 const querySnapshot = await getDocs(q);
-                const questionsData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Question[];
+                const questionsData = querySnapshot.docs.map(doc => {
+                    const data = doc.data() as Question;
+                    // Options va CorrectAnswer ni shuffle qilish
+                    const originalOptions = [...data.options];
+                    const correctAnswerText = originalOptions[data.correctAnswer];
+                    
+                    const shuffledOptions = originalOptions
+                        .map((value) => ({ value, sort: Math.random() }))
+                        .sort((a, b) => a.sort - b.sort)
+                        .map(({ value }) => value);
+                    
+                    const newCorrectAnswer = shuffledOptions.indexOf(correctAnswerText);
 
-                // Shuffle questions
-                const shuffled = questionsData.sort(() => Math.random() - 0.5);
-                setQuestions(shuffled);
+                    return {
+                        id: doc.id,
+                        ...data,
+                        options: shuffledOptions,
+                        correctAnswer: newCorrectAnswer
+                    };
+                }) as Question[];
+
+                // Savollarni o'zini ham shuffle qilish
+                const shuffledQuestions = questionsData.sort(() => Math.random() - 0.5);
+                setQuestions(shuffledQuestions);
             } catch (error) {
                 toast.error("Error loading test");
                 console.error(error);
@@ -65,7 +106,7 @@ export default function TestPage() {
         };
 
         if (subjectId && (user || isAdmin)) fetchData();
-    }, [subjectId, user, profile]);
+    }, [subjectId, user, profile, isAdmin]);
 
     const handleSubmit = async () => {
         if (isFinished) return;
@@ -94,11 +135,31 @@ export default function TestPage() {
         };
 
         try {
+            // Delete old results for this user and subject to only keep the latest one
+            const oldResultsQuery = query(
+                collection(db, "results"),
+                where("userId", "==", user!.uid),
+                where("subjectId", "==", subjectId)
+            );
+            const oldResultsSnap = await getDocs(oldResultsQuery);
+            const deletePromises = oldResultsSnap.docs.map(d => deleteDoc(doc(db, "results", d.id)));
+            await Promise.all(deletePromises);
+
             const docRef = await addDoc(collection(db, "results"), result);
-            toast.success("Test submitted successfully!");
+            
+            // If it was a retake, remove the permission now that it's used
+            if (canRetake) {
+                const userRef = doc(db, "users", user!.uid);
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data() as UserProfile;
+                const newRetakeAllowed = (userData.retakeAllowed || []).filter((id: string) => id !== subjectId);
+                await updateDoc(userRef, { retakeAllowed: newRetakeAllowed });
+            }
+
+            toast.success("Test muvaffaqiyatli topshirildi!");
             router.push(`/result/${docRef.id}`);
         } catch (error) {
-            toast.error("Failed to save result");
+            toast.error("Natijani saqlashda xatolik yuz berdi");
             setIsFinished(false);
             setLoading(false);
         }
@@ -112,13 +173,38 @@ export default function TestPage() {
         );
     }
 
+    if (hasAttempted && !canRetake && !isAdmin) {
+        return (
+            <div className="flex h-screen flex-col items-center justify-center bg-gray-950 px-4 text-center">
+                <div className="relative mb-6">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-red-500/20" />
+                    <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-red-500/10 text-red-500 border border-red-500/30">
+                        <AlertTriangle className="h-12 w-12" />
+                    </div>
+                </div>
+                <h2 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">Kirish Taqiqlangan</h2>
+                <p className="mt-4 max-w-md text-gray-400 leading-relaxed text-lg">
+                    Siz ushbu fandan testni topshirib bo'lgansiz. Qayta topshirish uchun <span className="text-blue-500 font-bold">Super Admin</span> ruxsati kerak.
+                </p>
+                <button 
+                    onClick={() => router.push('/dashboard')} 
+                    className="mt-8 rounded-2xl bg-white/5 border border-white/10 px-10 py-4 font-bold text-white transition-all hover:bg-white/10 active:scale-95 shadow-xl"
+                >
+                    Dashboardga qaytish
+                </button>
+            </div>
+        );
+    }
+
     if (questions.length === 0) {
         return (
             <div className="flex h-screen flex-col items-center justify-center bg-gray-950 px-4 text-center">
-                <AlertTriangle className="mb-4 h-16 w-16 text-yellow-500" />
-                <h2 className="text-2xl font-bold text-white">No questions found</h2>
-                <p className="mt-2 text-gray-400">This subject doesn't have any questions yet.</p>
-                <button onClick={() => router.back()} className="mt-6 rounded-lg bg-blue-600 px-6 py-2 text-white">Go Back</button>
+                <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-500/10 text-amber-500 mb-6 border border-amber-500/20">
+                    <FileQuestion className="h-10 w-10" />
+                </div>
+                <h2 className="text-2xl font-black text-white tracking-tight font-outfit uppercase">Savollar topilmadi</h2>
+                <p className="mt-2 text-gray-400">Bu fan va sizning sinfingiz uchun hali testlar qo'shilmagan.</p>
+                <button onClick={() => router.back()} className="mt-8 rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all active:scale-95">Orqaga qaytish</button>
             </div>
         );
     }
