@@ -213,6 +213,7 @@ export default function AdminTests() {
                             className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
                             value={selectedSubjectId}
                             onChange={(e) => setSelectedSubjectId(e.target.value)}
+                        >
                             {subjects.map(sub => (
                                 <option key={sub.id} value={sub.id}>{sub.title}</option>
                             ))}
