@@ -324,8 +324,12 @@ export default function AdminUsers() {
                             </tr>
                         ) : filteredUsers.length > 0 ? (
                             filteredUsers.map((user, idx) => (
-                                <tr 
+                                <motion.tr 
                                     key={user.uid || `user-${idx}`} 
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-20px" }}
+                                    transition={{ delay: (idx % 10) * 0.05 }}
                                     onClick={() => setSelectedUser(user)}
                                     className="hover:bg-gray-800/60 transition-all cursor-pointer group"
                                 >
@@ -402,7 +406,7 @@ export default function AdminUsers() {
                                             )}
                                         </td>
                                     )}
-                                </tr>
+                                </motion.tr>
                             ))
                         ) : (
                             <tr>

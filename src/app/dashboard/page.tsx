@@ -71,8 +71,9 @@ export default function Dashboard() {
                             <motion.div
                                 key={subject.id}
                                 initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ delay: index * 0.05 }}
                             >
                                 <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-sm transition-all hover:border-blue-500/50 hover:bg-white dark:hover:bg-gray-900/80 hover:shadow-xl dark:hover:shadow-blue-500/10">
                                     <div className="mb-4 flex items-center justify-between">

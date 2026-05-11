@@ -8,6 +8,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import StatsChart from "@/components/Charts";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
 import { 
     Users, 
     BookOpen, 
@@ -244,39 +245,30 @@ export default function AdminOverview() {
             )}
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                            <Users className="h-6 w-6" />
+                {[
+                    { label: "Jami O'quvchilar", value: stats.totalUsers, icon: <Users className="h-6 w-6" />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
+                    { label: "Topshirilgan Testlar", value: stats.totalResults, icon: <TrendingUp className="h-6 w-6" />, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
+                    { label: "O'rtacha Ball", value: `${stats.avgScore}%`, icon: <BarChart3 className="h-6 w-6" />, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" }
+                ].map((stat, i) => (
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                                {stat.icon}
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-gray-500">{stat.label}</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-500">Jami O'quvchilar</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalUsers}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                            <BookOpen className="h-6 w-6" />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-black text-white tracking-tight font-outfit uppercase">Top O'quvchilar <span className="text-blue-500">(Leaderboard)</span></h2>
-                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Umumiy ballar bo'yicha eng yuqori natijalar</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-lg backdrop-blur-sm">
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                            <TrendingUp className="h-6 w-6" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-500">O'rtacha Ball</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.avgScore}%</p>
-                        </div>
-                    </div>
-                </div>
+                    </motion.div>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -291,7 +283,14 @@ export default function AdminOverview() {
                     </h2>
                     <div className="space-y-4">
                         {topStudents.length > 0 ? topStudents.map((student, idx) => (
-                            <div key={student.uid} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/30 p-4 transition-all hover:scale-[1.02] hover:bg-gray-100 dark:hover:bg-gray-800/50">
+                            <motion.div
+                                key={student.uid}
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/30 p-4 transition-all hover:scale-[1.02] hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                            >
                                 <div className="flex items-center gap-4">
                                     <div className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-xs ${
                                         idx === 0 ? "bg-yellow-500 text-white shadow-lg shadow-yellow-500/30" :
@@ -312,7 +311,7 @@ export default function AdminOverview() {
                                     <p className="text-lg font-black text-blue-600 dark:text-blue-400">{student.totalScore}</p>
                                     <p className="text-[10px] text-gray-500 uppercase font-black tracking-tighter">Umumiy Ball</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         )) : (
                             <p className="text-center py-8 text-gray-500">Hozircha ma'lumotlar mavjud emas</p>
                         )}
