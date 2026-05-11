@@ -98,7 +98,7 @@ export default function AdminStats() {
                 [t.admin.users.class]: u.className || "N/A",
                 [t.admin.users.testsCount]: u.testsTaken,
                 [t.admin.users.totalScore]: u.totalScore,
-                [t.test.percentage]: u.avgAccuracy + "%"
+                [t.result.percentage]: u.avgAccuracy + "%"
             }));
 
             // Prepare Subject Stats Data
@@ -183,7 +183,7 @@ export default function AdminStats() {
                                         <th className="px-6 py-4">{t.admin.users.class}</th>
                                         <th className="px-6 py-4">{t.admin.users.testsCount}</th>
                                         <th className="px-6 py-4">{t.admin.users.totalScore}</th>
-                                        <th className="px-6 py-4">{t.test.percentage}</th>
+                                        <th className="px-6 py-4">{t.result.percentage}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
