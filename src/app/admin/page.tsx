@@ -163,7 +163,7 @@ export default function AdminOverview() {
                 role: "admin",
                 status: "active"
             });
-            toast.success("Admin so'rovi tasdiqlandi!");
+            toast.success(t.admin.overview.approved);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -174,7 +174,7 @@ export default function AdminOverview() {
             await updateDoc(doc(db, "users", uid), {
                 status: "active" // Keeps as regular user
             });
-            toast.success("So'rov rad etildi (O'quvchi bo'lib qoldi)");
+            toast.success(t.admin.overview.rejected);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -313,7 +313,7 @@ export default function AdminOverview() {
                                 </div>
                             </motion.div>
                         )) : (
-                            <p className="text-center py-8 text-gray-500">Hozircha ma'lumotlar mavjud emas</p>
+                            <p className="text-center py-8 text-gray-500">{t.admin.overview.noData}</p>
                         )}
                     </div>
                 </div>
@@ -340,19 +340,19 @@ export default function AdminOverview() {
                             </Link>
                             <Link href="/admin/stats" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-purple-500 hover:shadow-lg">
                                 <TrendingUp className="h-6 w-6 text-purple-500 group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Analitika</span>
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.adminNav.statistics}</span>
                             </Link>
                         </div>
                     </div>
 
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white shadow-xl">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-lg">Maktab Holati</h3>
+                            <h3 className="font-bold text-lg">{t.admin.overview.schoolStatus}</h3>
                             <Crown className="h-5 w-5 text-amber-300" />
                         </div>
-                        <p className="text-sm text-blue-100 mb-6">Barcha tizimlar normal holatda ishlamoqda. Yangi testlar va o'quvchilar qo'shishga tayyor.</p>
+                        <p className="text-sm text-blue-100 mb-6">{t.admin.overview.schoolStatusDesc}</p>
                         <Link href="/admin/ads" className="inline-block w-full text-center rounded-lg bg-white/20 py-2 text-sm font-bold backdrop-blur-sm hover:bg-white/30 transition-all">
-                            E'lon qo'shish
+                            {t.admin.ads.newAd}
                         </Link>
                     </div>
                 </div>
@@ -381,7 +381,7 @@ export default function AdminOverview() {
                                     {sub.title}
                                 </h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
-                                    {sub.description || "Tavsif mavjud emas."}
+                                    {sub.description || t.admin.subjects.noSubjects}
                                 </p>
                             </div>
                         ))}
