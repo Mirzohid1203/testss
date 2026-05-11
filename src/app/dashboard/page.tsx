@@ -36,13 +36,10 @@ export default function Dashboard() {
                 const allSubjects = subSnap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
                 const activeSubjectIds = new Set(testSnap.docs.map(d => d.data().subjectId));
                 
-                // 2-bosqichli filtr:
-                // 1. Shu fan bo'yicha o'quvchining sinfiga tegishli testlar bormi?
-                // 2. Admin ushbu fanni o'quvchining sinfi uchun ochib qo'yganmi (allowedGrades)?
-                const filteredSubjects = allSubjects.filter(s => 
-                    activeSubjectIds.has(s.id) && 
-                    s.allowedGrades?.includes(studentGrade)
-                );
+                const filteredSubjects = allSubjects.filter(s => {
+                    if (profile?.role === 'admin' || profile?.role === 'superadmin') return true;
+                    return activeSubjectIds.has(s.id) && s.allowedGrades?.includes(studentGrade);
+                });
                 
                 setSubjects(filteredSubjects);
             } catch (error) {

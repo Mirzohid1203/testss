@@ -7,6 +7,7 @@ import { UserProfile, TestResult, Subject } from "@/types";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import StatsChart from "@/components/Charts";
+import { useAuth } from "@/context/AuthContext";
 import { 
     Users, 
     BookOpen, 
@@ -34,7 +35,11 @@ export default function AdminOverview() {
     const [pendingRequests, setPendingRequests] = useState<UserProfile[]>([]);
     const [recentResults, setRecentResults] = useState<TestResult[]>([]);
     const [chartData, setChartData] = useState<any[]>([]);
+    const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+
+    const isSuperAdmin = user?.email === "mirzohidmahmutaliyev@gmail.com";
 
     useEffect(() => {
         // Real-time stats
@@ -52,6 +57,8 @@ export default function AdminOverview() {
         });
 
         const unsubSubjects = onSnapshot(collection(db, "subjects"), (snap) => {
+            const subjects = snap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
+            setAllSubjects(subjects);
             setStats(prev => ({ ...prev, totalSubjects: snap.size }));
         });
 
@@ -335,6 +342,37 @@ export default function AdminOverview() {
                     </div>
                 </div>
             </div>
+
+            {/* All Subjects Section (Super Admin Only) */}
+            {isSuperAdmin && (
+                <div className="mt-12 space-y-6 pb-12">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">
+                            Tizimdagi <span className="text-blue-500">Barcha Fanlar</span>
+                        </h2>
+                        <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-500 border border-blue-500/20">
+                            Jami: {allSubjects.length} ta
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {allSubjects.map((sub) => (
+                            <div key={sub.id} className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 transition-all hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10">
+                                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-blue-500/5 transition-transform group-hover:scale-150" />
+                                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                                    <BookOpen className="h-6 w-6" />
+                                </div>
+                                <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">
+                                    {sub.title}
+                                </h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                                    {sub.description || "Tavsif mavjud emas."}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
