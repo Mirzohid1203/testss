@@ -20,7 +20,8 @@ import {
     Loader2,
     Calendar,
     Crown,
-    Shield
+    Shield,
+    Medal
 } from "lucide-react";
 import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
 
@@ -33,7 +34,7 @@ export default function AdminOverview() {
         avgScore: 0,
     });
     const [pendingRequests, setPendingRequests] = useState<UserProfile[]>([]);
-    const [recentResults, setRecentResults] = useState<TestResult[]>([]);
+    const [topStudents, setTopStudents] = useState<any[]>([]);
     const [chartData, setChartData] = useState<any[]>([]);
     const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
@@ -122,17 +123,28 @@ export default function AdminOverview() {
             setLoading(false);
         });
 
-        // Recent results query
-        const qRecent = query(collection(db, "results"), orderBy("createdAt", "desc"));
-        const unsubRecent = onSnapshot(qRecent, async (snap) => {
-            const resultsRaw = snap.docs.map(d => ({ id: d.id, ...d.data() } as TestResult));
-            const usersSnap = await getDocs(collection(db, "users"));
-            const activeUserIds = new Set(usersSnap.docs.map(d => d.id));
-
-            const filteredResults = resultsRaw
-                .filter(r => !r.isAdminResult && activeUserIds.has(r.userId))
+        // Top Students logic
+        const unsubTop = onSnapshot(collection(db, "users"), async (userSnap) => {
+            const resultsSnap = await getDocs(collection(db, "results"));
+            const results = resultsSnap.docs.map(d => d.data() as TestResult);
+            
+            const students = userSnap.docs
+                .map(doc => {
+                    const userData = doc.data() as UserProfile;
+                    const userResults = results.filter(r => r.userId === doc.id && !r.isAdminResult);
+                    const totalScore = userResults.reduce((acc, curr) => acc + (curr.score || 0), 0);
+                    return {
+                        email: userData.email,
+                        totalScore,
+                        uid: doc.id,
+                        role: userData.role
+                    };
+                })
+                .filter(u => u.role === "user")
+                .sort((a, b) => b.totalScore - a.totalScore)
                 .slice(0, 5);
-            setRecentResults(filteredResults);
+
+            setTopStudents(students);
         });
 
         return () => {
@@ -140,7 +152,7 @@ export default function AdminOverview() {
             unsubTests();
             unsubSubjects();
             unsubResults();
-            unsubRecent();
+            unsubTop();
         };
     }, []);
 
@@ -277,28 +289,41 @@ export default function AdminOverview() {
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {/* Recent Results */}
-                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
-                    <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Recent Activities</h2>
+                {/* Top Students Leaderboard */}
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <Medal className="h-24 w-24 text-blue-500" />
+                    </div>
+                    <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Award className="h-5 w-5 text-yellow-500" />
+                        Top O'quvchilar (Reyting)
+                    </h2>
                     <div className="space-y-4">
-                        {recentResults.length > 0 ? recentResults.map((res) => (
-                            <div key={res.id} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/30 p-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800/50">
-                                <div className="flex items-center gap-3">
-                                    <div className={`h-2 w-2 rounded-full ${res.score / res.total >= 0.7 ? "bg-green-500" : "bg-red-500"}`} />
+                        {topStudents.length > 0 ? topStudents.map((student, idx) => (
+                            <div key={student.uid} className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/30 p-4 transition-all hover:scale-[1.02] hover:bg-gray-100 dark:hover:bg-gray-800/50">
+                                <div className="flex items-center gap-4">
+                                    <div className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-xs ${
+                                        idx === 0 ? "bg-yellow-500 text-white shadow-lg shadow-yellow-500/30" :
+                                        idx === 1 ? "bg-gray-300 text-gray-700" :
+                                        idx === 2 ? "bg-amber-600 text-white" :
+                                        "bg-gray-200 dark:bg-gray-800 text-gray-500"
+                                    }`}>
+                                        {idx + 1}
+                                    </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{res.subjectTitle}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Result: {res.score}/{res.total}</p>
+                                        <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px] md:max-w-[200px]">
+                                            {student.email}
+                                        </p>
+                                        <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Muvaffaqiyatli o'quvchi</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="flex items-center gap-1 text-[10px] text-gray-500">
-                                        <Calendar className="h-3 w-3" />
-                                        {res.createdAt ? formatDistanceToNow(new Date(res.createdAt), { addSuffix: true }) : "recently"}
-                                    </div>
+                                    <p className="text-lg font-black text-blue-600 dark:text-blue-400">{student.totalScore}</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold">Jami Ball</p>
                                 </div>
                             </div>
                         )) : (
-                            <p className="text-center py-8 text-gray-500">No recent activities</p>
+                            <p className="text-center py-8 text-gray-500">Hozircha ma'lumotlar mavjud emas</p>
                         )}
                     </div>
                 </div>
