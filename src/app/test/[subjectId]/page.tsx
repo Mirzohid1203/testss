@@ -81,7 +81,7 @@ export default function TestPage() {
 
         const timeSpent = Math.floor((Date.now() - startTime) / 1000);
 
-        const result: TestResult = {
+        const result = {
             userId: user!.uid,
             subjectId: subjectId,
             subjectTitle: subject?.title || "Unknown",
@@ -90,6 +90,7 @@ export default function TestPage() {
             timeSpent,
             createdAt: Date.now(),
             isAdminResult: isAdmin,
+            userAnswers: answers // Store all user answers
         };
 
         try {
