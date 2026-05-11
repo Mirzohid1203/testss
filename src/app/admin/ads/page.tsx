@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Loader2, Megaphone, Trash2, Plus, Calendar } from "lucide-react";
+import { Loader2, Megaphone, Trash2, Plus, Calendar, Edit2, X } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
@@ -20,6 +20,7 @@ export default function AdminAds() {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newAd, setNewAd] = useState({ title: "", content: "" });
+    const [editingId, setEditingId] = useState<string | null>(null);
     const { t } = useLanguage();
 
     useEffect(() => {
@@ -32,7 +33,7 @@ export default function AdminAds() {
         return () => unsubscribe();
     }, []);
 
-    const handleAddAd = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newAd.title.trim() || !newAd.content.trim()) {
             toast.error(t.admin.ads.fillFields);
@@ -41,12 +42,22 @@ export default function AdminAds() {
 
         setIsSubmitting(true);
         try {
-            await addDoc(collection(db, "ads"), {
-                ...newAd,
-                createdAt: Date.now()
-            });
-            toast.success(t.admin.ads.added);
-            setNewAd({ title: "", content: "" });
+            if (editingId) {
+                // Update existing ad
+                await updateDoc(doc(db, "ads", editingId), {
+                    title: newAd.title,
+                    content: newAd.content
+                });
+                toast.success(t.admin.ads.updated);
+            } else {
+                // Add new ad
+                await addDoc(collection(db, "ads"), {
+                    ...newAd,
+                    createdAt: Date.now()
+                });
+                toast.success(t.admin.ads.added);
+            }
+            handleCancelEdit();
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -54,11 +65,24 @@ export default function AdminAds() {
         }
     };
 
+    const handleEdit = (ad: Ad) => {
+        setEditingId(ad.id);
+        setNewAd({ title: ad.title, content: ad.content });
+        // Scroll to form on mobile
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setNewAd({ title: "", content: "" });
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm(t.admin.ads.confirmDelete)) return;
         try {
             await deleteDoc(doc(db, "ads", id));
             toast.success(t.admin.ads.deleted);
+            if (editingId === id) handleCancelEdit();
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -84,11 +108,22 @@ export default function AdminAds() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-1">
-                    <form onSubmit={handleAddAd} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
-                        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                            <Plus className="h-5 w-5 text-blue-500" />
-                            {t.admin.ads.newAd}
-                        </h2>
+                    <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl sticky top-6">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+                                {editingId ? <Edit2 className="h-5 w-5 text-amber-500" /> : <Plus className="h-5 w-5 text-blue-500" />}
+                                {editingId ? t.admin.ads.editAd : t.admin.ads.newAd}
+                            </h2>
+                            {editingId && (
+                                <button 
+                                    type="button"
+                                    onClick={handleCancelEdit}
+                                    className="rounded-full p-1 text-gray-500 hover:bg-gray-800 hover:text-white transition-all"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
+                        </div>
                         
                         <div className="space-y-4">
                             <div>
@@ -110,13 +145,28 @@ export default function AdminAds() {
                                     placeholder={t.admin.ads.placeholderContent}
                                 />
                             </div>
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-                            >
-                                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : t.admin.ads.publish}
-                            </button>
+                            <div className="flex gap-2">
+                                {editingId && (
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelEdit}
+                                        className="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-700"
+                                    >
+                                        {t.common.cancel}
+                                    </button>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium text-white transition-colors disabled:opacity-50 ${editingId ? "bg-amber-600 hover:bg-amber-700 flex-[2]" : "bg-blue-600 hover:bg-blue-700 w-full"}`}
+                                >
+                                    {isSubmitting ? (
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                    ) : (
+                                        editingId ? t.common.save : t.admin.ads.publish
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -128,20 +178,33 @@ export default function AdminAds() {
                         </div>
                     ) : ads.length > 0 ? (
                         ads.map((ad) => (
-                            <div key={ad.id} className="relative rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-lg transition-all hover:border-gray-700">
-                                <button
-                                    onClick={() => handleDelete(ad.id)}
-                                    className="absolute right-4 top-4 text-gray-500 hover:text-red-500"
-                                >
-                                    <Trash2 className="h-5 w-5" />
-                                </button>
+                            <div 
+                                key={ad.id} 
+                                className={`relative rounded-2xl border p-6 shadow-lg transition-all ${editingId === ad.id ? "border-amber-500/50 bg-amber-500/5 shadow-amber-500/10 scale-[1.02]" : "border-gray-800 bg-gray-900/50 hover:border-gray-700"}`}
+                            >
+                                <div className="absolute right-4 top-4 flex items-center gap-2">
+                                    <button
+                                        onClick={() => handleEdit(ad)}
+                                        className={`rounded-lg p-2 transition-colors ${editingId === ad.id ? "text-amber-500 bg-amber-500/10" : "text-gray-500 hover:text-amber-500 hover:bg-amber-500/10"}`}
+                                        title={t.common.edit}
+                                    >
+                                        <Edit2 className="h-5 w-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(ad.id)}
+                                        className="rounded-lg p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                        title={t.common.delete}
+                                    >
+                                        <Trash2 className="h-5 w-5" />
+                                    </button>
+                                </div>
                                 <div className="flex items-start gap-4">
-                                    <div className="rounded-full bg-blue-600/20 p-3 text-blue-400">
+                                    <div className={`rounded-full p-3 ${editingId === ad.id ? "bg-amber-500/20 text-amber-500" : "bg-blue-600/20 text-blue-400"}`}>
                                         <Megaphone className="h-6 w-6" />
                                     </div>
-                                    <div>
+                                    <div className="pr-20">
                                         <h3 className="text-lg font-semibold text-white">{ad.title}</h3>
-                                        <p className="mt-1 text-sm text-gray-300">{ad.content}</p>
+                                        <p className="mt-1 text-sm text-gray-300 whitespace-pre-wrap">{ad.content}</p>
                                         <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
                                             <Calendar className="h-4 w-4" />
                                             {safeFormatDate(ad.createdAt)}

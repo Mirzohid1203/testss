@@ -229,7 +229,9 @@ export const translations = {
                 publish: "Publish",
                 noAds: "No announcements yet",
                 confirmDelete: "Are you sure you want to delete this announcement?",
+                editAd: "Edit Announcement",
                 deleted: "Announcement deleted",
+                updated: "Announcement updated successfully",
                 added: "Announcement added successfully",
                 fillFields: "Please fill all fields"
             },
@@ -480,7 +482,9 @@ export const translations = {
                 publish: "Chop etish",
                 noAds: "Hozircha e'lonlar yo'q",
                 confirmDelete: "Ushbu e'lonni o'chirib tashlamoqchimisiz?",
+                editAd: "E'lonni tahrirlash",
                 deleted: "E'lon o'chirildi",
+                updated: "E'lon muvaffaqiyatli yangilandi",
                 added: "E'lon muvaffaqiyatli qo'shildi",
                 fillFields: "Iltimos, barcha maydonlarni to'ldiring"
             },
@@ -731,7 +735,9 @@ export const translations = {
                 publish: "Опубликовать",
                 noAds: "Объявлений пока нет",
                 confirmDelete: "Вы уверены, что хотите удалить это объявление?",
+                editAd: "Редактировать объявление",
                 deleted: "Объявление удалено",
+                updated: "Объявление успешно обновлено",
                 added: "Объявление успешно добавлено",
                 fillFields: "Пожалуйста, заполните все поля"
             },
