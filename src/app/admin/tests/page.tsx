@@ -103,42 +103,69 @@ export default function AdminTests() {
 
         reader.onload = async (evt) => {
             try {
-                const bstr = evt.target?.result;
-                const wb = XLSX.read(bstr, { type: "binary" });
+                const dataArray = evt.target?.result;
+                const wb = XLSX.read(dataArray, { type: "array" });
                 const wsname = wb.SheetNames[0];
                 const ws = wb.Sheets[wsname];
                 const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-                if (!data || data.length < 2) {
-                    toast.error("Faylda ma'lumot yetarli emas (kamida 2 qator bo'lishi kerak).");
+                if (!data || data.length < 1) {
+                    toast.error("Fayl bo'sh.");
                     setImportLoading(false);
                     return;
                 }
 
-                // Ustunlarni aniqlash (Aqlli qidiruv)
-                // Agar 1-ustun (0) raqam bo'lsa va 2-ustun (1) matn bo'lsa, demak B ustun - Savol
-                // Agar 1-ustun (0) matn bo'lsa, demak A ustun - Savol
-                const firstRow = data[1]; // Sarlavhadan keyingi birinchi ma'lumot qatori
-                let startIndex = 0;
-                
-                if (typeof firstRow[0] === 'number' && firstRow[1]) {
-                    startIndex = 1; // Savol B ustunda
-                } else if (typeof firstRow[0] === 'string') {
-                    startIndex = 0; // Savol A ustunda
+                // Sarlavha qatorini topish (Lotin va Kirill tillarini qo'llab-quvvatlaydi)
+                let headerRowIndex = -1;
+                let colIdx = { savol: -1, a: -1, b: -1, c: -1, d: -1, javob: -1 };
+
+                for (let i = 0; i < Math.min(data.length, 10); i++) {
+                    const row = (data[i] || []).map(h => h?.toString().toLowerCase().trim() || "");
+                    
+                    // Lotin va Kirill variantlari
+                    const sIdx = row.findIndex(h => h.includes("savol") || h.includes("савол"));
+                    const jIdx = row.findIndex(h => h.includes("javob") || h.includes("жавоб") || h.includes("javob"));
+                    
+                    if (sIdx !== -1 && jIdx !== -1) {
+                        headerRowIndex = i;
+                        colIdx = {
+                            savol: sIdx,
+                            a: row.findIndex(h => h === "a" || h === "а"), // Latin 'a' vs Cyrillic 'а'
+                            b: row.findIndex(h => h === "b" || h === "б"),
+                            c: row.findIndex(h => h === "c" || h === "с"),
+                            d: row.findIndex(h => h === "d" || h === "д"),
+                            javob: jIdx
+                        };
+                        break;
+                    }
                 }
 
-                const questionsToImport = data.slice(1)
-                    .filter(row => row[startIndex] && row[startIndex + 5]) // Savol va Javob borligini tekshirish
+                if (headerRowIndex === -1) {
+                    const firstRows = data.slice(0, 3).map(r => r.join(", ")).join(" | ");
+                    toast.error("Sarlavhalar topilmadi. Ustunlarda 'Savol' va 'Javobi' so'zlari borligini tekshiring.");
+                    console.log("Fayl sarlavhalari:", data[0]); // Debug uchun konsolga chiqarish
+                    setImportLoading(false);
+                    return;
+                }
+
+                const questionsToImport = data.slice(headerRowIndex + 1)
+                    .filter(row => row[colIdx.savol] && row[colIdx.javob])
                     .map(row => {
-                        const question = row[startIndex]?.toString() || "";
+                        const question = row[colIdx.savol]?.toString() || "";
                         const options = [
-                            row[startIndex + 1]?.toString() || "",
-                            row[startIndex + 2]?.toString() || "",
-                            row[startIndex + 3]?.toString() || "",
-                            row[startIndex + 4]?.toString() || ""
+                            row[colIdx.a]?.toString() || "",
+                            row[colIdx.b]?.toString() || "",
+                            row[colIdx.c]?.toString() || "",
+                            row[colIdx.d]?.toString() || ""
                         ];
                         
-                        const correctChar = row[startIndex + 5]?.toString().trim().toUpperCase();
+                        let correctChar = row[colIdx.javob]?.toString().trim().toUpperCase();
+                        // Kirill harflarni Lotin harflarga o'girish (agar foydalanuvchi kirillda yozgan bo'lsa)
+                        if (correctChar === "А") correctChar = "A";
+                        if (correctChar === "В") correctChar = "B";
+                        if (correctChar === "С") correctChar = "C";
+                        if (correctChar === "Д") correctChar = "D";
+
                         const correctAnswer = correctChar === "A" ? 0 : 
                                             correctChar === "B" ? 1 : 
                                             correctChar === "C" ? 2 : 
@@ -155,7 +182,7 @@ export default function AdminTests() {
                     });
 
                 if (questionsToImport.length === 0) {
-                    toast.error("Format mos kelmadi. Ustunlar tartibini tekshiring (Savol, A, B, C, D, Javobi).");
+                    toast.error("Savollar topilmadi. Qatorlar to'liq to'ldirilganiga ishonch hosil qiling.");
                     setImportLoading(false);
                     return;
                 }
@@ -163,16 +190,16 @@ export default function AdminTests() {
                 const promises = questionsToImport.map(q => addDoc(collection(db, "tests"), q));
                 await Promise.all(promises);
 
-                toast.success(`${questionsToImport.length} ta savol muvaffaqiyatli yuklandi!`);
+                toast.success(`${questionsToImport.length} ta savol yuklandi!`);
                 e.target.value = ""; 
             } catch (err: any) {
-                toast.error("Xatolik yuz berdi: " + err.message);
+                toast.error("Xatolik: " + err.message);
             } finally {
                 setImportLoading(false);
             }
         };
 
-        reader.readAsBinaryString(file);
+        reader.readAsArrayBuffer(file);
     };
 
     const handleDelete = async (id: string) => {
