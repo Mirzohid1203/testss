@@ -352,7 +352,7 @@ export default function AdminUsers() {
                                     <td className="px-6 py-4">
                                         {(user.role === "admin" || user.role === "superadmin") ? (
                                             <span className="inline-flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-400 border border-purple-500/20">
-                                                Nazoratchi
+                                                {t.admin.users.role}
                                             </span>
                                         ) : (
                                             <select
@@ -361,7 +361,7 @@ export default function AdminUsers() {
                                                 onChange={(e) => handleClassChange(user.uid, e)}
                                                 className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-white outline-none focus:border-blue-500"
                                             >
-                                                <option value="">Sinfni tanlang</option>
+                                                <option value="">{t.admin.users.selectClass}</option>
                                                 {classes.map(c => (
                                                     <option key={c.id} value={c.id}>{c.name}</option>
                                                 ))}
@@ -451,7 +451,7 @@ export default function AdminUsers() {
                                 <button
                                     onClick={() => handleExportUserStats(selectedUser)}
                                     className="mr-2 rounded-full bg-emerald-600/20 p-2.5 text-emerald-400 hover:bg-emerald-600/30 transition-all cursor-pointer relative z-50 active:scale-90"
-                                    title="Excelga yuklash"
+                                    title={t.admin.users.export}
                                 >
                                     <Download className="h-5 w-5" />
                                 </button>
@@ -461,7 +461,7 @@ export default function AdminUsers() {
                                         setSelectedUser(null);
                                     }}
                                     className="rounded-full bg-gray-800 p-2.5 text-gray-400 hover:bg-gray-700 hover:text-white transition-all cursor-pointer relative z-50 active:scale-90"
-                                    aria-label="Yopish"
+                                    aria-label={t.adsPage.close}
                                 >
                                     <X className="h-5 w-5" />
                                 </button>
@@ -473,11 +473,11 @@ export default function AdminUsers() {
                             >
                                 <div className="grid grid-cols-2 gap-4 mb-8">
                                     <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">Jami Testlar</p>
+                                        <p className="text-sm text-gray-500 font-medium">{t.admin.users.testsCount}</p>
                                         <p className="text-2xl font-bold text-white">{selectedUser.testsTaken}</p>
                                     </div>
                                     <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">Umumiy Ball</p>
+                                        <p className="text-sm text-gray-500 font-medium">{t.admin.users.totalScore}</p>
                                         <p className="text-2xl font-bold text-blue-400">{selectedUser.totalScore}</p>
                                     </div>
                                 </div>
@@ -494,7 +494,7 @@ export default function AdminUsers() {
                                                     </div>
                                                     <div>
                                                         <p className="font-semibold text-white">{stat.title}</p>
-                                                        <p className="text-xs text-gray-500">{stat.count} marta topshirilgan</p>
+                                                        <p className="text-xs text-gray-500">{stat.count} {t.admin.users.timesTaken}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
@@ -510,7 +510,7 @@ export default function AdminUsers() {
                                                                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 cursor-default"
                                                                 : "bg-blue-600/10 border-blue-600/30 text-blue-400 hover:bg-blue-600 hover:text-white"
                                                             }`}
-                                                            title={selectedUser.retakeAllowed?.includes(stat.subjectId) ? "Ruxsat berilgan" : "Qayta topshirishga ruxsat berish"}
+                                                            title={selectedUser.retakeAllowed?.includes(stat.subjectId) ? t.admin.users.retakeGranted : t.admin.users.grantRetake}
                                                         >
                                                             {selectedUser.retakeAllowed?.includes(stat.subjectId) ? <CheckCircle2 className="h-5 w-5" /> : <RefreshCw className="h-5 w-5" />}
                                                         </button>
@@ -520,7 +520,7 @@ export default function AdminUsers() {
                                         ))
                                     ) : (
                                         <div className="py-12 text-center text-gray-500">
-                                            <p>Ushbu foydalanuvchi uchun ma'lumot topilmadi.</p>
+                                            <p>{t.admin.users.noUsers}</p>
                                         </div>
                                     )}
                                 </div>
@@ -531,7 +531,7 @@ export default function AdminUsers() {
                                     onClick={() => setSelectedUser(null)}
                                     className="rounded-xl bg-blue-600 px-8 py-2.5 font-bold text-white transition-all hover:bg-blue-700"
                                 >
-                                    Yopish
+                                    {t.adsPage.close}
                                 </button>
                             </div>
                         </motion.div>
@@ -541,6 +541,3 @@ export default function AdminUsers() {
         </div>
     );
 }
-
-import { BookOpen } from "lucide-react";
-
