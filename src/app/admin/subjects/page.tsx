@@ -6,6 +6,7 @@ import { db } from "@/lib/firebase";
 import { Subject } from "@/types";
 import { Plus, Trash2, Edit3, Loader2, Search, X, ShieldCheck, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AdminSubjects() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -18,6 +19,7 @@ export default function AdminSubjects() {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+    const { t } = useLanguage();
 
     const availableGrades = ["5", "6", "7", "8", "9", "10", "11"];
 
@@ -51,13 +53,13 @@ export default function AdminSubjects() {
             if (isEditing && currentSubject.id) {
                 const { id, ...data } = currentSubject;
                 await updateDoc(doc(db, "subjects", id as string), data);
-                toast.success("Fan yangilandi");
+                toast.success(t.admin.subjects.updated);
             } else {
                 await addDoc(collection(db, "subjects"), {
                     ...currentSubject,
                     createdAt: Date.now()
                 });
-                toast.success("Fan qo'shildi");
+                toast.success(t.admin.subjects.added);
             }
             setIsModalOpen(false);
             setCurrentSubject({ title: "", description: "", allowedGrades: [] });
@@ -70,10 +72,10 @@ export default function AdminSubjects() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Ishonchingiz komilmi? Bu fanning barcha testlarini ham o'chirib yuboradi.")) return;
+        if (!confirm(t.admin.subjects.confirmDelete)) return;
         try {
             await deleteDoc(doc(db, "subjects", id as string));
-            toast.success("Fan o'chirildi");
+            toast.success(t.admin.subjects.deleted);
         } catch (e: any) {
             toast.error(e.message);
         }
@@ -92,8 +94,8 @@ export default function AdminSubjects() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Fanlar</h1>
-                    <p className="text-gray-400">Test kategoriyalari va fanlarni boshqarish</p>
+                    <h1 className="text-3xl font-bold text-white">{t.admin.subjects.title}</h1>
+                    <p className="text-gray-400">{t.admin.subjects.desc}</p>
                 </div>
                 <button
                     onClick={() => {
@@ -104,7 +106,7 @@ export default function AdminSubjects() {
                     className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                     <Plus className="h-5 w-5" />
-                    Fan qo'shish
+                    {t.admin.subjects.add}
                 </button>
             </div>
 
@@ -113,10 +115,10 @@ export default function AdminSubjects() {
                     <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
                         <tr>
-                            <th className="px-6 py-4">Nomi</th>
-                            <th className="px-6 py-4">Tavsif</th>
-                            <th className="px-6 py-4 text-center">Ruxsat etilgan sinflar</th>
-                            <th className="px-6 py-4 text-right">Amallar</th>
+                            <th className="px-6 py-4">{t.admin.subjects.name}</th>
+                            <th className="px-6 py-4">{t.admin.subjects.description}</th>
+                            <th className="px-6 py-4 text-center">{t.admin.subjects.allowedGrades}</th>
+                            <th className="px-6 py-4 text-right">{t.common.actions}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
@@ -136,7 +138,7 @@ export default function AdminSubjects() {
                                             {sub.allowedGrades && sub.allowedGrades.length > 0 ? (
                                                 sub.allowedGrades.sort((a,b)=>parseInt(a)-parseInt(b)).map(g => (
                                                     <span key={g} className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20">
-                                                        {g}-sinf
+                                                        {g}
                                                     </span>
                                                 ))
                                             ) : (
@@ -166,7 +168,7 @@ export default function AdminSubjects() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={4} className="py-12 text-center text-gray-500">Fanlar topilmadi</td>
+                                <td colSpan={4} className="py-12 text-center text-gray-500">{t.admin.subjects.noSubjects}</td>
                             </tr>
                         )}
                     </tbody>
@@ -180,7 +182,7 @@ export default function AdminSubjects() {
                     <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-2xl">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-xl font-bold text-white">
-                                {isEditing ? "Fanni tahrirlash" : "Yangi fan"}
+                                {isEditing ? t.admin.subjects.edit : t.admin.subjects.new}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
                                 <X className="h-6 w-6" />
@@ -188,7 +190,7 @@ export default function AdminSubjects() {
                         </div>
                         <form onSubmit={handleSave} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Nomi</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">{t.admin.subjects.name}</label>
                                 <input
                                     type="text"
                                     required
@@ -198,7 +200,7 @@ export default function AdminSubjects() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Tavsif</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">{t.admin.subjects.description}</label>
                                 <textarea
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none"
                                     rows={2}
@@ -210,7 +212,7 @@ export default function AdminSubjects() {
                             <div>
                                 <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-3">
                                     <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                                    Ruxsat etilgan sinflar
+                                    {t.admin.subjects.allowedGrades}
                                 </label>
                                 <div className="grid grid-cols-4 gap-2">
                                     {availableGrades.map((grade) => (
@@ -224,7 +226,7 @@ export default function AdminSubjects() {
                                                     : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
                                             }`}
                                         >
-                                            {grade}-sinf
+                                            {grade}
                                         </button>
                                     ))}
                                 </div>
@@ -235,7 +237,7 @@ export default function AdminSubjects() {
                                 disabled={btnLoading}
                                 className="w-full rounded-lg bg-blue-600 py-3 font-bold text-white hover:bg-blue-700 disabled:opacity-50"
                             >
-                                {btnLoading ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : "Saqlash"}
+                                {btnLoading ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : t.common.save}
                             </button>
                         </form>
                     </div>

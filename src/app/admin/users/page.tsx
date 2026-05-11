@@ -167,7 +167,7 @@ export default function AdminUsers() {
 
     const handleClearAllResults = async () => {
         if (!isSuperAdmin) return;
-        const confirmed = window.confirm("DIQQAT! Barcha o'quvchilarning hamma natijalarini o'chirib tashlamoqchimisiz? Bu amalni qaytarib bo'lmaydi!");
+        const confirmed = window.confirm(t.admin.users.clearConfirm);
         if (!confirmed) return;
 
         setLoading(true);
@@ -218,7 +218,7 @@ export default function AdminUsers() {
                 await updateDoc(userRef, {
                     retakeAllowed: [...retakeAllowed, subjectId]
                 });
-                toast.success("Qayta topshirishga ruxsat berildi!");
+                toast.success(t.admin.users.retakeGranted);
                 
                 // Update local state to reflect change immediately
                 setUsers(prev => prev.map(u => {
@@ -233,7 +233,7 @@ export default function AdminUsers() {
                     setSelectedUser({ ...selectedUser, retakeAllowed: [...retakeAllowed, subjectId] });
                 }
             } else {
-                toast.error("Bu fan uchun allaqachon ruxsat berilgan");
+                toast.error(t.admin.users.alreadyGranted);
             }
         } catch (error: any) {
             toast.error(error.message);
@@ -274,8 +274,8 @@ export default function AdminUsers() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Foydalanuvchilar va Reyting</h1>
-                    <p className="text-gray-400">Platforma a'zolarini ko'rish va boshqarish</p>
+                    <h1 className="text-3xl font-bold text-white">{t.admin.users.title}</h1>
+                    <p className="text-gray-400">{t.admin.users.desc}</p>
                 </div>
                 
                 <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -285,14 +285,14 @@ export default function AdminUsers() {
                             className="flex items-center gap-2 rounded-xl bg-red-600/10 border border-red-500/20 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-600 hover:text-white transition-all active:scale-95 whitespace-nowrap"
                         >
                             <Trash2 className="h-4 w-4" />
-                            Natijalarni tozalash
+                            {t.admin.users.clearResults}
                         </button>
                     )}
                     <div className="relative w-full max-w-md">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input
                             type="text"
-                            placeholder="Email yoki ID orqali qidirish..."
+                            placeholder={t.admin.users.searchPlaceholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
@@ -305,14 +305,14 @@ export default function AdminUsers() {
                 <table className="w-full text-left min-w-[800px]">
                     <thead className="bg-gray-800/80 text-xs font-semibold uppercase text-gray-500 whitespace-nowrap">
                         <tr>
-                            <th className="px-6 py-4">O'rin</th>
-                            <th className="px-6 py-4">Foydalanuvchi</th>
-                            <th className="px-6 py-4">Sinf</th>
-                            <th className="px-6 py-4">Rol</th>
-                            <th className="px-6 py-4">Testlar Soni</th>
-                            <th className="px-6 py-4">Umumiy Ball</th>
-                            <th className="px-6 py-4">Ro'yxatdan o'tdi</th>
-                            {isSuperAdmin && <th className="px-6 py-4">Amallar</th>}
+                            <th className="px-6 py-4">{t.admin.users.rank}</th>
+                            <th className="px-6 py-4">{t.admin.users.user}</th>
+                            <th className="px-6 py-4">{t.admin.users.class}</th>
+                            <th className="px-6 py-4">{t.admin.users.role}</th>
+                            <th className="px-6 py-4">{t.admin.users.testsCount}</th>
+                            <th className="px-6 py-4">{t.admin.users.totalScore}</th>
+                            <th className="px-6 py-4">{t.admin.users.joined}</th>
+                            {isSuperAdmin && <th className="px-6 py-4">{t.common.actions}</th>}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
@@ -410,7 +410,7 @@ export default function AdminUsers() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="py-12 text-center text-gray-500">Foydalanuvchilar topilmadi</td>
+                                <td colSpan={8} className="py-12 text-center text-gray-500">{t.admin.users.noUsers}</td>
                             </tr>
                         )}
                     </tbody>
@@ -442,9 +442,9 @@ export default function AdminUsers() {
                                         <BarChart3 className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-white">Foydalanuvchi Statistikasi</h2>
+                                        <h2 className="text-xl font-bold text-white">{t.admin.users.statsTitle}</h2>
                                         <p className="text-sm text-gray-400">
-                                            {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? "Nazoratchi" : (selectedUser.className || "Sinf yo'q")}
+                                            {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? t.admin.users.role : (selectedUser.className || "---")}
                                         </p>
                                     </div>
                                 </div>
@@ -482,7 +482,7 @@ export default function AdminUsers() {
                                     </div>
                                 </div>
 
-                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Fanlar bo'yicha natijalar</h3>
+                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">{t.admin.users.subjectResults}</h3>
                                 
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {getUserSubjectStats(selectedUser).length > 0 ? (
@@ -500,7 +500,7 @@ export default function AdminUsers() {
                                                 <div className="flex items-center gap-2">
                                                     <div className="text-right mr-3">
                                                         <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
-                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">O'rtacha natija</p>
+                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">{t.admin.overview.stats.avgScore}</p>
                                                     </div>
                                                     {isSuperAdmin && (
                                                         <button

@@ -35,7 +35,7 @@ export default function AdminAds() {
     const handleAddAd = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newAd.title.trim() || !newAd.content.trim()) {
-            toast.error(t.adminAds.fillFields);
+            toast.error(t.admin.ads.fillFields);
             return;
         }
 
@@ -45,7 +45,7 @@ export default function AdminAds() {
                 ...newAd,
                 createdAt: Date.now()
             });
-            toast.success(t.adminAds.added);
+            toast.success(t.admin.ads.added);
             setNewAd({ title: "", content: "" });
         } catch (error: any) {
             toast.error(error.message);
@@ -55,10 +55,10 @@ export default function AdminAds() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm(t.adminAds.confirmDelete)) return;
+        if (!confirm(t.admin.ads.confirmDelete)) return;
         try {
             await deleteDoc(doc(db, "ads", id));
-            toast.success(t.adminAds.deleted);
+            toast.success(t.admin.ads.deleted);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -78,8 +78,8 @@ export default function AdminAds() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-white">{t.adminAds.title}</h1>
-                <p className="text-gray-400">{t.adminAds.subtitle}</p>
+                <h1 className="text-3xl font-bold text-white">{t.admin.ads.title}</h1>
+                <p className="text-gray-400">{t.admin.ads.subtitle}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -87,27 +87,27 @@ export default function AdminAds() {
                     <form onSubmit={handleAddAd} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                             <Plus className="h-5 w-5 text-blue-500" />
-                            {t.adminAds.newAd}
+                            {t.admin.ads.newAd}
                         </h2>
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.adminAds.adTitle}</label>
+                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.admin.ads.adTitle}</label>
                                 <input
                                     type="text"
                                     value={newAd.title}
                                     onChange={(e) => setNewAd({ ...newAd, title: e.target.value })}
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
-                                    placeholder={t.adminAds.placeholderTitle}
+                                    placeholder={t.admin.ads.placeholderTitle}
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.adminAds.adContent}</label>
+                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.admin.ads.adContent}</label>
                                 <textarea
                                     value={newAd.content}
                                     onChange={(e) => setNewAd({ ...newAd, content: e.target.value })}
                                     className="h-32 w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
-                                    placeholder={t.adminAds.placeholderContent}
+                                    placeholder={t.admin.ads.placeholderContent}
                                 />
                             </div>
                             <button
@@ -115,7 +115,7 @@ export default function AdminAds() {
                                 disabled={isSubmitting}
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                             >
-                                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : t.adminAds.publish}
+                                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : t.admin.ads.publish}
                             </button>
                         </div>
                     </form>
@@ -153,7 +153,7 @@ export default function AdminAds() {
                     ) : (
                         <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-gray-800 bg-gray-900/50 text-gray-500">
                             <Megaphone className="mb-2 h-8 w-8 opacity-50" />
-                            <p>{t.adminAds.noAds}</p>
+                            <p>{t.admin.ads.noAds}</p>
                         </div>
                     )}
                 </div>

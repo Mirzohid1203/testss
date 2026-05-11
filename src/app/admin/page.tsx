@@ -192,8 +192,8 @@ export default function AdminOverview() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">Boshqaruv <span className="text-blue-500 italic">Paneli</span></h1>
-                    <p className="text-gray-400 font-medium">Maktabingizdagi o'quv jarayoni va natijalar nazorati</p>
+                    <h1 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">{t.admin.overview.title.split(' ')[0]} <span className="text-blue-500 italic">{t.admin.overview.title.split(' ').slice(1).join(' ')}</span></h1>
+                    <p className="text-gray-400 font-medium">{t.admin.overview.subtitle}</p>
                 </div>
             </div>
 
@@ -206,8 +206,8 @@ export default function AdminOverview() {
                                 <Shield className="h-6 w-6" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Admin So'rovlari</h2>
-                                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{pendingRequests.length} ta yangi so'rov kutilmoqda</p>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.admin.overview.pending}</h2>
+                                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{pendingRequests.length} {t.admin.overview.pendingDesc}</p>
                             </div>
                         </div>
 
@@ -228,13 +228,13 @@ export default function AdminOverview() {
                                             onClick={() => handleApproveAdmin(req.uid)}
                                             className="flex-1 rounded-xl bg-blue-600 py-2 text-xs font-bold text-white transition-all hover:bg-blue-700 active:scale-95"
                                         >
-                                            Tasdiqlash
+                                            {t.admin.overview.approve}
                                         </button>
                                         <button
                                             onClick={() => handleRejectAdmin(req.uid)}
                                             className="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 transition-all hover:bg-red-500/20 hover:text-red-600 hover:border-red-500/30 active:scale-95"
                                         >
-                                            Rad etish
+                                            {t.admin.overview.reject}
                                         </button>
                                     </div>
                                 </div>
@@ -246,9 +246,9 @@ export default function AdminOverview() {
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {[
-                    { label: "Jami O'quvchilar", value: stats.totalUsers, icon: <Users className="h-6 w-6" />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
-                    { label: "Topshirilgan Testlar", value: stats.totalResults, icon: <TrendingUp className="h-6 w-6" />, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
-                    { label: "O'rtacha Ball", value: `${stats.avgScore}%`, icon: <BarChart3 className="h-6 w-6" />, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" }
+                    { label: t.admin.overview.stats.students, value: stats.totalUsers, icon: <Users className="h-6 w-6" />, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
+                    { label: t.admin.overview.stats.results, value: stats.totalResults, icon: <TrendingUp className="h-6 w-6" />, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
+                    { label: t.admin.overview.stats.avgScore, value: `${stats.avgScore}%`, icon: <BarChart3 className="h-6 w-6" />, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" }
                 ].map((stat, i) => (
                     <motion.div
                         key={i}
@@ -279,7 +279,7 @@ export default function AdminOverview() {
                     </div>
                     <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <Award className="h-5 w-5 text-yellow-500" />
-                        Top O'quvchilar (Reyting)
+                        {t.admin.overview.leaderboard}
                     </h2>
                     <div className="space-y-4">
                         {topStudents.length > 0 ? topStudents.map((student, idx) => (
@@ -304,12 +304,12 @@ export default function AdminOverview() {
                                         <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px] md:max-w-[200px]">
                                             {student.email}
                                         </p>
-                                        <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Muvaffaqiyatli o'quvchi</p>
+                                        <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t.features.secure.title}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-lg font-black text-blue-600 dark:text-blue-400">{student.totalScore}</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-black tracking-tighter">Umumiy Ball</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-black tracking-tighter">{t.admin.users.totalScore}</p>
                                 </div>
                             </motion.div>
                         )) : (
@@ -323,20 +323,20 @@ export default function AdminOverview() {
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
                         <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <BarChart3 className="h-5 w-5 text-blue-500" />
-                            Tezkor Amallar
+                            {t.admin.overview.quickActions}
                         </h2>
                         <div className="grid grid-cols-2 gap-4">
                             <Link href="/admin/tests" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-blue-500 hover:shadow-lg">
                                 <FileQuestion className="h-6 w-6 text-blue-500 group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Savol Qo'shish</span>
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.admin.overview.addQuestion}</span>
                             </Link>
                             <Link href="/admin/classes" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-emerald-500 hover:shadow-lg">
                                 <Users className="h-6 w-6 text-emerald-500 group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Sinflar</span>
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.admin.overview.classes}</span>
                             </Link>
                             <Link href="/admin/subjects" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-amber-500 hover:shadow-lg">
                                 <BookOpen className="h-6 w-6 text-amber-500 group-hover:scale-110 transition-transform" />
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Fanlar</span>
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.admin.subjects.title}</span>
                             </Link>
                             <Link href="/admin/stats" className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 p-4 transition-all hover:border-purple-500 hover:shadow-lg">
                                 <TrendingUp className="h-6 w-6 text-purple-500 group-hover:scale-110 transition-transform" />
@@ -363,10 +363,10 @@ export default function AdminOverview() {
                 <div className="mt-12 space-y-6 pb-12">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">
-                            Tizimdagi <span className="text-blue-500">Barcha Fanlar</span>
+                            {t.admin.overview.allSubjects.split(' ')[0]} <span className="text-blue-500">{t.admin.overview.allSubjects.split(' ').slice(1).join(' ')}</span>
                         </h2>
                         <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-500 border border-blue-500/20">
-                            Jami: {allSubjects.length} ta
+                            {t.admin.overview.total}: {allSubjects.length}
                         </span>
                     </div>
 

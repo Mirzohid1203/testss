@@ -7,6 +7,7 @@ import { Question, Subject } from "@/types";
 import { Plus, Trash2, Edit3, Loader2, Filter, X, ChevronRight, CheckCircle2, FileUp } from "lucide-react";
 import { toast } from "react-hot-toast";
 import * as XLSX from "xlsx";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AdminTests() {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -25,6 +26,7 @@ export default function AdminTests() {
     const [isEditing, setIsEditing] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
     const [importLoading, setImportLoading] = useState(false);
+    const { t } = useLanguage();
 
     useEffect(() => {
         const q = query(collection(db, "subjects"), orderBy("title"));
@@ -77,10 +79,10 @@ export default function AdminTests() {
             if (isEditing && currentQuestion.id) {
                 const { id, ...rest } = dataToSave;
                 await updateDoc(doc(db, "tests", id as string), rest);
-                toast.success("Savol yangilandi");
+                toast.success(t.admin.tests.updated);
             } else {
                 await addDoc(collection(db, "tests"), dataToSave);
-                toast.success("Savol qo'shildi");
+                toast.success(t.admin.tests.added);
             }
             setIsModalOpen(false);
             resetForm();
@@ -203,10 +205,10 @@ export default function AdminTests() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Ushbu savolni o'chirmoqchimisiz?")) return;
+        if (!confirm(t.common.confirm)) return;
         try {
             await deleteDoc(doc(db, "tests", id as string));
-            toast.success("Savol o'chirildi");
+            toast.success(t.admin.tests.deleted);
         } catch (e: any) {
             toast.error(e.message);
         }
@@ -239,8 +241,8 @@ export default function AdminTests() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Savollar</h1>
-                    <p className="text-gray-400">Testlar bazasi va javoblarni boshqarish</p>
+                    <h1 className="text-3xl font-bold text-white">{t.admin.tests.title}</h1>
+                    <p className="text-gray-400">{t.admin.tests.desc}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
@@ -250,7 +252,7 @@ export default function AdminTests() {
                             onChange={(e) => setSelectedGrade(e.target.value)}
                         >
                             {[5, 6, 7, 8, 9, 10, 11].map(g => (
-                                <option key={g} value={g.toString()}>{g}-sinf</option>
+                                <option key={g} value={g.toString()}>{g}</option>
                             ))}
                         </select>
                         <div className="h-4 w-px bg-gray-800" />
@@ -270,7 +272,7 @@ export default function AdminTests() {
                         ) : (
                             <FileUp className="h-4 w-4" />
                         )}
-                        Exceldan yuklash
+                        {t.admin.tests.import}
                         <input
                             type="file"
                             accept=".xlsx, .xls"
@@ -287,7 +289,7 @@ export default function AdminTests() {
                         className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 whitespace-nowrap shadow-lg shadow-blue-900/20 transition-all active:scale-95"
                     >
                         <Plus className="h-4 w-4" />
-                        Savol Qo'shish
+                        {t.admin.tests.add}
                     </button>
                 </div>
             </div>
@@ -303,7 +305,7 @@ export default function AdminTests() {
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                     <span className="mb-2 inline-block rounded bg-gray-800 px-2 py-1 text-[10px] font-bold uppercase text-gray-500">
-                                        Savol {i + 1}
+                                        {t.test.question} {i + 1}
                                     </span>
                                     <h3 className="text-lg font-medium text-white">{q.question}</h3>
                                     <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -341,7 +343,7 @@ export default function AdminTests() {
                     ))
                 ) : (
                     <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/30 py-20 text-center text-gray-500">
-                        Ushbu fan uchun savollar topilmadi.
+                        {t.admin.tests.noTests}
                     </div>
                 )}
             </div>
@@ -352,7 +354,7 @@ export default function AdminTests() {
                     <div className="w-full max-w-2xl rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-bold text-white">
-                                {isEditing ? "Savolni tahrirlash" : "Yangi savol"}
+                                {isEditing ? t.admin.tests.title : t.admin.tests.add}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
                                 <X className="h-6 w-6" />
@@ -361,7 +363,7 @@ export default function AdminTests() {
                         <form onSubmit={handleSave} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Fan</label>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.subject}</label>
                                     <select
                                         className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
                                         value={currentQuestion.subjectId || selectedSubjectId}
@@ -371,20 +373,20 @@ export default function AdminTests() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Sinf</label>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.grade}</label>
                                     <select
                                         className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
                                         value={currentQuestion.gradeLevel || selectedGrade}
                                         onChange={(e) => setCurrentQuestion({ ...currentQuestion, gradeLevel: e.target.value })}
                                     >
                                         {[5, 6, 7, 8, 9, 10, 11].map(g => (
-                                            <option key={g} value={g.toString()}>{g}-sinf</option>
+                                            <option key={g} value={g.toString()}>{g}</option>
                                         ))}
                                     </select>
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Savol Matni</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.question}</label>
                                 <textarea
                                     required
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
@@ -425,7 +427,7 @@ export default function AdminTests() {
                                 disabled={btnLoading}
                                 className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-700 disabled:opacity-50"
                             >
-                                {btnLoading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : "Saqlash"}
+                                {btnLoading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : t.common.save}
                             </button>
                         </form>
                     </div>
