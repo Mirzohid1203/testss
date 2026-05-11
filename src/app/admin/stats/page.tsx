@@ -140,6 +140,16 @@ export default function AdminStats() {
                     <h1 className="text-3xl font-bold text-white font-outfit">Maktab Analitikasi</h1>
                     <p className="text-gray-400">O'quvchilar natijalari va sinflar reytingi</p>
                 </div>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
+                        <School className="ml-2 h-4 w-4 text-gray-500" />
+                        <select
+                            className="bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            value={selectedClassId}
+                            onChange={(e) => setSelectedClassId(e.target.value)}
+                        >
+                            <option value="all">Barcha Sinflar</option>
+                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
                     <button
