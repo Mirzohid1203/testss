@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     if (isSuperAdmin) {
         menuItems.push({ name: t.adminNav.announcements, icon: <Megaphone className="h-5 w-5" />, href: "/admin/ads" });
-        menuItems.push({ name: "Sinflar", icon: <Users className="h-5 w-5" />, href: "/admin/classes" });
+        menuItems.push({ name: t.adminNav.classes, icon: <Users className="h-5 w-5" />, href: "/admin/classes" });
     }
 
 

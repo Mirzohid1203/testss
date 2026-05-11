@@ -118,6 +118,7 @@ export const translations = {
             users: "Users",
             statistics: "Statistics",
             announcements: "Announcements",
+            classes: "Classes",
             menu: "Admin Menu",
             superAdminMode: "Super Admin Mode"
         },
@@ -334,6 +335,7 @@ export const translations = {
             users: "O'quvchilar",
             statistics: "Statistika",
             announcements: "E'lonlar",
+            classes: "Sinflar",
             menu: "Admin Menyu",
             superAdminMode: "Super Admin Rejimi"
         },
@@ -550,6 +552,7 @@ export const translations = {
             users: "Ученики",
             statistics: "Статистика",
             announcements: "Объявления",
+            classes: "Классы",
             menu: "Меню админа",
             superAdminMode: "Режим Суперадмина"
         },
