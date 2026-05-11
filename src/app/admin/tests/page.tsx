@@ -77,10 +77,10 @@ export default function AdminTests() {
             if (isEditing && currentQuestion.id) {
                 const { id, ...rest } = dataToSave;
                 await updateDoc(doc(db, "tests", id as string), rest);
-                toast.success("Question updated");
+                toast.success("Savol yangilandi");
             } else {
                 await addDoc(collection(db, "tests"), dataToSave);
-                toast.success("Question added");
+                toast.success("Savol qo'shildi");
             }
             setIsModalOpen(false);
             resetForm();
@@ -203,10 +203,10 @@ export default function AdminTests() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Delete this question?")) return;
+        if (!confirm("Ushbu savolni o'chirmoqchimisiz?")) return;
         try {
             await deleteDoc(doc(db, "tests", id as string));
-            toast.success("Question deleted");
+            toast.success("Savol o'chirildi");
         } catch (e: any) {
             toast.error(e.message);
         }
@@ -239,8 +239,8 @@ export default function AdminTests() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Questions</h1>
-                    <p className="text-gray-400">Manage test pool and answers</p>
+                    <h1 className="text-3xl font-bold text-white">Savollar</h1>
+                    <p className="text-gray-400">Testlar bazasi va javoblarni boshqarish</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
@@ -303,7 +303,7 @@ export default function AdminTests() {
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
                                     <span className="mb-2 inline-block rounded bg-gray-800 px-2 py-1 text-[10px] font-bold uppercase text-gray-500">
-                                        Question {i + 1}
+                                        Savol {i + 1}
                                     </span>
                                     <h3 className="text-lg font-medium text-white">{q.question}</h3>
                                     <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -341,7 +341,7 @@ export default function AdminTests() {
                     ))
                 ) : (
                     <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/30 py-20 text-center text-gray-500">
-                        No questions found for this subject.
+                        Ushbu fan uchun savollar topilmadi.
                     </div>
                 )}
             </div>
@@ -352,7 +352,7 @@ export default function AdminTests() {
                     <div className="w-full max-w-2xl rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-bold text-white">
-                                {isEditing ? "Edit Question" : "New Question"}
+                                {isEditing ? "Savolni tahrirlash" : "Yangi savol"}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
                                 <X className="h-6 w-6" />
@@ -361,7 +361,7 @@ export default function AdminTests() {
                         <form onSubmit={handleSave} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">Fan</label>
                                     <select
                                         className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
                                         value={currentQuestion.subjectId || selectedSubjectId}
@@ -371,7 +371,7 @@ export default function AdminTests() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">Target Grade</label>
+                                    <label className="block text-sm font-medium text-gray-400 mb-2">Sinf</label>
                                     <select
                                         className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
                                         value={currentQuestion.gradeLevel || selectedGrade}
@@ -384,21 +384,21 @@ export default function AdminTests() {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">Question Text</label>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">Savol Matni</label>
                                 <textarea
                                     required
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                                     rows={2}
                                     value={currentQuestion.question}
                                     onChange={e => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
-                                    placeholder="e.g. What is the capital of France?"
+                                    placeholder="Masalan: O'zbekistonning poytaxti qaysi shahar?"
                                 />
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 {currentQuestion.options?.map((opt, idx) => (
                                     <div key={idx}>
                                         <label className="block text-xs font-semibold uppercase text-gray-500 mb-1">
-                                            Option {String.fromCharCode(65 + idx)}
+                                            Variant {String.fromCharCode(65 + idx)}
                                         </label>
                                         <div className="flex items-center gap-2">
                                             <input
@@ -414,7 +414,7 @@ export default function AdminTests() {
                                                 className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                                                 value={opt}
                                                 onChange={e => updateOption(idx, e.target.value)}
-                                                placeholder={`Option ${idx + 1}`}
+                                                placeholder={`Variant ${String.fromCharCode(65 + idx)}`}
                                             />
                                         </div>
                                     </div>
@@ -425,7 +425,7 @@ export default function AdminTests() {
                                 disabled={btnLoading}
                                 className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-700 disabled:opacity-50"
                             >
-                                {btnLoading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : "Save Question"}
+                                {btnLoading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : "Saqlash"}
                             </button>
                         </form>
                     </div>

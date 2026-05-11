@@ -181,7 +181,7 @@ export default function AdminStats() {
                                         <th className="px-6 py-4">Sinf</th>
                                         <th className="px-6 py-4">Testlar</th>
                                         <th className="px-6 py-4">Umumiy Ball</th>
-                                        <th className="px-6 py-4">Aniqiq</th>
+                                        <th className="px-6 py-4">Aniqlik</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
@@ -201,7 +201,7 @@ export default function AdminStats() {
                                                 <p className="font-medium text-white">{u.email}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-sm text-gray-400">{u.className || "N/A"}</span>
+                                                <span className="text-sm text-gray-400">{u.className || "Mavjud emas"}</span>
                                             </td>
                                             <td className="px-6 py-4 text-gray-400">{u.testsTaken}</td>
                                             <td className="px-6 py-4 font-bold text-blue-400">{u.totalScore}</td>
@@ -286,7 +286,7 @@ export default function AdminStats() {
             {/* Summary Table */}
             <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden shadow-xl">
                 <div className="border-b border-gray-800 p-6">
-                    <h2 className="text-xl font-bold text-white">Detailed Subject Stats</h2>
+                    <h2 className="text-xl font-bold text-white">Fanlar bo'yicha batafsil statistika</h2>
                 </div>
                 <table className="w-full text-left">
                     <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">

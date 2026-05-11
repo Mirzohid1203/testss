@@ -179,13 +179,6 @@ export default function AdminOverview() {
         }
     };
 
-    const statCards = [
-        { name: "Total Users", value: stats.totalUsers, icon: <Users className="h-6 w-6" />, color: "bg-blue-500" },
-        { name: "Tests Created", value: stats.totalTests, icon: <FileQuestion className="h-6 w-6" />, color: "bg-purple-500" },
-        { name: "Tests Taken", value: stats.totalResults, icon: <GraduationCap className="h-6 w-6" />, color: "bg-emerald-500" },
-        { name: "Average Score", value: `${stats.avgScore}%`, icon: <TrendingUp className="h-6 w-6" />, color: "bg-orange-500" },
-    ];
-
     if (loading) {
         return (
             <div className="flex h-96 items-center justify-center">
@@ -198,10 +191,8 @@ export default function AdminOverview() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
-                    <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">
-                        Dashboard <span className="text-blue-500">Overview</span>
-                    </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">Platformaning real vaqt rejimida statistikasi va faoliyati</p>
+                    <h1 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">Boshqaruv <span className="text-blue-500 italic">Paneli</span></h1>
+                    <p className="text-gray-400 font-medium">Maktabingizdagi o'quv jarayoni va natijalar nazorati</p>
                 </div>
             </div>
 
@@ -259,7 +250,7 @@ export default function AdminOverview() {
                             <Users className="h-6 w-6" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Total Users</p>
+                            <p className="text-sm font-medium text-gray-500">Jami O'quvchilar</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalUsers}</p>
                         </div>
                     </div>
@@ -270,8 +261,8 @@ export default function AdminOverview() {
                             <BookOpen className="h-6 w-6" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Subjects</p>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSubjects}</p>
+                            <h2 className="text-xl font-black text-white tracking-tight font-outfit uppercase">Top O'quvchilar <span className="text-blue-500">(Leaderboard)</span></h2>
+                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Umumiy ballar bo'yicha eng yuqori natijalar</p>
                         </div>
                     </div>
                 </div>
@@ -281,7 +272,7 @@ export default function AdminOverview() {
                             <TrendingUp className="h-6 w-6" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Avg Score</p>
+                            <p className="text-sm font-medium text-gray-500">O'rtacha Ball</p>
                             <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.avgScore}%</p>
                         </div>
                     </div>
@@ -319,7 +310,7 @@ export default function AdminOverview() {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-lg font-black text-blue-600 dark:text-blue-400">{student.totalScore}</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-bold">Jami Ball</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-black tracking-tighter">Umumiy Ball</p>
                                 </div>
                             </div>
                         )) : (

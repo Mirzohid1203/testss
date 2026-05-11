@@ -274,8 +274,8 @@ export default function AdminUsers() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Users & Leaderboard</h1>
-                    <p className="text-gray-400">View and manage platform members</p>
+                    <h1 className="text-3xl font-bold text-white">Foydalanuvchilar va Reyting</h1>
+                    <p className="text-gray-400">Platforma a'zolarini ko'rish va boshqarish</p>
                 </div>
                 
                 <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -292,7 +292,7 @@ export default function AdminUsers() {
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input
                             type="text"
-                            placeholder="Search users by email or ID..."
+                            placeholder="Email yoki ID orqali qidirish..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
@@ -305,14 +305,14 @@ export default function AdminUsers() {
                 <table className="w-full text-left min-w-[800px]">
                     <thead className="bg-gray-800/80 text-xs font-semibold uppercase text-gray-500 whitespace-nowrap">
                         <tr>
-                            <th className="px-6 py-4">Rank</th>
-                            <th className="px-6 py-4">User</th>
+                            <th className="px-6 py-4">O'rin</th>
+                            <th className="px-6 py-4">Foydalanuvchi</th>
                             <th className="px-6 py-4">Sinf</th>
-                            <th className="px-6 py-4">Role</th>
-                            <th className="px-6 py-4">Tests Taken</th>
-                            <th className="px-6 py-4">Total Score</th>
-                            <th className="px-6 py-4">Joined At</th>
-                            {isSuperAdmin && <th className="px-6 py-4">Actions</th>}
+                            <th className="px-6 py-4">Rol</th>
+                            <th className="px-6 py-4">Testlar Soni</th>
+                            <th className="px-6 py-4">Umumiy Ball</th>
+                            <th className="px-6 py-4">Ro'yxatdan o'tdi</th>
+                            {isSuperAdmin && <th className="px-6 py-4">Amallar</th>}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
@@ -395,7 +395,7 @@ export default function AdminUsers() {
                                                 <button
                                                     onClick={(e) => handleDeleteUser(user.uid, user.email, e)}
                                                     className="rounded-lg p-2 text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                                                    title="Delete User"
+                                                    title="Foydalanuvchini o'chirish"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
@@ -406,7 +406,7 @@ export default function AdminUsers() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="py-12 text-center text-gray-500">No users found</td>
+                                <td colSpan={7} className="py-12 text-center text-gray-500">Foydalanuvchilar topilmadi</td>
                             </tr>
                         )}
                     </tbody>
@@ -438,9 +438,9 @@ export default function AdminUsers() {
                                         <BarChart3 className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-white">User Statistics</h2>
+                                        <h2 className="text-xl font-bold text-white">Foydalanuvchi Statistikasi</h2>
                                         <p className="text-sm text-gray-400">
-                                            {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? "Nazoratchi" : (selectedUser.className || "No Class")}
+                                            {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? "Nazoratchi" : (selectedUser.className || "Sinf yo'q")}
                                         </p>
                                     </div>
                                 </div>
@@ -469,16 +469,16 @@ export default function AdminUsers() {
                             >
                                 <div className="grid grid-cols-2 gap-4 mb-8">
                                     <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">Total Tests</p>
+                                        <p className="text-sm text-gray-500 font-medium">Jami Testlar</p>
                                         <p className="text-2xl font-bold text-white">{selectedUser.testsTaken}</p>
                                     </div>
                                     <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">Total Score</p>
+                                        <p className="text-sm text-gray-500 font-medium">Umumiy Ball</p>
                                         <p className="text-2xl font-bold text-blue-400">{selectedUser.totalScore}</p>
                                     </div>
                                 </div>
 
-                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Performance by Subject</h3>
+                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">Fanlar bo'yicha natijalar</h3>
                                 
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {getUserSubjectStats(selectedUser).length > 0 ? (
@@ -490,13 +490,13 @@ export default function AdminUsers() {
                                                     </div>
                                                     <div>
                                                         <p className="font-semibold text-white">{stat.title}</p>
-                                                        <p className="text-xs text-gray-500">{stat.count} test(s) completed</p>
+                                                        <p className="text-xs text-gray-500">{stat.count} marta topshirilgan</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="text-right mr-3">
                                                         <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
-                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Avg. Accuracy</p>
+                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">O'rtacha natija</p>
                                                     </div>
                                                     {isSuperAdmin && (
                                                         <button
@@ -516,7 +516,7 @@ export default function AdminUsers() {
                                         ))
                                     ) : (
                                         <div className="py-12 text-center text-gray-500">
-                                            <p>No test data available for this user.</p>
+                                            <p>Ushbu foydalanuvchi uchun ma'lumot topilmadi.</p>
                                         </div>
                                     )}
                                 </div>
@@ -527,7 +527,7 @@ export default function AdminUsers() {
                                     onClick={() => setSelectedUser(null)}
                                     className="rounded-xl bg-blue-600 px-8 py-2.5 font-bold text-white transition-all hover:bg-blue-700"
                                 >
-                                    Close
+                                    Yopish
                                 </button>
                             </div>
                         </motion.div>
