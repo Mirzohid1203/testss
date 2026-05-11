@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { TestResult } from "@/types";
+import { TestResult, Question } from "@/types";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
-import { Loader2, Trophy, Clock, Target, Home, RefreshCw, ChevronRight } from "lucide-react";
+import { Loader2, Trophy, Clock, Target, Home, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function ResultPage() {
     const { resultId } = useParams() as { resultId: string };
+    const [result, setResult] = useState<any | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [loading, setLoading] = useState(true);
     const [showReview, setShowReview] = useState(false);
 
     useEffect(() => {
@@ -169,35 +171,58 @@ export default function ResultPage() {
                                         <div className="flex-1">
                                             <p className="text-lg font-bold text-white mb-4 leading-relaxed">{q.question}</p>
                                             
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 gap-3">
                                                 {q.options.map((opt, optIdx) => {
                                                     const isUserSelected = userAnswer === optIdx;
                                                     const isCorrectOpt = q.correctAnswer === optIdx;
                                                     
-                                                    let bgColor = "bg-white/5 border-white/10";
-                                                    if (isCorrectOpt) bgColor = "bg-emerald-500/20 border-emerald-500/50 text-emerald-400";
-                                                    if (isUserSelected && !isCorrectOpt) bgColor = "bg-red-500/20 border-red-500/50 text-red-400";
+                                                    let borderColor = "border-white/10";
+                                                    let bgColor = "bg-white/5";
+                                                    if (isCorrectOpt) {
+                                                        borderColor = "border-emerald-500/50";
+                                                        bgColor = "bg-emerald-500/10";
+                                                    } else if (isUserSelected) {
+                                                        borderColor = "border-red-500/50";
+                                                        bgColor = "bg-red-500/10";
+                                                    }
 
                                                     return (
                                                         <div 
                                                             key={optIdx} 
-                                                            className={`rounded-xl border p-3 text-sm font-medium transition-all ${bgColor}`}
+                                                            className={`flex items-center gap-3 rounded-xl border p-3 text-sm font-medium transition-all ${borderColor} ${bgColor} ${isCorrectOpt ? "text-emerald-400" : isUserSelected ? "text-red-400" : "text-gray-400"}`}
                                                         >
-                                                            <div className="flex items-center justify-between">
-                                                                <span>{String.fromCharCode(65 + optIdx)}. {opt}</span>
-                                                                {isCorrectOpt && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
-                                                                {isUserSelected && !isCorrectOpt && <Target className="h-4 w-4 text-red-500" />}
-                                                            </div>
+                                                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-current text-[10px] font-bold uppercase">
+                                                                {String.fromCharCode(65 + optIdx)}
+                                                            </span>
+                                                            <span className="flex-1">{opt}</span>
+                                                            {isCorrectOpt && <CheckCircle2 className="h-4 w-4" />}
                                                         </div>
                                                     );
                                                 })}
                                             </div>
-                                            
+
                                             {!isCorrect && (
-                                                <p className="mt-4 text-xs font-bold text-red-400 uppercase tracking-widest flex items-center gap-2">
-                                                    <AlertTriangle className="h-3 w-3" />
-                                                    Sizning javobingiz noto'g'ri
-                                                </p>
+                                                <div className="mt-4 flex flex-wrap gap-3 rounded-2xl bg-red-500/10 border border-red-500/20 p-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Sizning javobingiz:</span>
+                                                        <span className="rounded-lg bg-red-500 px-3 py-1 text-xs font-black text-white shadow-lg shadow-red-500/20">
+                                                            {userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : "Belgilanmagan"}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">To'g'ri javob:</span>
+                                                        <span className="rounded-lg bg-emerald-500 px-3 py-1 text-xs font-black text-white shadow-lg shadow-emerald-500/20">
+                                                            {String.fromCharCode(65 + q.correctAnswer)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            {isCorrect && (
+                                                <div className="mt-4 flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4">
+                                                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Barakalla! To'g'ri javob berdingiz.</span>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
