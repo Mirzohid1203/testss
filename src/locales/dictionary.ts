@@ -163,7 +163,9 @@ export const translations = {
                 added: "Subject added",
                 deleted: "Subject deleted",
                 noSubjects: "No subjects found",
-                confirmDelete: "Are you sure? This will delete all tests for this subject too."
+                confirmDelete: "Are you sure? This will delete all tests for this subject too.",
+                noOne: "No one",
+                gradeWarning: "* If no grade is selected, this subject will be hidden from everyone."
             },
             tests: {
                 title: "Tests & Questions",
@@ -387,7 +389,9 @@ export const translations = {
                 added: "Fan qo'shildi",
                 deleted: "Fan o'chirildi",
                 noSubjects: "Fanlar topilmadi",
-                confirmDelete: "Ishonchingiz komilmi? Bu fanning barcha testlarini ham o'chirib yuboradi."
+                confirmDelete: "Ishonchingiz komilmi? Bu fanning barcha testlarini ham o'chirib yuboradi.",
+                noOne: "Hech kimga",
+                gradeWarning: "* Agar hech qaysi sinf tanlanmasa, bu fan hech kimga ko'rinmaydi."
             },
             tests: {
                 title: "Testlar va Savollar",
@@ -611,7 +615,9 @@ export const translations = {
                 added: "Предмет добавлен",
                 deleted: "Предмет удален",
                 noSubjects: "Предметы не найдены",
-                confirmDelete: "Вы уверены? Это также удалит все тесты для этого предмета."
+                confirmDelete: "Вы уверены? Это также удалит все тесты для этого предмета.",
+                noOne: "Никому",
+                gradeWarning: "* Если ни один класс не выбран, этот предмет будет скрыт от всех."
             },
             tests: {
                 title: "Тесты и Вопросы",

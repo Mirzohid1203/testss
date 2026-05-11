@@ -143,7 +143,7 @@ export default function AdminSubjects() {
                                                 ))
                                             ) : (
                                                 <span className="text-[10px] text-gray-600 flex items-center gap-1">
-                                                    <Lock className="h-3 w-3" /> Hech kimga
+                                                    <Lock className="h-3 w-3" /> {t.admin.subjects.noOne}
                                                 </span>
                                             )}
                                         </div>
@@ -230,7 +230,7 @@ export default function AdminSubjects() {
                                         </button>
                                     ))}
                                 </div>
-                                <p className="mt-2 text-[10px] text-gray-500 italic">* Agar hech qaysi sinf tanlanmasa, bu fan hech kimga ko'rinmaydi.</p>
+                                <p className="mt-2 text-[10px] text-gray-500 italic">{t.admin.subjects.gradeWarning}</p>
                             </div>
                             <button
                                 type="submit"
