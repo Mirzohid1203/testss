@@ -171,7 +171,7 @@ export default function AdminStats() {
                         <div className="flex items-center justify-between border-b border-gray-800 p-6">
                             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                                 <Medal className="text-yellow-500" />
-                                {selectedClassId === "all" ? t.admin.overview.leaderboard : t.admin.users.class + " Leaderboard"}
+                                {selectedClassId === "all" ? t.admin.overview.leaderboard : t.admin.classes.students}
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
@@ -227,7 +227,7 @@ export default function AdminStats() {
                     <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
                         <h3 className="mb-4 text-lg font-bold text-white flex items-center gap-2">
                             <Target className="text-red-500" />
-                            Sinf Faolligi
+                            {t.admin.overview.stats.classActivity}
                         </h3>
                         <div className="space-y-4">
                             {classes.map(c => {
@@ -318,7 +318,7 @@ export default function AdminStats() {
                                 <td className="px-6 py-4">
                                     <span className={`rounded-lg px-2 py-1 text-[10px] font-bold uppercase ${s.ortachaBall < 50 ? "bg-red-500/10 text-red-400" : s.ortachaBall < 75 ? "bg-yellow-500/10 text-yellow-400" : "bg-green-500/10 text-green-400"
                                         }`}>
-                                        {s.ortachaBall < 50 ? "Qiyin" : s.ortachaBall < 75 ? "O'rtacha" : "Oson"}
+                                        {s.ortachaBall < 50 ? t.admin.overview.stats.difficulty.hard : s.ortachaBall < 75 ? t.admin.overview.stats.difficulty.medium : t.admin.overview.stats.difficulty.easy}
                                     </span>
                                 </td>
                             </tr>

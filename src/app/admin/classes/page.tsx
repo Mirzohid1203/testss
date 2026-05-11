@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface SchoolClass {
     id: string;
@@ -42,6 +43,7 @@ interface ClassUser {
 }
 
 export default function AdminClasses() {
+    const { t } = useLanguage();
     const [classes, setClasses] = useState<SchoolClass[]>([]);
     const [newClassName, setNewClassName] = useState("");
     const [loading, setLoading] = useState(true);
@@ -89,7 +91,7 @@ export default function AdminClasses() {
 
             setClassUsers(usersWithStats);
         } catch (error: any) {
-            toast.error("O'quvchilarni yuklashda xatolik: " + error.message);
+            toast.error(t.admin.classes.loading + ": " + error.message);
         } finally {
             setLoadingUsers(false);
         }
@@ -108,13 +110,13 @@ export default function AdminClasses() {
             const hasLetter = /[A-ZА-Я]/.test(formattedName);
 
             if (!hasNumber || !hasLetter) {
-                toast.error("Sinf nomida raqam va harf qatnashishi shart! (masalan: 9-A)");
+                toast.error(t.admin.classes.validation);
                 setIsSubmitting(false);
                 return;
             }
 
             if (classes.some(c => c.name === formattedName)) {
-                toast.error("Ushbu sinf allaqachon mavjud!");
+                toast.error(t.admin.classes.exists);
                 setIsSubmitting(false);
                 return;
             }
@@ -124,9 +126,9 @@ export default function AdminClasses() {
                 createdAt: new Date().toISOString()
             });
             setNewClassName("");
-            toast.success("Sinf muvaffaqiyatli qo'shildi!");
+            toast.success(t.admin.classes.added);
         } catch (error: any) {
-            toast.error("Xatolik yuz berdi: " + error.message);
+            toast.error(t.common.error + ": " + error.message);
         } finally {
             setIsSubmitting(false);
         }
@@ -134,13 +136,13 @@ export default function AdminClasses() {
 
     const handleDeleteClass = async (id: string, name: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!window.confirm(`${name} sinfini o'chirmoqchimisiz?`)) return;
+        if (!window.confirm(t.admin.classes.confirmDelete.replace('{name}', name))) return;
 
         try {
             await deleteDoc(doc(db, "classes", id));
-            toast.success("Sinf o'chirildi");
+            toast.success(t.admin.classes.deleted);
         } catch (error: any) {
-            toast.error("O'chirishda xatolik: " + error.message);
+            toast.error(t.admin.classes.deleted + " ERROR: " + error.message);
         }
     };
 
@@ -165,8 +167,8 @@ export default function AdminClasses() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-outfit">Sinflar Boshqaruvi</h1>
-                    <p className="text-gray-400 text-sm">Sinf ustiga bosib o'quvchilar ro'yxatini ko'ring</p>
+                    <h1 className="text-3xl font-bold text-white font-outfit">{t.admin.classes.title}</h1>
+                    <p className="text-gray-400 text-sm">{t.admin.classes.subtitle}</p>
                 </div>
             </div>
 
@@ -176,7 +178,7 @@ export default function AdminClasses() {
                         <School className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
                         <input
                             type="text"
-                            placeholder="Sinf nomi (masalan: 9A -> 9-A)"
+                            placeholder={t.admin.classes.placeholder}
                             value={newClassName}
                             onChange={(e) => handleClassNameChange(e.target.value)}
                             className="w-full rounded-xl border border-gray-800 bg-gray-800/50 py-3 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all uppercase"
@@ -189,7 +191,7 @@ export default function AdminClasses() {
                         className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-                        Sinf Qo'shish
+                        {t.admin.classes.add}
                     </button>
                 </form>
             </div>
@@ -199,7 +201,7 @@ export default function AdminClasses() {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                     <input
                         type="text"
-                        placeholder="Sinflarni qidirish..."
+                        placeholder={t.common.search}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full rounded-xl border border-gray-800 bg-gray-900/30 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
@@ -224,7 +226,7 @@ export default function AdminClasses() {
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-lg font-bold text-white">{cls.name}</span>
-                                        <span className="text-[10px] uppercase tracking-wider text-gray-500">O'quvchilarni ko'rish</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-gray-500">{t.admin.classes.viewStudents}</span>
                                     </div>
                                 </div>
                                 <button
@@ -241,7 +243,7 @@ export default function AdminClasses() {
                 {!loading && filteredClasses.length === 0 && (
                     <div className="rounded-2xl border border-dashed border-gray-800 py-12 text-center">
                         <Users className="mx-auto mb-4 h-12 w-12 text-gray-700" />
-                        <p className="text-gray-500">Sinflar topilmadi. Yangi sinf qo'shing!</p>
+                        <p className="text-gray-500">{t.admin.classes.noClasses}</p>
                     </div>
                 )}
             </div>
@@ -270,8 +272,8 @@ export default function AdminClasses() {
                                         <School className="h-7 w-7" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white">{selectedClass.name} Sinf O'quvchilari</h2>
-                                        <p className="text-sm text-gray-400">Jami: {classUsers.length} ta o'quvchi</p>
+                                        <h2 className="text-2xl font-bold text-white">{selectedClass.name} {t.admin.classes.students}</h2>
+                                        <p className="text-sm text-gray-400">{t.admin.classes.totalStudents}: {classUsers.length}</p>
                                     </div>
                                 </div>
                                 <button
@@ -280,7 +282,7 @@ export default function AdminClasses() {
                                         setSelectedClass(null);
                                     }}
                                     className="rounded-full bg-gray-800 p-3 text-gray-400 hover:bg-gray-700 hover:text-white transition-all cursor-pointer relative z-50 active:scale-95 shadow-lg"
-                                    aria-label="Yopish"
+                                    aria-label={t.adsPage.close}
                                 >
                                     <X className="h-6 w-6" />
                                 </button>
@@ -293,7 +295,7 @@ export default function AdminClasses() {
                                 {loadingUsers ? (
                                     <div className="flex flex-col items-center justify-center py-20">
                                         <Loader2 className="h-10 w-10 animate-spin text-blue-500 mb-4" />
-                                        <p className="text-gray-400">O'quvchilar ro'yxati shakllanmoqda...</p>
+                                        <p className="text-gray-400">{t.admin.classes.loading}</p>
                                     </div>
                                 ) : classUsers.length > 0 ? (
                                     classUsers.map((user, idx) => (
@@ -310,11 +312,11 @@ export default function AdminClasses() {
                                                     <div className="flex items-center gap-4 mt-1">
                                                         <span className="flex items-center gap-1 text-[10px] text-gray-500">
                                                             <GraduationCap className="h-3 w-3" />
-                                                            {user.testsTaken} ta test
+                                                            {user.testsTaken} {t.admin.users.testsCount}
                                                         </span>
                                                         <span className="flex items-center gap-1 text-[10px] text-gray-500">
                                                             <TrendingUp className="h-3 w-3" />
-                                                            {user.totalScore} ball
+                                                            {user.totalScore} {t.admin.users.totalScore}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -325,7 +327,7 @@ export default function AdminClasses() {
                                 ) : (
                                     <div className="py-20 text-center">
                                         <Users className="mx-auto mb-4 h-12 w-12 text-gray-800" />
-                                        <p className="text-gray-500">Ushbu sinfda hozircha o'quvchilar yo'q.</p>
+                                        <p className="text-gray-500">{t.admin.classes.noStudents}</p>
                                     </div>
                                 )}
                             </div>
@@ -335,7 +337,7 @@ export default function AdminClasses() {
                                     onClick={() => setSelectedClass(null)}
                                     className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700"
                                 >
-                                    Yopish
+                                    {t.adsPage.close}
                                 </button>
                             </div>
                         </motion.div>

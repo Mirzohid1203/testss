@@ -25,6 +25,7 @@ import {
     Medal
 } from "lucide-react";
 import { formatDistanceToNow, format, startOfDay, subDays } from "date-fns";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AdminOverview() {
     const [stats, setStats] = useState({
@@ -40,6 +41,7 @@ export default function AdminOverview() {
     const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
     const { user } = useAuth();
+    const { t } = useLanguage();
 
     const isSuperAdmin = user?.email === "mirzohidmahmutaliyev@gmail.com";
 

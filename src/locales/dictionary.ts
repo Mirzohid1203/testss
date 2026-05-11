@@ -131,7 +131,13 @@ export const translations = {
                     subjects: "Total Subjects",
                     questions: "Total Questions",
                     results: "Tests Taken",
-                    avgScore: "Average Score"
+                    avgScore: "Average Score",
+                    classActivity: "Class Activity",
+                    difficulty: {
+                        hard: "Hard",
+                        medium: "Medium",
+                        easy: "Easy"
+                    }
                 },
                 leaderboard: "Top Students (Leaderboard)",
                 leaderboardDesc: "Highest results based on total scores",
@@ -224,6 +230,23 @@ export const translations = {
                 deleted: "Announcement deleted",
                 added: "Announcement added successfully",
                 fillFields: "Please fill all fields"
+            },
+            classes: {
+                title: "Classes Management",
+                subtitle: "Select a class to view its students",
+                add: "Add Class",
+                placeholder: "Class name (e.g., 9-A)",
+                added: "Class added successfully!",
+                deleted: "Class deleted",
+                noClasses: "No classes found. Add a new one!",
+                confirmDelete: "Are you sure you want to delete class {name}?",
+                validation: "Class name must contain both a number and a letter! (e.g., 9-A)",
+                exists: "This class already exists!",
+                students: "Class Students",
+                totalStudents: "Total students",
+                noStudents: "No students in this class yet",
+                viewStudents: "View students",
+                loading: "Loading students list..."
             }
         }
     },
@@ -357,7 +380,13 @@ export const translations = {
                     subjects: "Jami Fanlar",
                     questions: "Jami Savollar",
                     results: "Topshirilgan Testlar",
-                    avgScore: "O'rtacha Ball"
+                    avgScore: "O'rtacha Ball",
+                    classActivity: "Sinf Faolligi",
+                    difficulty: {
+                        hard: "Qiyin",
+                        medium: "O'rtacha",
+                        easy: "Oson"
+                    }
                 },
                 leaderboard: "Top O'quvchilar (Reyting)",
                 leaderboardDesc: "Umumiy ballar bo'yicha eng yuqori natijalar",
@@ -450,6 +479,23 @@ export const translations = {
                 deleted: "E'lon o'chirildi",
                 added: "E'lon muvaffaqiyatli qo'shildi",
                 fillFields: "Iltimos, barcha maydonlarni to'ldiring"
+            },
+            classes: {
+                title: "Sinflar Boshqaruvi",
+                subtitle: "Sinf ustiga bosib o'quvchilar ro'yxatini ko'ring",
+                add: "Sinf Qo'shish",
+                placeholder: "Sinf nomi (masalan: 9-A)",
+                added: "Sinf muvaffaqiyatli qo'shildi!",
+                deleted: "Sinf o'chirildi",
+                noClasses: "Sinflar topilmadi. Yangi sinf qo'shing!",
+                confirmDelete: "{name} sinfini o'chirmoqchimisiz?",
+                validation: "Sinf nomida raqam va harf qatnashishi shart! (masalan: 9-A)",
+                exists: "Ushbu sinf allaqachon mavjud!",
+                students: "Sinf O'quvchilari",
+                totalStudents: "Jami o'quvchilar",
+                noStudents: "Ushbu sinfda hozircha o'quvchilar yo'q",
+                viewStudents: "O'quvchilarni ko'rish",
+                loading: "O'quvchilar ro'yxati shakllanmoqda..."
             }
         }
     },
@@ -583,7 +629,13 @@ export const translations = {
                     subjects: "Всего предметов",
                     questions: "Всего вопросов",
                     results: "Сдано тестов",
-                    avgScore: "Средний балл"
+                    avgScore: "Средний балл",
+                    classActivity: "Активность классов",
+                    difficulty: {
+                        hard: "Сложный",
+                        medium: "Средний",
+                        easy: "Легкий"
+                    }
                 },
                 leaderboard: "Лучшие ученики (Рейтинг)",
                 leaderboardDesc: "Наивысшие результаты по общей сумме баллов",
@@ -676,6 +728,23 @@ export const translations = {
                 deleted: "Объявление удалено",
                 added: "Объявление успешно добавлено",
                 fillFields: "Пожалуйста, заполните все поля"
+            },
+            classes: {
+                title: "Управление классами",
+                subtitle: "Нажмите на класс, чтобы увидеть список учеников",
+                add: "Добавить класс",
+                placeholder: "Название класса (например: 9-А)",
+                added: "Класс успешно добавлен!",
+                deleted: "Класс удален",
+                noClasses: "Классы не найдены. Добавьте новый!",
+                confirmDelete: "Вы уверены, что хотите удалить класс {name}?",
+                validation: "Название класса должно содержать и цифру, и букву! (например: 9-А)",
+                exists: "Этот класс уже существует!",
+                students: "Ученики класса",
+                totalStudents: "Всего учеников",
+                noStudents: "В этом классе пока нет учеников",
+                viewStudents: "Посмотреть учеников",
+                loading: "Формирование списка учеников..."
             }
         }
     }
