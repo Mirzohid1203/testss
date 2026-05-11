@@ -213,10 +213,10 @@ export default function AdminTests() {
                             className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
                             value={selectedSubjectId}
                             onChange={(e) => setSelectedSubjectId(e.target.value)}
-                        >
                             {subjects.map(sub => (
                                 <option key={sub.id} value={sub.id}>{sub.title}</option>
                             ))}
+                        </select>
                     </div>
                     <label className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer">
                         {importLoading ? (
