@@ -111,6 +111,16 @@ export const translations = {
             search: "Search...",
             confirm: "Are you sure?"
         },
+        adminNav: {
+            overview: "Overview",
+            subjects: "Subjects",
+            tests: "Tests",
+            users: "Users",
+            statistics: "Statistics",
+            announcements: "Announcements",
+            menu: "Admin Menu",
+            superAdminMode: "Super Admin Mode"
+        },
         admin: {
             overview: {
                 title: "Dashboard",
@@ -317,6 +327,16 @@ export const translations = {
             search: "Qidirish...",
             confirm: "Ishonchingiz komilmi?"
         },
+        adminNav: {
+            overview: "Umumiy ko'rinish",
+            subjects: "Fanlar",
+            tests: "Testlar",
+            users: "O'quvchilar",
+            statistics: "Statistika",
+            announcements: "E'lonlar",
+            menu: "Admin Menyu",
+            superAdminMode: "Super Admin Rejimi"
+        },
         admin: {
             overview: {
                 title: "Boshqaruv Paneli",
@@ -522,6 +542,16 @@ export const translations = {
             actions: "Действия",
             search: "Поиск...",
             confirm: "Вы уверены?"
+        },
+        adminNav: {
+            overview: "Обзор",
+            subjects: "Предметы",
+            tests: "Тесты",
+            users: "Ученики",
+            statistics: "Статистика",
+            announcements: "Объявления",
+            menu: "Меню админа",
+            superAdminMode: "Режим Суперадмина"
         },
         admin: {
             overview: {
