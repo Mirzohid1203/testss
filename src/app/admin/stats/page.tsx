@@ -104,7 +104,7 @@ export default function AdminStats() {
             // Prepare Subject Stats Data
             const subjectData = statsBySubject.map(s => ({
                 [t.admin.subjects.name]: s.name,
-                [t.test.score]: s.urinishlar,
+                [t.result.score]: s.urinishlar,
                 [t.admin.overview.stats.avgScore]: s.ortachaBall + "%"
             }));
 

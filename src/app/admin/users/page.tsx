@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query, updateDoc, doc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, TestResult } from "@/types";
-import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2, Download, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Loader2, User, Mail, Calendar, Shield, Crown, BarChart3, X, Search, ChevronRight, Trash2, Download, RefreshCw, CheckCircle2, BookOpen } from "lucide-react";
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface UserWithStats extends UserProfile {
     testsTaken: number;
@@ -25,6 +26,7 @@ export default function AdminUsers() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedUser, setSelectedUser] = useState<UserWithStats | null>(null);
     const { isSuperAdmin } = useAuth();
+    const { t } = useLanguage();
 
     useEffect(() => {
         const fetchUsersAndStats = async () => {
@@ -121,7 +123,7 @@ export default function AdminUsers() {
             }
 
             await updateDoc(doc(db, "users", uid), updateData);
-            toast.success("Foydalanuvchi roli va sinf ma'lumotlari yangilandi");
+            toast.success(t.admin.overview.approved);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -135,7 +137,7 @@ export default function AdminUsers() {
 
         try {
             await updateDoc(doc(db, "users", uid), { classId, className });
-            toast.success("Sinf muvaffaqiyatli biriktirildi");
+            toast.success(t.admin.classes.added);
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -145,7 +147,7 @@ export default function AdminUsers() {
         e.stopPropagation();
         if (!isSuperAdmin) return;
         
-        const confirmed = window.confirm(`Are you sure you want to delete user ${email} and ALL their test results? This action cannot be undone.`);
+        const confirmed = window.confirm(t.admin.users.deleteConfirm);
         if (!confirmed) return;
 
         try {
@@ -159,7 +161,7 @@ export default function AdminUsers() {
             // 2. Delete user profile
             await deleteDoc(doc(db, "users", uid));
             
-            toast.success("User and all results deleted successfully");
+            toast.success(t.admin.users.deleted || "Deleted successfully");
         } catch (error: any) {
             toast.error(error.message);
         }
@@ -175,7 +177,7 @@ export default function AdminUsers() {
             const resultsSnap = await getDocs(collection(db, "results"));
             const deletePromises = resultsSnap.docs.map(resDoc => deleteDoc(doc(db, "results", resDoc.id)));
             await Promise.all(deletePromises);
-            toast.success("Barcha natijalar muvaffaqiyatli o'chirildi!");
+            toast.success(t.admin.users.deleted || "Success");
             // Refresh will happen automatically due to onSnapshot if any results are being watched
             window.location.reload(); // Hard refresh to clear everything
         } catch (error: any) {
@@ -255,9 +257,9 @@ export default function AdminUsers() {
         try {
             const subjectStats = getUserSubjectStats(user);
             const data = subjectStats.map(s => ({
-                "Fan nomi": s.title,
-                "Testlar soni": s.count,
-                "O'rtacha natija (%)": s.avgScore + "%"
+                [t.admin.subjects.name]: s.title,
+                [t.admin.users.testsCount]: s.count,
+                [t.admin.overview.stats.avgScore]: s.avgScore + "%"
             }));
 
             const ws = XLSX.utils.json_to_sheet(data);
@@ -399,7 +401,7 @@ export default function AdminUsers() {
                                                 <button
                                                     onClick={(e) => handleDeleteUser(user.uid, user.email, e)}
                                                     className="rounded-lg p-2 text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                                                    title="Foydalanuvchini o'chirish"
+                                                    title={t.common.delete}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
