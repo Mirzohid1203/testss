@@ -39,17 +39,17 @@ const sections = [
 
 export default function DocsPage() {
     return (
-        <div className="min-h-screen bg-gray-950 text-gray-300 selection:bg-blue-500/30">
+        <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-700 dark:text-gray-300 selection:bg-blue-500/30 transition-colors duration-300">
             {/* Top Navigation Bar */}
-            <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/80 backdrop-blur-xl">
+            <nav className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="rounded-lg bg-blue-600 p-1.5">
                             <ShieldCheck className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-lg font-bold text-white tracking-tight">Docs <span className="text-blue-500">Center</span></span>
+                        <span className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">Docs <span className="text-blue-500">Center</span></span>
                     </Link>
-                    <Link href="/" className="text-sm font-medium hover:text-white transition-colors">Saytga qaytish</Link>
+                    <Link href="/" className="text-sm font-medium hover:text-gray-950 dark:hover:text-white transition-colors">Saytga qaytish</Link>
                 </div>
             </nav>
 
@@ -57,12 +57,12 @@ export default function DocsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
                     {/* Sidebar Navigation */}
                     <aside className="hidden lg:block space-y-2 sticky top-28 h-fit">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4 px-3">Hujjatlar Mundarijasi</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4 px-3">Hujjatlar Mundarijasi</p>
                         {sections.map(section => (
                             <a 
                                 key={section.id} 
                                 href={`#${section.id}`}
-                                className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium hover:bg-white/5 hover:text-white transition-all group"
+                                className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-950 dark:hover:text-white transition-all group"
                             >
                                 <div className="p-1 rounded-md group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
                                     {section.icon}
@@ -78,12 +78,12 @@ export default function DocsPage() {
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-400"
+                                className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-500 dark:text-blue-400"
                             >
                                 <Zap className="h-3 w-3" /> System Documentation v1.2
                             </motion.div>
-                            <h1 className="text-5xl font-black text-white tracking-tight">3-IDUM TTM CRM <br/><span className="text-blue-500">Texnik Qo'llanma</span></h1>
-                            <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
+                            <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight">3-IDUM TTM CRM <br/><span className="text-blue-500">Texnik Qo'llanma</span></h1>
+                            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
                                 Tizimdan samarali foydalanish va ma'muriy jarayonlarni boshqarish bo'yicha to'liq va professional qo'llanma.
                             </p>
                         </header>
@@ -100,15 +100,15 @@ export default function DocsPage() {
                                     className="scroll-mt-28 space-y-6"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-900 border border-gray-800 shadow-xl">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-xl">
                                             {section.icon}
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white tracking-tight">{section.title}</h2>
+                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{section.title}</h2>
                                     </div>
-                                    <div className="rounded-3xl border border-gray-800 bg-gray-900/30 p-8 backdrop-blur-sm">
+                                    <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 p-8 backdrop-blur-sm">
                                         <div className="prose prose-invert max-w-none">
                                             {section.content.split('\n').map((line, i) => (
-                                                <p key={i} className="text-gray-400 leading-relaxed mb-4 last:mb-0">
+                                                <p key={i} className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4 last:mb-0">
                                                     {line}
                                                 </p>
                                             ))}
@@ -119,7 +119,7 @@ export default function DocsPage() {
                         </div>
 
                         {/* Footer in Docs */}
-                        <footer className="pt-20 border-t border-gray-800">
+                        <footer className="pt-20 border-t border-gray-200 dark:border-gray-800">
                             <div className="rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 p-10 text-white shadow-2xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 -m-10 h-64 w-64 rounded-full bg-white/10 blur-3xl group-hover:scale-125 transition-transform duration-700" />
                                 <div className="relative z-10 space-y-6">
@@ -138,7 +138,7 @@ export default function DocsPage() {
                                     </div>
                                 </div>
                             </div>
-                            <p className="mt-12 text-center text-sm text-gray-600">
+                            <p className="mt-12 text-center text-sm text-gray-500 dark:text-gray-600">
                                 &copy; {new Date().getFullYear()} 3-IDUM TTM Systems. Barcha huquqlar himoyalangan.
                             </p>
                         </footer>

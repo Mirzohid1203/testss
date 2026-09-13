@@ -139,24 +139,24 @@ export default function AdminStats() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-outfit">{t.adminNav.statistics}</h1>
-                    <p className="text-gray-400">{t.admin.overview.subtitle}</p>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">{t.adminNav.statistics}</h1>
+                    <p className="text-gray-600 dark:text-gray-400">{t.admin.overview.subtitle}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
+                    <div className="flex items-center gap-2 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 p-1">
                         <School className="ml-2 h-4 w-4 text-gray-500" />
                         <select
-                            className="bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            className="bg-transparent px-3 py-1.5 text-sm text-gray-800 dark:text-white outline-none focus:text-blue-600 dark:focus:text-blue-400"
                             value={selectedClassId}
                             onChange={(e) => setSelectedClassId(e.target.value)}
                         >
-                            <option value="all">{t.admin.users.allClasses}</option>
-                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            <option value="all" className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{t.admin.users.allClasses}</option>
+                            {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{c.name}</option>)}
                         </select>
                     </div>
                     <button
                         onClick={handleExportExcel}
-                        className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95"
+                        className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-md active:scale-98 transition-all"
                     >
                         <Download className="h-4 w-4" />
                         {t.admin.tests.import.replace('yuklash', 'saqlash')}
@@ -167,16 +167,16 @@ export default function AdminStats() {
             {/* Top Students Section */}
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden shadow-xl">
-                        <div className="flex items-center justify-between border-b border-gray-800 p-6">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden shadow-xl">
+                        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-6">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 <Medal className="text-yellow-500" />
                                 {selectedClassId === "all" ? t.admin.overview.leaderboard : t.admin.classes.students}
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-gray-800/30 text-xs font-semibold uppercase text-gray-500">
+                                <thead className="bg-gray-50 dark:bg-gray-800/30 text-xs font-semibold uppercase text-gray-550 dark:text-gray-400">
                                     <tr>
                                         <th className="px-6 py-4">{t.admin.users.rank}</th>
                                         <th className="px-6 py-4">{t.admin.users.user}</th>
@@ -186,29 +186,30 @@ export default function AdminStats() {
                                         <th className="px-6 py-4">{t.result.percentage}</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-800">
+                                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                                     {filteredRankings.slice(0, 10).map((u, idx) => (
-                                        <tr key={u.uid} className="hover:bg-gray-800/30 transition-colors">
+                                        <tr key={u.uid} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className={`flex h-8 w-8 items-center justify-center rounded-full font-bold ${
-                                                    idx === 0 ? "bg-yellow-500/20 text-yellow-500" :
-                                                    idx === 1 ? "bg-gray-300/20 text-gray-300" :
-                                                    idx === 2 ? "bg-amber-600/20 text-amber-600" :
-                                                    "bg-gray-800 text-gray-500"
+                                                    idx === 0 ? "bg-yellow-500/20 text-yellow-600 dark:text-yellow-500" :
+                                                    idx === 1 ? "bg-gray-300/30 text-gray-600 dark:text-gray-300" :
+                                                    idx === 2 ? "bg-amber-600/20 text-amber-700 dark:text-amber-600" :
+                                                    "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                                                 }`}>
                                                     {idx + 1}
                                                 </div>
                                             </td>
+                                             <td className="px-6 py-4">
+                                                 <p className="font-medium text-gray-900 dark:text-white">{u.name || u.email}</p>
+                                                 {u.name && <p className="text-xs text-gray-500">{u.email}</p>}
+                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="font-medium text-white">{u.email}</p>
+                                                <span className="text-sm text-gray-600 dark:text-gray-400">{u.className || "---"}</span>
                                             </td>
+                                            <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{u.testsTaken}</td>
+                                            <td className="px-6 py-4 font-bold text-blue-600 dark:text-blue-400">{u.totalScore}</td>
                                             <td className="px-6 py-4">
-                                                <span className="text-sm text-gray-400">{u.className || "---"}</span>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-400">{u.testsTaken}</td>
-                                            <td className="px-6 py-4 font-bold text-blue-400">{u.totalScore}</td>
-                                            <td className="px-6 py-4">
-                                                <span className="text-xs font-semibold text-emerald-500">{u.avgAccuracy}%</span>
+                                                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-500">{u.avgAccuracy}%</span>
                                             </td>
                                         </tr>
                                     ))}
@@ -224,8 +225,8 @@ export default function AdminStats() {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-white flex items-center gap-2">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <Target className="text-red-500" />
                             {t.admin.overview.stats.classActivity}
                         </h3>
@@ -236,10 +237,10 @@ export default function AdminStats() {
                                 return (
                                     <div key={c.id} className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-400">{c.name}</span>
-                                            <span className="text-white font-bold">{totalClassScore}</span>
+                                            <span className="text-gray-650 dark:text-gray-400">{c.name}</span>
+                                            <span className="text-gray-900 dark:text-white font-bold">{totalClassScore}</span>
                                         </div>
-                                        <div className="h-2 w-full rounded-full bg-gray-800 overflow-hidden">
+                                        <div className="h-2 w-full rounded-full bg-gray-105 dark:bg-gray-800 overflow-hidden">
                                             <div 
                                                 className="h-full bg-blue-600 transition-all duration-1000" 
                                                 style={{ width: `${Math.min((totalClassScore / 500) * 100, 100)}%` }}
@@ -255,9 +256,9 @@ export default function AdminStats() {
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Most Popular Subjects */}
-                <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">{t.admin.subjects.title}</h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.admin.subjects.title}</h2>
                         <TrendingUp className="text-blue-500" />
                     </div>
                     <StatsChart
@@ -270,9 +271,9 @@ export default function AdminStats() {
                 </div>
 
                 {/* Average Scores by Subject */}
-                <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl">
+                <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white">{t.admin.overview.stats.avgScore}</h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.admin.overview.stats.avgScore}</h2>
                         <Award className="text-yellow-500" />
                     </div>
                     <StatsChart
@@ -286,45 +287,47 @@ export default function AdminStats() {
             </div>
 
             {/* Summary Table */}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden shadow-xl">
-                <div className="border-b border-gray-800 p-6">
-                    <h2 className="text-xl font-bold text-white">{t.admin.subjects.title}</h2>
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-hidden shadow-xl">
+                <div className="border-b border-gray-200 dark:border-gray-800 p-6">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t.admin.subjects.title}</h2>
                 </div>
-                <table className="w-full text-left">
-                    <thead className="bg-gray-800/50 text-xs font-semibold uppercase text-gray-500">
-                        <tr>
-                            <th className="px-6 py-4">{t.admin.subjects.name}</th>
-                            <th className="px-6 py-4">{t.admin.users.testsCount}</th>
-                            <th className="px-6 py-4">{t.admin.overview.stats.avgScore}</th>
-                            <th className="px-6 py-4">---</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-800">
-                        {statsBySubject.map((s) => (
-                            <tr key={s.name} className="hover:bg-gray-800/30 transition-colors">
-                                <td className="px-6 py-4 font-medium text-white">{s.name}</td>
-                                <td className="px-6 py-4 text-gray-400">{s.urinishlar}</td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-700">
-                                            <div
-                                                className={`h-full ${s.ortachaBall >= 70 ? "bg-green-500" : s.ortachaBall >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
-                                                style={{ width: `${s.ortachaBall}%` }}
-                                            />
-                                        </div>
-                                        <span className="text-sm font-semibold text-white">{s.ortachaBall}%</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={`rounded-lg px-2 py-1 text-[10px] font-bold uppercase ${s.ortachaBall < 50 ? "bg-red-500/10 text-red-400" : s.ortachaBall < 75 ? "bg-yellow-500/10 text-yellow-400" : "bg-green-500/10 text-green-400"
-                                        }`}>
-                                        {s.ortachaBall < 50 ? t.admin.overview.stats.difficulty.hard : s.ortachaBall < 75 ? t.admin.overview.stats.difficulty.medium : t.admin.overview.stats.difficulty.easy}
-                                    </span>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-55/50 dark:bg-gray-800/50 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                            <tr>
+                                <th className="px-6 py-4">{t.admin.subjects.name}</th>
+                                <th className="px-6 py-4">{t.admin.users.testsCount}</th>
+                                <th className="px-6 py-4">{t.admin.overview.stats.avgScore}</th>
+                                <th className="px-6 py-4">---</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                            {statsBySubject.map((s) => (
+                                <tr key={s.name} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{s.name}</td>
+                                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{s.urinishlar}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                                                <div
+                                                    className={`h-full ${s.ortachaBall >= 70 ? "bg-green-500" : s.ortachaBall >= 40 ? "bg-yellow-500" : "bg-red-500"}`}
+                                                    style={{ width: `${s.ortachaBall}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{s.ortachaBall}%</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`rounded-lg px-2 py-1 text-[10px] font-bold uppercase ${s.ortachaBall < 50 ? "bg-red-500/10 text-red-600 dark:text-red-400" : s.ortachaBall < 75 ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400" : "bg-green-500/10 text-green-600 dark:text-green-400"
+                                            }`}>
+                                            {s.ortachaBall < 50 ? t.admin.overview.stats.difficulty.hard : s.ortachaBall < 75 ? t.admin.overview.stats.difficulty.medium : t.admin.overview.stats.difficulty.easy}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

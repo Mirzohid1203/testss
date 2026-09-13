@@ -169,10 +169,10 @@ export default function TestPage() {
 
     if (loading && !isFinished) {
         return (
-            <div className="flex h-screen w-full items-center justify-center bg-gray-950">
+            <div className="flex h-screen w-full items-center justify-center bg-white dark:bg-gray-950 transition-colors duration-300">
                 <div className="text-center">
                     <Loader2 className="mx-auto h-10 w-10 animate-spin text-blue-500 mb-4" />
-                    <p className="text-gray-400 font-medium">{t.test.loading}</p>
+                    <p className="text-gray-600 dark:text-gray-400 font-medium">{t.test.loading}</p>
                 </div>
             </div>
         );
@@ -180,20 +180,20 @@ export default function TestPage() {
 
     if (hasAttempted && !canRetake && !isAdmin) {
         return (
-            <div className="flex h-screen flex-col items-center justify-center bg-gray-950 px-4 text-center">
+            <div className="flex h-screen flex-col items-center justify-center bg-white dark:bg-gray-950 px-4 text-center transition-colors duration-300">
                 <div className="relative mb-6">
                     <div className="absolute inset-0 animate-ping rounded-full bg-red-500/20" />
                     <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-red-500/10 text-red-500 border border-red-500/30">
                         <AlertTriangle className="h-12 w-12" />
                     </div>
                 </div>
-                <h2 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">{t.test.forbidden}</h2>
-                <p className="mt-4 max-w-md text-gray-400 leading-relaxed text-lg">
+                <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">{t.test.forbidden}</h2>
+                <p className="mt-4 max-w-md text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
                     {t.test.attempted}
                 </p>
                 <button 
                     onClick={() => router.push('/dashboard')} 
-                    className="mt-8 rounded-2xl bg-white/5 border border-white/10 px-10 py-4 font-bold text-white transition-all hover:bg-white/10 active:scale-95 shadow-xl"
+                    className="mt-8 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-10 py-4 font-bold text-gray-700 dark:text-white transition-all hover:bg-gray-200 dark:hover:bg-white/10 active:scale-95 shadow-xl"
                 >
                     {t.test.backDashboard}
                 </button>
@@ -203,12 +203,12 @@ export default function TestPage() {
 
     if (questions.length === 0) {
         return (
-            <div className="flex h-screen flex-col items-center justify-center bg-gray-950 px-4 text-center">
+            <div className="flex h-screen flex-col items-center justify-center bg-white dark:bg-gray-950 px-4 text-center transition-colors duration-300">
                 <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-500/10 text-amber-500 mb-6 border border-amber-500/20">
                     <FileQuestion className="h-10 w-10" />
                 </div>
-                <h2 className="text-2xl font-black text-white tracking-tight font-outfit uppercase">{t.test.noQuestions}</h2>
-                <p className="mt-2 text-gray-400">{t.test.noQuestionsDesc}</p>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">{t.test.noQuestions}</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">{t.test.noQuestionsDesc}</p>
                 <button onClick={() => router.back()} className="mt-8 rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all active:scale-95">{t.test.back}</button>
             </div>
         );
@@ -219,20 +219,20 @@ export default function TestPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-gray-950 text-gray-100">
-                <header className="sticky top-0 z-30 border-b border-gray-800 bg-gray-950/80 p-4 backdrop-blur-md">
+            <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+                <header className="sticky top-0 z-30 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 p-4 backdrop-blur-md">
                     <div className="mx-auto flex max-w-4xl items-center justify-between">
                         <div>
-                            <h1 className="text-xl font-bold text-white">{subject?.title}</h1>
-                            <p className="text-xs text-gray-400">{currentIdx + 1}-{t.test.question}, {t.test.of} {questions.length}</p>
+                            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{subject?.title}</h1>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">{currentIdx + 1}-{t.test.question}, {t.test.of} {questions.length}</p>
                         </div>
                         <Timer
-                            initialTime={questions.length * 60}
+                            initialTime={questions.length * (subject?.timePerQuestion || 60)}
                             onTimeUp={handleSubmit}
                             isActive={!isFinished}
                         />
                     </div>
-                    <div className="mx-auto mt-4 h-1.5 max-w-4xl overflow-hidden rounded-full bg-gray-800">
+                    <div className="mx-auto mt-4 h-1.5 max-w-4xl overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
                         <div
                             className="h-full bg-blue-600 transition-all duration-300"
                             style={{ width: `${progress}%` }}
@@ -241,8 +241,8 @@ export default function TestPage() {
                 </header>
 
                 <main className="mx-auto max-w-3xl px-4 py-12">
-                    <div className="rounded-3xl border border-gray-800 bg-gray-900/50 p-8 shadow-xl backdrop-blur-sm">
-                        <h2 className="mb-8 text-2xl font-semibold leading-relaxed text-white">
+                    <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 p-8 shadow-xl backdrop-blur-sm">
+                        <h2 className="mb-8 text-2xl font-semibold leading-relaxed text-gray-900 dark:text-white">
                             {currentQuestion.question}
                         </h2>
 
@@ -251,14 +251,14 @@ export default function TestPage() {
                                 <button
                                     key={idx}
                                     onClick={() => setAnswers({ ...answers, [currentQuestion.id]: idx })}
-                                    className={`flex w-full items-center justify-between rounded-2xl border p-5 transition-all ${answers[currentQuestion.id] === idx
-                                            ? "border-blue-500 bg-blue-500/10 text-white"
-                                            : "border-gray-700 bg-gray-800/50 hover:bg-gray-800 hover:border-gray-600"
+                                    className={`flex w-full items-center justify-between rounded-2xl border p-5 transition-all text-left ${answers[currentQuestion.id] === idx
+                                            ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-white font-semibold"
+                                            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-200"
                                         }`}
                                 >
                                     <span className="text-lg">{option}</span>
                                     {answers[currentQuestion.id] === idx && (
-                                        <CheckCircle2 className="h-6 w-6 text-blue-500" />
+                                        <CheckCircle2 className="h-6 w-6 text-blue-500 shrink-0 ml-4" />
                                     )}
                                 </button>
                             ))}
@@ -268,7 +268,7 @@ export default function TestPage() {
                             <button
                                 disabled={currentIdx === 0}
                                 onClick={() => setCurrentIdx(prev => prev - 1)}
-                                className="flex items-center gap-2 rounded-xl border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-gray-800 disabled:opacity-30"
+                                className="flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 px-6 py-3 font-semibold text-gray-600 dark:text-gray-300 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30"
                             >
                                 <ChevronLeft className="h-5 w-5" />
                                 {t.test.previous}
@@ -284,7 +284,7 @@ export default function TestPage() {
                             ) : (
                                 <button
                                     onClick={() => setCurrentIdx(prev => prev + 1)}
-                                    className="flex items-center gap-2 rounded-xl bg-white/5 border border-gray-700 px-6 py-3 font-semibold transition-colors hover:bg-white/10"
+                                    className="flex items-center gap-2 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-6 py-3 font-semibold transition-colors hover:bg-gray-200 dark:hover:bg-white/10"
                                 >
                                     {t.test.next}
                                     <ChevronRight className="h-5 w-5" />

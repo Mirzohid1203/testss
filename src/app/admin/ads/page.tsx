@@ -102,15 +102,15 @@ export default function AdminAds() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-white">{t.admin.ads.title}</h1>
-                <p className="text-gray-400">{t.admin.ads.subtitle}</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">{t.admin.ads.title}</h1>
+                <p className="text-gray-600 dark:text-gray-400">{t.admin.ads.subtitle}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-1">
-                    <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 shadow-xl sticky top-6">
+                    <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-xl sticky top-6">
                         <div className="mb-4 flex items-center justify-between">
-                            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+                            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white">
                                 {editingId ? <Edit2 className="h-5 w-5 text-amber-500" /> : <Plus className="h-5 w-5 text-blue-500" />}
                                 {editingId ? t.admin.ads.editAd : t.admin.ads.newAd}
                             </h2>
@@ -118,7 +118,7 @@ export default function AdminAds() {
                                 <button 
                                     type="button"
                                     onClick={handleCancelEdit}
-                                    className="rounded-full p-1 text-gray-500 hover:bg-gray-800 hover:text-white transition-all"
+                                    className="rounded-full p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all"
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
@@ -127,21 +127,21 @@ export default function AdminAds() {
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.admin.ads.adTitle}</label>
+                                <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{t.admin.ads.adTitle}</label>
                                 <input
                                     type="text"
                                     value={newAd.title}
                                     onChange={(e) => setNewAd({ ...newAd, title: e.target.value })}
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                    className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-850 px-4 py-2 text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                     placeholder={t.admin.ads.placeholderTitle}
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-400">{t.admin.ads.adContent}</label>
+                                <label className="mb-1 block text-sm font-medium text-gray-600 dark:text-gray-400">{t.admin.ads.adContent}</label>
                                 <textarea
                                     value={newAd.content}
                                     onChange={(e) => setNewAd({ ...newAd, content: e.target.value })}
-                                    className="h-32 w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                    className="h-32 w-full resize-none rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-855 px-4 py-2 text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                     placeholder={t.admin.ads.placeholderContent}
                                 />
                             </div>
@@ -150,7 +150,7 @@ export default function AdminAds() {
                                     <button
                                         type="button"
                                         onClick={handleCancelEdit}
-                                        className="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-700"
+                                        className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 font-medium text-gray-700 dark:text-white transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                                     >
                                         {t.common.cancel}
                                     </button>
@@ -173,14 +173,14 @@ export default function AdminAds() {
 
                 <div className="lg:col-span-2 space-y-4">
                     {loading ? (
-                        <div className="flex h-32 items-center justify-center rounded-2xl border border-gray-800 bg-gray-900/50">
+                        <div className="flex h-32 items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50">
                             <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
                         </div>
                     ) : ads.length > 0 ? (
                         ads.map((ad) => (
                             <div 
                                 key={ad.id} 
-                                className={`relative rounded-2xl border p-6 shadow-lg transition-all ${editingId === ad.id ? "border-amber-500/50 bg-amber-500/5 shadow-amber-500/10 scale-[1.02]" : "border-gray-800 bg-gray-900/50 hover:border-gray-700"}`}
+                                className={`relative rounded-2xl border p-6 shadow-lg transition-all ${editingId === ad.id ? "border-amber-500/50 bg-amber-500/5 shadow-amber-500/10 scale-[1.02]" : "border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 hover:border-gray-300 dark:hover:border-gray-700"}`}
                             >
                                 <div className="absolute right-4 top-4 flex items-center gap-2">
                                     <button
@@ -203,9 +203,9 @@ export default function AdminAds() {
                                         <Megaphone className="h-6 w-6" />
                                     </div>
                                     <div className="pr-20">
-                                        <h3 className="text-lg font-semibold text-white">{ad.title}</h3>
-                                        <p className="mt-1 text-sm text-gray-300 whitespace-pre-wrap">{ad.content}</p>
-                                        <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{ad.title}</h3>
+                                        <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{ad.content}</p>
+                                        <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                             <Calendar className="h-4 w-4" />
                                             {safeFormatDate(ad.createdAt)}
                                         </div>
@@ -214,7 +214,7 @@ export default function AdminAds() {
                             </div>
                         ))
                     ) : (
-                        <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-gray-800 bg-gray-900/50 text-gray-500">
+                        <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 text-gray-500 dark:text-gray-400">
                             <Megaphone className="mb-2 h-8 w-8 opacity-50" />
                             <p>{t.admin.ads.noAds}</p>
                         </div>

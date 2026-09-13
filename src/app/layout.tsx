@@ -28,20 +28,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-gray-950 text-gray-50 flex min-h-screen flex-col`}
+        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex min-h-screen flex-col`}
       >
-        <LanguageProvider>
-          <AuthProvider>
-            <Toaster
-              position="top-right"
-            />
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-          </AuthProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <Toaster
+                position="top-right"
+              />
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

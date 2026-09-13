@@ -169,9 +169,9 @@ export default function AdminTests() {
                         if (correctChar === "Д") correctChar = "D";
 
                         const correctAnswer = correctChar === "A" ? 0 : 
-                                            correctChar === "B" ? 1 : 
-                                            correctChar === "C" ? 2 : 
-                                            correctChar === "D" ? 3 : 0;
+                                             correctChar === "B" ? 1 : 
+                                             correctChar === "C" ? 2 : 
+                                             correctChar === "D" ? 3 : 0;
 
                         return {
                             question,
@@ -241,32 +241,32 @@ export default function AdminTests() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">{t.admin.tests.title}</h1>
-                    <p className="text-gray-400">{t.admin.tests.desc}</p>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">{t.admin.tests.title}</h1>
+                    <p className="text-gray-600 dark:text-gray-400">{t.admin.tests.desc}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 rounded-xl bg-gray-900/50 border border-gray-800 p-1">
+                    <div className="flex items-center gap-2 rounded-xl bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 p-1">
                         <select
-                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-gray-800 dark:text-white outline-none focus:text-blue-600 dark:focus:text-blue-400"
                             value={selectedGrade}
                             onChange={(e) => setSelectedGrade(e.target.value)}
                         >
                             {[5, 6, 7, 8, 9, 10, 11].map(g => (
-                                <option key={g} value={g.toString()}>{g}</option>
+                                <option key={g} value={g.toString()} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{g}</option>
                             ))}
                         </select>
-                        <div className="h-4 w-px bg-gray-800" />
+                        <div className="h-4 w-px bg-gray-200 dark:bg-gray-800" />
                         <select
-                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-white outline-none focus:text-blue-400"
+                            className="rounded-lg bg-transparent px-3 py-1.5 text-sm text-gray-800 dark:text-white outline-none focus:text-blue-600 dark:focus:text-blue-400 max-w-[150px] truncate"
                             value={selectedSubjectId}
                             onChange={(e) => setSelectedSubjectId(e.target.value)}
                         >
                             {subjects.map(sub => (
-                                <option key={sub.id} value={sub.id}>{sub.title}</option>
+                                <option key={sub.id} value={sub.id} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{sub.title}</option>
                             ))}
                         </select>
                     </div>
-                    <label className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer">
+                    <label className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 whitespace-nowrap shadow-md transition-all active:scale-95 cursor-pointer">
                         {importLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
@@ -286,7 +286,7 @@ export default function AdminTests() {
                             resetForm();
                             setIsModalOpen(true);
                         }}
-                        className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 whitespace-nowrap shadow-lg shadow-blue-900/20 transition-all active:scale-95"
+                        className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-700 whitespace-nowrap shadow-md transition-all active:scale-95"
                     >
                         <Plus className="h-4 w-4" />
                         {t.admin.tests.add}
@@ -301,20 +301,20 @@ export default function AdminTests() {
                     </div>
                 ) : questions.length > 0 ? (
                     questions.map((q, i) => (
-                        <div key={q.id} className="group relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-6 transition-all hover:bg-gray-900/80">
+                        <div key={q.id} className="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 transition-all hover:bg-gray-50 dark:hover:bg-gray-900/80 hover:border-gray-300 dark:hover:border-gray-700 shadow-sm">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
-                                    <span className="mb-2 inline-block rounded bg-gray-800 px-2 py-1 text-[10px] font-bold uppercase text-gray-500">
+                                    <span className="mb-2 inline-block rounded bg-gray-100 dark:bg-gray-800 px-2 py-1 text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400">
                                         {t.test.question} {i + 1}
                                     </span>
-                                    <h3 className="text-lg font-medium text-white">{q.question}</h3>
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">{q.question}</h3>
                                     <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                                         {q.options.map((opt, idx) => (
                                             <div
                                                 key={idx}
                                                 className={`flex items-center gap-2 rounded-lg border p-3 text-sm ${idx === q.correctAnswer
-                                                    ? "border-green-500/50 bg-green-500/10 text-green-400"
-                                                    : "border-gray-800 bg-gray-900/50 text-gray-400"
+                                                    ? "border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
+                                                    : "border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 text-gray-600 dark:text-gray-400"
                                                     }`}
                                             >
                                                 {idx === q.correctAnswer && <CheckCircle2 className="h-4 w-4" />}
@@ -327,13 +327,13 @@ export default function AdminTests() {
                                 <div className="flex flex-col gap-2">
                                     <button
                                         onClick={() => openEdit(q)}
-                                        className="rounded-lg bg-gray-800 p-2 text-blue-400 hover:bg-blue-400/10 transition-colors"
+                                        className="rounded-lg bg-gray-100 dark:bg-gray-800 p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-400/10 transition-colors"
                                     >
                                         <Edit3 className="h-5 w-5" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(q.id)}
-                                        className="rounded-lg bg-gray-800 p-2 text-red-400 hover:bg-red-400/10 transition-colors"
+                                        className="rounded-lg bg-gray-100 dark:bg-gray-800 p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-400/10 transition-colors"
                                     >
                                         <Trash2 className="h-5 w-5" />
                                     </button>
@@ -342,7 +342,7 @@ export default function AdminTests() {
                         </div>
                     ))
                 ) : (
-                    <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/30 py-20 text-center text-gray-500">
+                    <div className="rounded-2xl border border-dashed border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900/30 py-20 text-center text-gray-500">
                         {t.admin.tests.noTests}
                     </div>
                 )}
@@ -350,46 +350,46 @@ export default function AdminTests() {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-                    <div className="w-full max-w-2xl rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-8 shadow-2xl transition-all">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-bold text-white">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-outfit">
                                 {isEditing ? t.admin.tests.title : t.admin.tests.add}
                             </h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
+                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-650 dark:hover:text-white p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 <X className="h-6 w-6" />
                             </button>
                         </div>
                         <form onSubmit={handleSave} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.subject}</label>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.admin.tests.subject}</label>
                                     <select
-                                        className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                        className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                         value={currentQuestion.subjectId || selectedSubjectId}
                                         onChange={(e) => setCurrentQuestion({ ...currentQuestion, subjectId: e.target.value })}
                                     >
-                                        {subjects.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+                                        {subjects.map(s => <option key={s.id} value={s.id} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{s.title}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.grade}</label>
+                                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.admin.tests.grade}</label>
                                     <select
-                                        className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-white outline-none focus:border-blue-500"
+                                        className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                         value={currentQuestion.gradeLevel || selectedGrade}
                                         onChange={(e) => setCurrentQuestion({ ...currentQuestion, gradeLevel: e.target.value })}
                                     >
                                         {[5, 6, 7, 8, 9, 10, 11].map(g => (
-                                            <option key={g} value={g.toString()}>{g}</option>
+                                            <option key={g} value={g.toString()} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{g}</option>
                                         ))}
                                     </select>
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">{t.admin.tests.question}</label>
+                                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">{t.admin.tests.question}</label>
                                 <textarea
                                     required
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                                    className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     rows={2}
                                     value={currentQuestion.question}
                                     onChange={e => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
@@ -408,12 +408,12 @@ export default function AdminTests() {
                                                 name="correctAnswer"
                                                 checked={currentQuestion.correctAnswer === idx}
                                                 onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: idx })}
-                                                className="h-5 w-5 border-gray-700 bg-gray-800 text-blue-600 focus:ring-blue-500"
+                                                className="h-5 w-5 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-blue-600 focus:ring-blue-500"
                                             />
                                             <input
                                                 type="text"
                                                 required
-                                                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                 value={opt}
                                                 onChange={e => updateOption(idx, e.target.value)}
                                                 placeholder={`${t.admin.tests.option} ${String.fromCharCode(65 + idx)}`}
@@ -425,7 +425,7 @@ export default function AdminTests() {
                             <button
                                 type="submit"
                                 disabled={btnLoading}
-                                className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-900/20 hover:bg-blue-700 disabled:opacity-50"
+                                className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-md hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-98"
                             >
                                 {btnLoading ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : t.common.save}
                             </button>

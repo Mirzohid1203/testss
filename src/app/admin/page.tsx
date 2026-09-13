@@ -138,6 +138,7 @@ export default function AdminOverview() {
                     const totalScore = userResults.reduce((acc, curr) => acc + (curr.score || 0), 0);
                     return {
                         email: userData.email,
+                        name: userData.name || "",
                         totalScore,
                         uid: doc.id,
                         role: userData.role
@@ -194,8 +195,8 @@ export default function AdminOverview() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight font-outfit uppercase">{t.admin.overview.title.split(' ')[0]} <span className="text-blue-500 italic">{t.admin.overview.title.split(' ').slice(1).join(' ')}</span></h1>
-                    <p className="text-gray-400 font-medium">{t.admin.overview.subtitle}</p>
+                    <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight font-outfit uppercase">{t.admin.overview.title.split(' ')[0]} <span className="text-blue-500 italic">{t.admin.overview.title.split(' ').slice(1).join(' ')}</span></h1>
+                    <p className="text-gray-600 dark:text-gray-400 font-medium">{t.admin.overview.subtitle}</p>
                 </div>
             </div>
 
@@ -304,9 +305,11 @@ export default function AdminOverview() {
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px] md:max-w-[200px]">
-                                            {student.email}
+                                            {student.name || student.email}
                                         </p>
-                                        <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{t.features.secure.title}</p>
+                                        <p className="text-[10px] text-gray-500 font-medium truncate max-w-[150px]">
+                                            {student.name ? student.email : t.features.secure.title}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="text-right">

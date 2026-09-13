@@ -26,8 +26,8 @@ function LoginContent() {
             await signInWithEmailAndPassword(auth, email, password);
             toast.success(t.common.welcomeBack);
             router.push(callbackUrl);
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : String(error));
         } finally {
             setLoading(false);
         }
@@ -35,30 +35,30 @@ function LoginContent() {
 
     return (
         <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-800 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 p-8 shadow-2xl backdrop-blur-xl transition-all duration-300">
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold tracking-tight text-white">{t.auth.welcomeBack}</h2>
-                    <p className="mt-2 text-sm text-gray-400">3-IDUM TTM</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t.auth.welcomeBack}</h2>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">3-IDUM TTM</p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                     <div className="space-y-4 rounded-md shadow-sm">
                         <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                            <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="email"
                                 required
-                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
                                 placeholder={t.auth.email}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                            <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="password"
                                 required
-                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
                                 placeholder={t.auth.password}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -70,7 +70,7 @@ function LoginContent() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative flex w-full justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="group relative flex w-full justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-200"
                         >
                             {loading ? (
                                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -84,9 +84,9 @@ function LoginContent() {
                     </div>
                 </form>
                 <div className="text-center">
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                         {t.auth.noAccount}{" "}
-                        <Link href="/register" className="font-medium text-blue-500 hover:text-blue-400">
+                        <Link href="/register" className="font-medium text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
                             {t.auth.register}
                         </Link>
                     </p>

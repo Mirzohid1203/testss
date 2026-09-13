@@ -3,6 +3,7 @@ export type UserRole = 'superadmin' | 'admin' | 'user';
 export interface UserProfile {
   uid: string;
   email: string;
+  name?: string;
   role: UserRole;
   classId?: string;
   className?: string;
@@ -19,7 +20,9 @@ export interface Subject {
   description?: string;
   allowedGrades?: string[]; // Qaysi sinflar uchun ochiqligi (masalan: ["5", "9"])
   createdAt: number;
+  timePerQuestion?: number; // Savol boshiga ajratilgan ortacha vaqt (sekundlarda)
 }
+
 
 export interface Question {
   id: string;

@@ -35,10 +35,13 @@ export default function Timer({ initialTime, onTimeUp, isActive }: TimerProps) {
     const isLow = timeLeft < 60;
 
     return (
-        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 font-mono text-xl font-bold transition-colors ${isLow ? "border-red-500/50 bg-red-500/10 text-red-500 animate-pulse" : "border-gray-700 bg-gray-800 text-blue-400"
+        <div className={`flex items-center gap-2 rounded-xl border px-4 py-2 font-mono text-xl font-bold transition-colors ${isLow 
+            ? "border-red-500/50 bg-red-500/10 text-red-500 animate-pulse" 
+            : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-blue-600 dark:text-blue-400"
             }`}>
             {isLow ? <AlertCircle className="h-5 w-5" /> : <TimerIcon className="h-5 w-5" />}
             {formatTime(timeLeft)}
         </div>
+
     );
 }

@@ -276,15 +276,15 @@ export default function AdminUsers() {
         <div className="space-y-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">{t.admin.users.title}</h1>
-                    <p className="text-gray-400">{t.admin.users.desc}</p>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">{t.admin.users.title}</h1>
+                    <p className="text-gray-600 dark:text-gray-400">{t.admin.users.desc}</p>
                 </div>
                 
-                <div className="flex flex-col md:flex-row gap-4 items-center">
+                <div className="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
                     {isSuperAdmin && (
                         <button
                             onClick={handleClearAllResults}
-                            className="flex items-center gap-2 rounded-xl bg-red-600/10 border border-red-500/20 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-600 hover:text-white transition-all active:scale-95 whitespace-nowrap"
+                            className="flex items-center gap-2 w-full md:w-auto justify-center rounded-xl bg-red-50 dark:bg-red-600/10 border border-red-200 dark:border-red-500/20 px-4 py-2.5 text-sm font-bold text-red-600 dark:text-red-500 hover:bg-red-600 hover:text-white transition-all active:scale-95 whitespace-nowrap shadow-sm"
                         >
                             <Trash2 className="h-4 w-4" />
                             {t.admin.users.clearResults}
@@ -297,15 +297,15 @@ export default function AdminUsers() {
                             placeholder={t.admin.users.searchPlaceholder}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-xl border border-gray-800 bg-gray-900/50 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900/50 py-2.5 pl-10 pr-4 text-gray-900 dark:text-white outline-none focus:border-blue-500 transition-all"
                         />
                     </div>
                 </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-x-auto shadow-xl">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 overflow-x-auto shadow-xl">
                 <table className="w-full text-left min-w-[800px]">
-                    <thead className="bg-gray-800/80 text-xs font-semibold uppercase text-gray-500 whitespace-nowrap">
+                    <thead className="bg-gray-50 dark:bg-gray-800/80 text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 whitespace-nowrap">
                         <tr>
                             <th className="px-6 py-4">{t.admin.users.rank}</th>
                             <th className="px-6 py-4">{t.admin.users.user}</th>
@@ -317,10 +317,10 @@ export default function AdminUsers() {
                             {isSuperAdmin && <th className="px-6 py-4">{t.common.actions}</th>}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-800">
+                    <tbody className="divide-y divide-gray-250 dark:divide-gray-800">
                         {loading ? (
                             <tr>
-                                <td colSpan={6} className="py-20 text-center">
+                                <td colSpan={8} className="py-20 text-center">
                                     <Loader2 className="mx-auto h-10 w-10 animate-spin text-blue-500" />
                                 </td>
                             </tr>
@@ -333,27 +333,31 @@ export default function AdminUsers() {
                                     viewport={{ once: true, margin: "-20px" }}
                                     transition={{ delay: (idx % 10) * 0.05 }}
                                     onClick={() => setSelectedUser(user)}
-                                    className="hover:bg-gray-800/60 transition-all cursor-pointer group"
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-all cursor-pointer group"
                                 >
                                     <td className="px-6 py-4">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 font-bold text-gray-300 group-hover:bg-blue-600/20 group-hover:text-blue-400 transition-colors">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 font-bold text-gray-650 dark:text-gray-300 group-hover:bg-blue-600/20 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                             #{user.rank}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/20 text-blue-400">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/15 text-blue-600 dark:text-blue-405">
                                                 <User className="h-5 w-5" />
                                             </div>
                                             <div>
-                                                <p className="font-medium text-white group-hover:text-blue-400 transition-colors">{user.email}</p>
-                                                <p className="text-xs text-gray-500 truncate max-w-[150px]">{user.uid}</p>
+                                                <p className="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                    {user.name || user.email}
+                                                </p>
+                                                <p className="text-xs text-gray-500 truncate max-w-[150px]">
+                                                    {user.name ? user.email : user.uid}
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         {(user.role === "admin" || user.role === "superadmin") ? (
-                                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-400 border border-purple-500/20">
+                                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-600 dark:text-purple-400 border border-purple-500/20">
                                                 {t.admin.users.role}
                                             </span>
                                         ) : (
@@ -361,19 +365,19 @@ export default function AdminUsers() {
                                                 value={user.classId || ""}
                                                 onClick={(e) => e.stopPropagation()}
                                                 onChange={(e) => handleClassChange(user.uid, e)}
-                                                className="rounded-lg border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-white outline-none focus:border-blue-500"
+                                                className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-white outline-none focus:border-blue-500"
                                             >
-                                                <option value="">{t.auth.selectClass}</option>
+                                                <option value="" className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{t.auth.selectClass}</option>
                                                 {classes.map(c => (
-                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                    <option key={c.id} value={c.id} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-white">{c.name}</option>
                                                 ))}
                                             </select>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
                                             <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                                                user.role === "superadmin" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                                                user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                                user.role === "superadmin" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20" :
+                                                user.role === "admin" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
                                             }`}>
                                                 {user.role === "superadmin" && <Crown className="h-3 w-3" />}
                                                 {user.role === "admin" && <Shield className="h-3 w-3" />}
@@ -381,12 +385,12 @@ export default function AdminUsers() {
                                             </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-semibold text-white">{user.testsTaken}</span>
+                                        <span className="font-semibold text-gray-900 dark:text-white">{user.testsTaken}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-semibold text-white">{user.totalScore}</span>
+                                        <span className="font-semibold text-gray-900 dark:text-white">{user.totalScore}</span>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-gray-400 whitespace-nowrap">
+                                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="h-4 w-4" />
@@ -400,7 +404,7 @@ export default function AdminUsers() {
                                             {user.role !== "superadmin" && (
                                                 <button
                                                     onClick={(e) => handleDeleteUser(user.uid, user.email, e)}
-                                                    className="rounded-lg p-2 text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                                                    className="rounded-lg p-2 text-red-500 hover:bg-red-500/10 hover:text-red-650 transition-colors"
                                                     title={t.common.delete}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -434,39 +438,41 @@ export default function AdminUsers() {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-gray-800 bg-gray-900 shadow-2xl"
+                            className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl z-10"
                         >
                             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
                             
-                            <div className="flex items-center justify-between border-b border-gray-800 p-6 relative z-10">
+                            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-6 relative z-10">
                                 <div className="flex items-center gap-4">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-400">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/15 text-blue-600 dark:text-blue-400">
                                         <BarChart3 className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-white">{t.admin.users.statsTitle}</h2>
-                                        <p className="text-sm text-gray-400">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white font-outfit">{t.admin.users.statsTitle}</h2>
+                                        <p className="text-sm text-gray-650 dark:text-gray-400">
                                             {selectedUser.email} • {(selectedUser.role === "admin" || selectedUser.role === "superadmin") ? t.admin.users.role : (selectedUser.className || "---")}
                                         </p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => handleExportUserStats(selectedUser)}
-                                    className="mr-2 rounded-full bg-emerald-600/20 p-2.5 text-emerald-400 hover:bg-emerald-600/30 transition-all cursor-pointer relative z-50 active:scale-90"
-                                    title={t.admin.users.export}
-                                >
-                                    <Download className="h-5 w-5" />
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedUser(null);
-                                    }}
-                                    className="rounded-full bg-gray-800 p-2.5 text-gray-400 hover:bg-gray-700 hover:text-white transition-all cursor-pointer relative z-50 active:scale-90"
-                                    aria-label={t.adsPage.close}
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => handleExportUserStats(selectedUser)}
+                                        className="rounded-full bg-emerald-50 dark:bg-emerald-600/20 p-2.5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-600/30 transition-all cursor-pointer relative z-50 active:scale-90 shadow-sm"
+                                        title={t.admin.users.export}
+                                    >
+                                        <Download className="h-5 w-5" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedUser(null);
+                                        }}
+                                        className="rounded-full bg-gray-100 dark:bg-gray-800 p-2.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer relative z-50 active:scale-90 shadow-sm"
+                                        aria-label={t.adsPage.close}
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div 
@@ -474,43 +480,43 @@ export default function AdminUsers() {
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div className="grid grid-cols-2 gap-4 mb-8">
-                                    <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">{t.admin.users.testsCount}</p>
-                                        <p className="text-2xl font-bold text-white">{selectedUser.testsTaken}</p>
+                                    <div className="rounded-2xl bg-gray-50 dark:bg-gray-800/50 p-4 border border-gray-200 dark:border-gray-800 shadow-sm">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t.admin.users.testsCount}</p>
+                                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{selectedUser.testsTaken}</p>
                                     </div>
-                                    <div className="rounded-2xl bg-gray-800/50 p-4 border border-gray-800">
-                                        <p className="text-sm text-gray-500 font-medium">{t.admin.users.totalScore}</p>
-                                        <p className="text-2xl font-bold text-blue-400">{selectedUser.totalScore}</p>
+                                    <div className="rounded-2xl bg-gray-50 dark:bg-gray-800/50 p-4 border border-gray-200 dark:border-gray-800 shadow-sm">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t.admin.users.totalScore}</p>
+                                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{selectedUser.totalScore}</p>
                                     </div>
                                 </div>
 
-                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">{t.admin.users.subjectResults}</h3>
+                                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-450">{t.admin.users.subjectResults}</h3>
                                 
                                 <div className="max-h-[40vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {getUserSubjectStats(selectedUser).length > 0 ? (
                                         getUserSubjectStats(selectedUser).map((stat, idx) => (
-                                            <div key={stat.subjectId || `stat-${idx}`} className="flex items-center justify-between rounded-xl bg-gray-800/30 p-4 border border-gray-800/50">
+                                            <div key={stat.subjectId || `stat-${idx}`} className="flex items-center justify-between rounded-xl bg-gray-55/50 dark:bg-gray-800/30 p-4 border border-gray-200 dark:border-gray-800/50 shadow-sm">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                                                         <BookOpen className="h-5 w-5" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-semibold text-white">{stat.title}</p>
-                                                        <p className="text-xs text-gray-500">{stat.count} {t.admin.users.timesTaken}</p>
+                                                        <p className="font-semibold text-gray-900 dark:text-white">{stat.title}</p>
+                                                        <p className="text-xs text-gray-550 dark:text-gray-400">{stat.count} {t.admin.users.timesTaken}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="text-right mr-3">
-                                                        <p className="text-lg font-bold text-white">{stat.avgScore}%</p>
-                                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">{t.admin.overview.stats.avgScore}</p>
+                                                        <p className="text-lg font-bold text-gray-900 dark:text-white">{stat.avgScore}%</p>
+                                                        <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-tighter">{t.admin.overview.stats.avgScore}</p>
                                                     </div>
                                                     {isSuperAdmin && (
                                                         <button
                                                             onClick={(e) => handleGrantRetake(selectedUser.uid, stat.subjectId, e)}
                                                             className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all active:scale-90 ${
                                                                 selectedUser.retakeAllowed?.includes(stat.subjectId)
-                                                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 cursor-default"
-                                                                : "bg-blue-600/10 border-blue-600/30 text-blue-400 hover:bg-blue-600 hover:text-white"
+                                                                ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-250 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-500 cursor-default"
+                                                                : "bg-blue-600/10 border-blue-600/30 text-blue-600 dark:text-blue-450 hover:bg-blue-600 hover:text-white"
                                                             }`}
                                                             title={selectedUser.retakeAllowed?.includes(stat.subjectId) ? t.admin.users.retakeGranted : t.admin.users.grantRetake}
                                                         >
@@ -521,17 +527,17 @@ export default function AdminUsers() {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="py-12 text-center text-gray-500">
+                                        <div className="py-12 text-center text-gray-550 dark:text-gray-500">
                                             <p>{t.admin.users.noUsers}</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="bg-gray-800/50 p-6 flex justify-end">
+                            <div className="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-800 p-6 flex justify-end">
                                 <button
                                     onClick={() => setSelectedUser(null)}
-                                    className="rounded-xl bg-blue-600 px-8 py-2.5 font-bold text-white transition-all hover:bg-blue-700"
+                                    className="rounded-xl bg-blue-600 px-8 py-2.5 font-bold text-white transition-all hover:bg-blue-700 active:scale-95 shadow-md"
                                 >
                                     {t.adsPage.close}
                                 </button>

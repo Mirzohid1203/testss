@@ -45,21 +45,21 @@ export default function UserAds() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-[calc(100vh-64px)] bg-gray-950 px-4 py-12 sm:px-6 lg:px-8">
+            <div className="min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-950 px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-300">
                 <div className="mx-auto max-w-4xl">
                     <motion.div 
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-12 text-center"
                     >
-                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-600/10 px-4 py-1.5 text-sm font-medium text-blue-400 ring-1 ring-inset ring-blue-600/20 mb-4">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-600/10 px-4 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 ring-1 ring-inset ring-blue-500/20 mb-4">
                             <Megaphone className="h-4 w-4" />
                             {t.nav.ads}
                         </div>
-                        <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
                             {t.nav.ads}
                         </h1>
-                        <p className="mt-4 text-lg text-gray-400">
+                        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
                             {t.adsPage.subtitle}
                         </p>
                     </motion.div>
@@ -78,7 +78,7 @@ export default function UserAds() {
                                         whileInView={{ opacity: 1, scale: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.4, delay: index * 0.1 }}
-                                        className="group relative overflow-hidden rounded-[2rem] border border-gray-800 bg-gray-900/30 p-8 shadow-2xl backdrop-blur-md transition-all hover:border-blue-500/40 hover:bg-gray-900/50"
+                                        className="group relative overflow-hidden rounded-[2rem] border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/30 p-8 shadow-md hover:shadow-xl dark:shadow-2xl backdrop-blur-md transition-all hover:border-blue-500/40 dark:hover:bg-gray-900/50"
                                     >
                                         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/5 blur-[100px] transition-all group-hover:bg-blue-600/10" />
                                         
@@ -89,22 +89,22 @@ export default function UserAds() {
                                             
                                             <div className="flex-1">
                                                 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                                                    <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                         {ad.title}
                                                     </h3>
-                                                    <div className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-1.5 text-xs font-semibold text-gray-400 border border-white/5">
+                                                    <div className="flex items-center gap-2 rounded-full bg-gray-100 dark:bg-white/5 px-4 py-1.5 text-xs font-semibold text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/5">
                                                         <Calendar className="h-3.5 w-3.5" />
                                                         {safeFormatDate(ad.createdAt)}
                                                     </div>
                                                 </div>
                                                 
-                                                <p className="text-lg leading-relaxed text-gray-300 font-medium line-clamp-3">
+                                                <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 font-medium line-clamp-3">
                                                     {ad.content}
                                                 </p>
                                                 
                                                 <button
                                                     onClick={() => setSelectedAd(ad)}
-                                                    className="mt-8 flex items-center gap-2 text-sm font-bold text-blue-500 group-hover:translate-x-2 transition-transform duration-300"
+                                                    className="mt-8 flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-500 group-hover:translate-x-2 transition-transform duration-300"
                                                 >
                                                     <span>{t.adsPage.readMore}</span>
                                                     <ArrowRight className="h-4 w-4" />
@@ -119,13 +119,13 @@ export default function UserAds() {
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-gray-800 bg-gray-900/20 py-24 text-center"
+                            className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/20 py-24 text-center"
                         >
-                            <div className="rounded-3xl bg-gray-800/50 p-6 mb-6">
-                                <Megaphone className="h-12 w-12 text-gray-600" />
+                            <div className="rounded-3xl bg-gray-100 dark:bg-gray-800/50 p-6 mb-6">
+                                <Megaphone className="h-12 w-12 text-gray-400 dark:text-gray-600" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white">{t.adsPage.noAds}</h3>
-                            <p className="mt-3 text-gray-400 max-w-sm mx-auto text-lg">
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t.adsPage.noAds}</h3>
+                            <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-sm mx-auto text-lg">
                                 {t.adsPage.noAdsDesc}
                             </p>
                         </motion.div>
@@ -140,21 +140,21 @@ export default function UserAds() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm"
                         onClick={() => setSelectedAd(null)}
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative max-w-2xl w-full overflow-hidden rounded-[2.5rem] border border-gray-800 bg-gray-900 p-8 shadow-2xl md:p-12"
+                            className="relative max-w-2xl w-full overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-8 shadow-2xl md:p-12"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
                             
                             <button
                                 onClick={() => setSelectedAd(null)}
-                                className="absolute right-6 top-6 rounded-full bg-gray-800 p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white z-10"
+                                className="absolute right-6 top-6 rounded-full bg-gray-100 dark:bg-gray-800 p-2 text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white z-10"
                             >
                                 <X className="h-6 w-6" />
                             </button>
@@ -164,17 +164,17 @@ export default function UserAds() {
                                     <Megaphone className="h-8 w-8" />
                                 </div>
                                 
-                                <div className="mb-4 flex items-center gap-3 text-sm font-semibold text-blue-400">
+                                <div className="mb-4 flex items-center gap-3 text-sm font-semibold text-blue-600 dark:text-blue-400">
                                     <Calendar className="h-4 w-4" />
                                     {safeFormatDate(selectedAd.createdAt)}
                                 </div>
                                 
-                                <h2 className="mb-6 text-3xl font-extrabold text-white md:text-4xl">
+                                <h2 className="mb-6 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl">
                                     {selectedAd.title}
                                 </h2>
                                 
                                 <div className="max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar">
-                                    <p className="text-lg leading-relaxed text-gray-300 font-medium whitespace-pre-wrap">
+                                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 font-medium whitespace-pre-wrap">
                                         {selectedAd.content}
                                     </p>
                                 </div>

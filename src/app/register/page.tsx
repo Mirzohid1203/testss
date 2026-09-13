@@ -7,10 +7,11 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import { Loader2, Mail, Lock, UserPlus, Users, Shield } from "lucide-react";
+import { Loader2, Mail, Lock, UserPlus, Users, Shield, User } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Register() {
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [classes, setClasses] = useState<{ id: string, name: string }[]>([]);
@@ -48,6 +49,7 @@ export default function Register() {
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: user.email,
+                name: name.trim(),
                 role: role,
                 status: isAdminRequest ? "pending_admin" : "active",
                 classId: isAdminRequest ? "" : selectedClass,
@@ -57,8 +59,8 @@ export default function Register() {
 
             toast.success(t.auth.success);
             router.push("/dashboard");
-        } catch (error: any) {
-            toast.error(error.message);
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : String(error));
         } finally {
             setLoading(false);
         }
@@ -66,30 +68,41 @@ export default function Register() {
 
     return (
         <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-800 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 p-8 shadow-2xl backdrop-blur-xl transition-all duration-300">
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold tracking-tight text-white">{t.auth.createAccount}</h2>
-                    <p className="mt-2 text-sm text-gray-400">3-IDUM TTM</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t.auth.createAccount}</h2>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">3-IDUM TTM</p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleRegister}>
                     <div className="space-y-4 rounded-md shadow-sm">
                         <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                            <User className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
+                            <input
+                                type="text"
+                                required
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
+                                placeholder={t.auth.fullName}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="email"
                                 required
-                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
                                 placeholder={t.auth.email}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                            <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                             <input
                                 type="password"
                                 required
-                                className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm transition-colors"
                                 placeholder={t.auth.password}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -98,16 +111,16 @@ export default function Register() {
 
                         {!isAdminRequest && (
                             <div className="relative">
-                                <Users className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                                <Users className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500" />
                                 <select
                                     required={!isAdminRequest}
-                                    className="block w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pl-10 pr-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm appearance-none"
+                                    className="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 pl-10 pr-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm appearance-none transition-colors"
                                     value={selectedClass}
                                     onChange={(e) => setSelectedClass(e.target.value)}
                                 >
-                                    <option value="" disabled>{t.auth.selectClass}</option>
+                                    <option value="" disabled className="bg-white dark:bg-gray-800 text-gray-500">{t.auth.selectClass}</option>
                                     {classes.map((cls) => (
-                                        <option key={cls.id} value={cls.id}>{cls.name}</option>
+                                        <option key={cls.id} value={cls.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{cls.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -115,19 +128,23 @@ export default function Register() {
 
                         <div 
                             className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
-                                isAdminRequest ? "bg-blue-600/10 border-blue-500/50" : "bg-gray-800/30 border-gray-700"
+                                isAdminRequest 
+                                    ? "bg-blue-50 dark:bg-blue-600/10 border-blue-500/50" 
+                                    : "bg-gray-50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700"
                             }`}
                             onClick={() => setIsAdminRequest(!isAdminRequest)}
                         >
-                            <div className={`p-2 rounded-lg ${isAdminRequest ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400"}`}>
+                            <div className={`p-2 rounded-lg transition-colors ${
+                                isAdminRequest ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                            }`}>
                                 <Shield className="h-5 w-5" />
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-bold text-white">{t.auth.joinAdmin}</p>
-                                <p className="text-xs text-gray-500">{t.auth.adminDesc}</p>
+                                <p className="text-sm font-bold text-gray-900 dark:text-white">{t.auth.joinAdmin}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{t.auth.adminDesc}</p>
                             </div>
                             <div className={`h-5 w-5 rounded-md border flex items-center justify-center transition-all ${
-                                isAdminRequest ? "bg-blue-600 border-blue-600" : "border-gray-600"
+                                isAdminRequest ? "bg-blue-600 border-blue-600" : "border-gray-300 dark:border-gray-600"
                             }`}>
                                 {isAdminRequest && <div className="h-2.5 w-2.5 rounded-sm bg-white" />}
                             </div>
@@ -138,7 +155,7 @@ export default function Register() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative flex w-full justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="group relative flex w-full justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-200 shadow-md active:scale-98"
                         >
                             {loading ? (
                                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -152,9 +169,9 @@ export default function Register() {
                     </div>
                 </form>
                 <div className="text-center">
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                         {t.auth.haveAccount}{" "}
-                        <Link href="/login" className="font-medium text-blue-500 hover:text-blue-400">
+                        <Link href="/login" className="font-medium text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
                             {t.auth.signIn}
                         </Link>
                     </p>

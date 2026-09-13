@@ -167,12 +167,12 @@ export default function AdminClasses() {
         <div className="space-y-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-outfit">{t.admin.classes.title}</h1>
-                    <p className="text-gray-400 text-sm">{t.admin.classes.subtitle}</p>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-outfit">{t.admin.classes.title}</h1>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">{t.admin.classes.subtitle}</p>
                 </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-6 shadow-sm">
                 <form onSubmit={handleAddClass} className="flex flex-col gap-4 sm:flex-row">
                     <div className="relative flex-1">
                         <School className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
@@ -181,14 +181,14 @@ export default function AdminClasses() {
                             placeholder={t.admin.classes.placeholder}
                             value={newClassName}
                             onChange={(e) => handleClassNameChange(e.target.value)}
-                            className="w-full rounded-xl border border-gray-800 bg-gray-800/50 py-3 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all uppercase"
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-850 bg-gray-50 dark:bg-gray-800/50 py-3 pl-10 pr-4 text-gray-900 dark:text-white outline-none focus:border-blue-500 transition-all uppercase"
                             required
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50 shadow-md active:scale-98"
                     >
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
                         {t.admin.classes.add}
@@ -204,7 +204,7 @@ export default function AdminClasses() {
                         placeholder={t.common.search}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-xl border border-gray-800 bg-gray-900/30 py-2.5 pl-10 pr-4 text-white outline-none focus:border-blue-500 transition-all"
+                        className="w-full rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900/30 py-2.5 pl-10 pr-4 text-gray-900 dark:text-white outline-none focus:border-blue-500 transition-all"
                     />
                 </div>
 
@@ -218,20 +218,20 @@ export default function AdminClasses() {
                             <div 
                                 key={cls.id}
                                 onClick={() => fetchClassUsers(cls)}
-                                className="group flex cursor-pointer items-center justify-between rounded-2xl border border-gray-800 bg-gray-900/50 p-4 transition-all hover:border-blue-500/50 hover:bg-gray-800/80 shadow-lg hover:shadow-blue-500/10"
+                                className="group flex cursor-pointer items-center justify-between rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 transition-all hover:border-blue-500/50 hover:bg-gray-50 dark:hover:bg-gray-800/80 shadow-md hover:shadow-blue-500/10"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/10 text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
                                         <School className="h-6 w-6" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-lg font-bold text-white">{cls.name}</span>
-                                        <span className="text-[10px] uppercase tracking-wider text-gray-500">{t.admin.classes.viewStudents}</span>
+                                        <span className="text-lg font-bold text-gray-900 dark:text-white">{cls.name}</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400">{t.admin.classes.viewStudents}</span>
                                     </div>
                                 </div>
                                 <button
                                     onClick={(e) => handleDeleteClass(cls.id, cls.name, e)}
-                                    className="rounded-lg p-2 text-gray-600 transition-all hover:bg-red-500/10 hover:text-red-500"
+                                    className="rounded-lg p-2 text-gray-500 transition-all hover:bg-red-500/10 hover:text-red-500"
                                 >
                                     <Trash2 className="h-5 w-5" />
                                 </button>
@@ -241,8 +241,8 @@ export default function AdminClasses() {
                 )}
 
                 {!loading && filteredClasses.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-gray-800 py-12 text-center">
-                        <Users className="mx-auto mb-4 h-12 w-12 text-gray-700" />
+                    <div className="rounded-2xl border border-dashed border-gray-300 dark:border-gray-800 py-12 text-center">
+                        <Users className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-600" />
                         <p className="text-gray-500">{t.admin.classes.noClasses}</p>
                     </div>
                 )}
@@ -256,24 +256,24 @@ export default function AdminClasses() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedClass(null)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                         />
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-gray-800 bg-gray-900 shadow-2xl"
+                            className="relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl z-10"
                         >
                             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-600/10 blur-[100px]" />
                             
-                            <div className="flex items-center justify-between border-b border-gray-800 p-8 relative z-10">
+                            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-8 relative z-10">
                                 <div className="flex items-center gap-4">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-400">
+                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/15 text-blue-600 dark:text-blue-400">
                                         <School className="h-7 w-7" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white">{selectedClass.name} {t.admin.classes.students}</h2>
-                                        <p className="text-sm text-gray-400">{t.admin.classes.totalStudents}: {classUsers.length}</p>
+                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedClass.name} {t.admin.classes.students}</h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{t.admin.classes.totalStudents}: {classUsers.length}</p>
                                     </div>
                                 </div>
                                 <button
@@ -281,7 +281,7 @@ export default function AdminClasses() {
                                         e.stopPropagation();
                                         setSelectedClass(null);
                                     }}
-                                    className="rounded-full bg-gray-800 p-3 text-gray-400 hover:bg-gray-700 hover:text-white transition-all cursor-pointer relative z-50 active:scale-95 shadow-lg"
+                                    className="rounded-full bg-gray-100 dark:bg-gray-800 p-3 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer relative z-50 active:scale-95 shadow-md"
                                     aria-label={t.adsPage.close}
                                 >
                                     <X className="h-6 w-6" />
@@ -295,47 +295,47 @@ export default function AdminClasses() {
                                 {loadingUsers ? (
                                     <div className="flex flex-col items-center justify-center py-20">
                                         <Loader2 className="h-10 w-10 animate-spin text-blue-500 mb-4" />
-                                        <p className="text-gray-400">{t.admin.classes.loading}</p>
+                                        <p className="text-gray-500 dark:text-gray-400">{t.admin.classes.loading}</p>
                                     </div>
                                 ) : classUsers.length > 0 ? (
                                     classUsers.map((user, idx) => (
                                         <div 
                                             key={user.uid}
-                                            className="flex items-center justify-between rounded-2xl border border-gray-800/50 bg-gray-800/30 p-5 transition-all hover:bg-gray-800/50"
+                                            className="flex items-center justify-between rounded-2xl border border-gray-200/50 dark:border-gray-800/50 bg-gray-50 dark:bg-gray-800/30 p-5 transition-all hover:bg-gray-100 dark:hover:bg-gray-800/50"
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 font-bold text-blue-400">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 font-bold text-blue-600 dark:text-blue-400">
                                                     #{idx + 1}
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-white">{user.email}</p>
+                                                    <p className="font-bold text-gray-900 dark:text-white">{user.email}</p>
                                                     <div className="flex items-center gap-4 mt-1">
-                                                        <span className="flex items-center gap-1 text-[10px] text-gray-500">
+                                                        <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
                                                             <GraduationCap className="h-3 w-3" />
                                                             {user.testsTaken} {t.admin.users.testsCount}
                                                         </span>
-                                                        <span className="flex items-center gap-1 text-[10px] text-gray-500">
+                                                        <span className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
                                                             <TrendingUp className="h-3 w-3" />
                                                             {user.totalScore} {t.admin.users.totalScore}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <ChevronRight className="h-5 w-5 text-gray-700" />
+                                            <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-700" />
                                         </div>
                                     ))
                                 ) : (
                                     <div className="py-20 text-center">
-                                        <Users className="mx-auto mb-4 h-12 w-12 text-gray-800" />
+                                        <Users className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-700" />
                                         <p className="text-gray-500">{t.admin.classes.noStudents}</p>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="bg-gray-800/50 p-6 flex justify-end">
+                            <div className="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-800 p-6 flex justify-end">
                                 <button
                                     onClick={() => setSelectedClass(null)}
-                                    className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700"
+                                    className="rounded-xl bg-blue-600 px-8 py-3 font-bold text-white transition-all hover:bg-blue-700 active:scale-95 shadow-md"
                                 >
                                     {t.adsPage.close}
                                 </button>
