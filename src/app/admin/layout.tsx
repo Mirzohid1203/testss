@@ -15,6 +15,7 @@ import {
     ChevronRight,
     Megaphone,
     Crown,
+    Menu,
     X
 } from "lucide-react";
 
@@ -92,7 +93,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </aside>
 
                 {/* Main content */}
-                <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
+                <div className="flex-1 flex flex-col min-w-0 pb-28 md:pb-8">
+                    {/* Mobile Admin Bar with Sidebar Toggle */}
+                    <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 px-4 py-2.5 backdrop-blur-md md:hidden sticky top-16 z-20">
+                        <span className="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                            Admin Panel
+                        </span>
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="flex items-center gap-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 active:scale-95 transition-all shadow-sm"
+                        >
+                            <Menu className="h-3.5 w-3.5 text-blue-500" />
+                            {t.adminNav.menu}
+                        </button>
+                    </div>
+
                     {isSuperAdmin && (
                         <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2">
                             <div className="mx-auto max-w-7xl flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest">
@@ -101,25 +117,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             </div>
                         </div>
                     )}
-                    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {children}
                     </div>
                 </div>
 
                 {/* Mobile Bottom Navigation (Admin Panel) */}
-                <nav className="fixed bottom-0 left-0 right-0 z-[100] flex items-center justify-around border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md px-2 py-3 md:hidden pb-safe">
+                <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-1 overflow-x-auto no-scrollbar border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md px-3 py-2 md:hidden shadow-2xl">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all ${
-                                    isActive ? "text-blue-600 dark:text-blue-500" : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-gray-200"
+                                className={`flex flex-col items-center justify-center gap-1 rounded-xl px-2.5 py-1.5 transition-all shrink-0 min-w-[62px] ${
+                                    isActive
+                                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 font-bold"
+                                        : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                                 }`}
                             >
-                                <span className={`${isActive ? "scale-110" : ""}`}>{item.icon}</span>
-                                <span className="text-[10px] font-medium">{item.name}</span>
+                                <span className={`transition-transform ${isActive ? "scale-110" : ""}`}>{item.icon}</span>
+                                <span className="text-[10px] whitespace-nowrap truncate max-w-[70px]">{item.name}</span>
                             </Link>
                         );
                     })}
